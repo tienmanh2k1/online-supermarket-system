@@ -56,3 +56,38 @@ it('encodes inventory id for the ledger route', async () => {
 
   expect(fetch).toHaveBeenCalledWith('/api/admin/inventory/inv%201/transactions?page=1&pageSize=20', expect.any(Object))
 })
+
+it('loads forecast rows for a branch and horizon', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await inventoryIntelligenceApi.getForecast('b-1', 14, { token })
+
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/admin/forecast?branchId=b-1&horizonDays=14',
+    expect.objectContaining({
+      headers: expect.objectContaining({ Authorization: 'Bearer jwt-token' }),
+    }),
+  )
+})
+
+it('triggers a forecast run with the branch id', async () => {
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValue(
+      jsonResponse({ jobRunId: 'job-1', statusUrl: '/api/admin/jobs/job-1' }),
+    )
+  vi.stubGlobal('fetch', fetchMock)
+
+  await inventoryIntelligenceApi.triggerForecast('b-1', token)
+
+  const [, init] = fetchMock.mock.calls[0]
+  expect(init).toMatchObject({
+    method: 'POST',
+    body: JSON.stringify({ branchId: 'b-1' }),
+    headers: {
+      Authorization: 'Bearer jwt-token',
+      'Content-Type': 'application/json',
+    },
+  })
+})

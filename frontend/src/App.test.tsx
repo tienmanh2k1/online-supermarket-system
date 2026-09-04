@@ -54,6 +54,12 @@ vi.mock('./features/admin/brands/AdminBrandsPage', () => ({
 vi.mock('./features/admin/products/AdminProductsPage', () => ({
   AdminProductsPage: () => <h1>Admin Products Route</h1>,
 }))
+vi.mock('./features/admin/AdminInventoryPage', () => ({
+  AdminInventoryPage: () => <h1>Admin Inventory Route</h1>,
+}))
+vi.mock('./features/admin/AdminForecastPage', () => ({
+  AdminForecastPage: () => <h1>Admin Forecast Route</h1>,
+}))
 
 it('wires the admin categories route', () => {
   window.history.pushState({}, '', '/admin/catalog/categories')
@@ -77,6 +83,18 @@ it('redirects /admin to /admin/catalog/categories', () => {
   window.history.pushState({}, '', '/admin')
   render(<App />)
   expect(screen.getByRole('heading', { name: 'Admin Categories Route' })).toBeInTheDocument()
+})
+
+it('wires the admin inventory route', () => {
+  window.history.pushState({}, '', '/admin/inventory')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Admin Inventory Route' })).toBeInTheDocument()
+})
+
+it('wires the admin forecast route', () => {
+  window.history.pushState({}, '', '/admin/forecast')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Admin Forecast Route' })).toBeInTheDocument()
 })
 
 

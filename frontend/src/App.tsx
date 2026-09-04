@@ -19,6 +19,7 @@ import { AdminLayout } from './features/admin/AdminLayout'
 import { AdminOrdersPage } from './features/admin/AdminOrdersPage'
 import { AdminOrderDetailPage } from './features/admin/AdminOrderDetailPage'
 import { AdminInventoryPage } from './features/admin/AdminInventoryPage'
+import { AdminForecastPage } from './features/admin/AdminForecastPage'
 import { AdminRecommendationsPage } from './features/admin/AdminRecommendationsPage'
 import { AdminUsersPage } from './features/admin/AdminUsersPage'
 import { AdminPromotionsPage } from './features/admin/AdminPromotionsPage'
@@ -54,6 +55,7 @@ function CompareAppShell() {
               <Route path="orders/:id" element={<AdminOrderDetailPage />} />
               <Route path="branches" element={<AdminBranchesPage />} />
               <Route path="inventory" element={<AdminInventoryPage />} />
+              <Route path="forecast" element={<AdminForecastPage />} />
               <Route path="recommendations" element={<AdminRecommendationsPage />} />
               <Route path="promotions" element={<AdminPromotionsPage />} />
               <Route path="users" element={<AdminUsersPage />} />

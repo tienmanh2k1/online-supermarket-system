@@ -1,4 +1,4 @@
-import { getJson } from './httpClient'
+import { getJson, postJson } from './httpClient'
 
 export interface InventoryTransactionDto {
   id: string
@@ -34,4 +34,53 @@ export const inventoryIntelligenceApi = {
         `?page=${params.page}&pageSize=${params.pageSize}`,
       { token, signal },
     ),
+
+  getForecast: (branchId: string, horizonDays: number, options?: { token?: string; signal?: AbortSignal }) =>
+    getJson<ForecastDto[]>(
+      `/admin/forecast?branchId=${encodeURIComponent(branchId)}&horizonDays=${horizonDays}`,
+      options,
+    ),
+
+  triggerForecast: (branchId: string, token?: string, signal?: AbortSignal) =>
+    postJson<TriggerForecastRunResponse>(
+      '/admin/jobs/forecast/runs',
+      { branchId },
+      { token, signal },
+    ),
+
+  getForecastRun: (runId: string, options?: { token?: string; signal?: AbortSignal }) =>
+    getJson<ForecastJobRunDto>(
+      `/admin/jobs/${encodeURIComponent(runId)}`,
+      options,
+    ),
+}
+
+export interface ForecastDto {
+  id: string
+  branchInventoryId: string
+  productId: string
+  productName: string
+  horizonDays: number
+  predictedQuantity: number
+  actualDataDays: number
+  dataQuality: string
+  forecastStartDate: string
+  forecastEndDate: string
+  generatedAtUtc: string
+  jobRunId: string
+}
+
+export interface TriggerForecastRunResponse {
+  jobRunId: string
+  statusUrl: string
+}
+
+export interface ForecastJobRunDto {
+  id: string
+  jobName: string
+  status: string
+  createdAtUtc: string
+  startedAtUtc: string | null
+  completedAtUtc: string | null
+  errorSummary: string | null
 }
