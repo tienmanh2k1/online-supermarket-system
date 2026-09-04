@@ -62,7 +62,7 @@ public class ForecastRecurringSchedule(
             var lockKey = BranchLockPrefix + branch.Id;
             if (!activeLockSet.Contains(lockKey) && !alreadyForecastedToday.Contains(branch.Id))
             {
-                dueJobs.Add(new RecurringJobRequest(ForecastJobName, lockKey));
+                dueJobs.Add(new RecurringJobRequest(ForecastJobName, lockKey, branch.Id));
             }
         }
 

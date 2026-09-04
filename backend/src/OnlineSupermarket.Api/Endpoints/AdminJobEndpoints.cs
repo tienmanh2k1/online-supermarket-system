@@ -27,7 +27,7 @@ public static class AdminJobEndpoints
 
             if (branchId.HasValue && branchId.Value != Guid.Empty)
             {
-                query = query.Where(x => x.LockKey == "branch:" + branchId.Value);
+                query = query.Where(x => x.BranchId == branchId.Value);
             }
 
             var totalCount = await query.CountAsync(cancellationToken);

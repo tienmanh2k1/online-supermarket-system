@@ -17,6 +17,7 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
     private readonly SqliteConnection _connection;
     private readonly AppDbContext _db;
     private readonly ForecastRecurringSchedule _schedule;
+    private readonly ForecastJobHandler _handler;
     private Guid _categoryId;
     private Guid _brandId;
     private bool _catalogSeeded;
@@ -34,6 +35,7 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
         _db.Database.EnsureCreated();
         _schedule = new ForecastRecurringSchedule(
             _db, Options.Create(new IntelligenceJobsOptions { ForecastHourUtc = 1 }));
+        _handler = new ForecastJobHandler(_db, TimeProvider.System);
     }
 
     public void Dispose()
@@ -135,6 +137,7 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
         var request = Assert.Single(due);
         Assert.Equal("Forecast", request.JobName);
         Assert.Equal($"branch:{branchId}", request.LockKey);
+        Assert.Equal(branchId, request.BranchId);
     }
 
     [Fact]
@@ -184,5 +187,20 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
 
         var request = Assert.Single(due);
         Assert.Equal($"branch:{queuedBranchId}", request.LockKey);
+    }
+
+    [Fact]
+    public async Task ScheduledForecastRun_CarriesBranchId_AndHandlerProcessesIt()
+    {
+        var branchId = await SeedBranchAsync("Scheduled Run Branch");
+        var inventoryId = await SeedInventoryAsync(branchId);
+        var runId = await QueueRunAsync(branchId);
+
+        await _handler.HandleAsync(runId, CancellationToken.None);
+
+        var forecasts = await _db.DemandForecasts
+            .Where(x => x.JobRunId == runId && x.BranchInventoryId == inventoryId)
+            .ToListAsync();
+        Assert.Equal(2, forecasts.Count);
     }
 }

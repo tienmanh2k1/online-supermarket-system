@@ -29,7 +29,8 @@ public class RecurringJobScheduler(
 
                     foreach (var request in dueJobs)
                     {
-                        await coordinator.TryQueueAsync(request.JobName, request.LockKey, stoppingToken);
+                        await coordinator.TryQueueAsync(
+                            request.JobName, request.LockKey, stoppingToken, request.BranchId);
                     }
                 }
             }

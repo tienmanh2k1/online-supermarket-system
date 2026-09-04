@@ -1,6 +1,6 @@
 namespace OnlineSupermarket.Infrastructure.Jobs;
 
-public sealed record RecurringJobRequest(string JobName, string LockKey);
+public sealed record RecurringJobRequest(string JobName, string LockKey, Guid? BranchId = null);
 
 public interface IRecurringJobSchedule
 {
