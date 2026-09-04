@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Recommendation;
+using OnlineSupermarket.Domain.Jobs;
 using OnlineSupermarket.Domain.Recommendations;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Recommendations;
@@ -25,6 +26,16 @@ public static class RecommendationEndpoints
             .WithName("MergeRecommendationSession")
             .RequireAuthorization()
             .Produces<MergeSessionResponse>()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        group.MapGet("/recommendations", GetRecommendationsAsync)
+            .WithName("GetRecommendations")
+            .Produces<RecommendationResponse>()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        group.MapGet("/products/{productId:guid}/recommendations", GetProductRecommendationsAsync)
+            .WithName("GetProductRecommendations")
+            .Produces<RecommendationResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         return routes;
@@ -88,5 +99,185 @@ public static class RecommendationEndpoints
             request.AnonymousSessionId, userId.Value, cancellationToken);
 
         return Results.Ok(new MergeSessionResponse(mergedCount));
+    }
+
+    private static async Task<IResult> GetRecommendationsAsync(
+        [FromQuery] Guid? branchId,
+        [FromQuery] int limit = 8,
+        HttpContext httpContext = null!,
+        [FromServices] AppDbContext dbContext = null!,
+        CancellationToken cancellationToken = default)
+    {
+        if (limit < 1 || limit > 20)
+        {
+            return Results.BadRequest(new { message = "Limit must be between 1 and 20." });
+        }
+
+        var userId = TryGetUserId(httpContext.User);
+        var jobRunId = await LatestSucceededRunIdAsync(dbContext, cancellationToken);
+        if (jobRunId == null)
+        {
+            return Results.Ok(new RecommendationResponse(null, null, []));
+        }
+
+        var nowUtc = DateTime.UtcNow;
+
+        if (userId.HasValue)
+        {
+            var userScope = await LoadScopeItemsAsync(
+                dbContext, jobRunId.Value, RecommendationScope.User,
+                $"user:{userId.Value}", branchId, limit, nowUtc, cancellationToken);
+            if (userScope.Items.Count > 0)
+            {
+                return Results.Ok(new RecommendationResponse(
+                    nameof(RecommendationScope.User), userScope.GeneratedAtUtc, userScope.Items));
+            }
+        }
+
+        var global = await LoadScopeItemsAsync(
+            dbContext, jobRunId.Value, RecommendationScope.Global,
+            "global", branchId, limit, nowUtc, cancellationToken);
+
+        if (global.Items.Count == 0)
+        {
+            return Results.Ok(new RecommendationResponse(null, null, []));
+        }
+
+        return Results.Ok(new RecommendationResponse(
+            nameof(RecommendationScope.Global), global.GeneratedAtUtc, global.Items));
+    }
+
+    private static async Task<IResult> GetProductRecommendationsAsync(
+        [FromRoute] Guid productId,
+        [FromQuery] Guid? branchId,
+        [FromQuery] int limit = 8,
+        [FromServices] AppDbContext dbContext = null!,
+        CancellationToken cancellationToken = default)
+    {
+        if (limit < 1 || limit > 20)
+        {
+            return Results.BadRequest(new { message = "Limit must be between 1 and 20." });
+        }
+
+        var jobRunId = await LatestSucceededRunIdAsync(dbContext, cancellationToken);
+        if (jobRunId == null)
+        {
+            return Results.Ok(new RecommendationResponse(null, null, []));
+        }
+
+        var nowUtc = DateTime.UtcNow;
+        var similar = await LoadScopeItemsAsync(
+            dbContext, jobRunId.Value, RecommendationScope.SimilarProduct,
+            $"product:{productId}", branchId, limit, nowUtc, cancellationToken);
+
+        if (similar.Items.Count > 0)
+        {
+            return Results.Ok(new RecommendationResponse(
+                nameof(RecommendationScope.SimilarProduct), similar.GeneratedAtUtc, similar.Items));
+        }
+
+        var global = await LoadScopeItemsAsync(
+            dbContext, jobRunId.Value, RecommendationScope.Global,
+            "global", branchId, limit, nowUtc, cancellationToken);
+
+        if (global.Items.Count == 0)
+        {
+            return Results.Ok(new RecommendationResponse(null, null, []));
+        }
+
+        return Results.Ok(new RecommendationResponse(
+            nameof(RecommendationScope.Global), global.GeneratedAtUtc, global.Items));
+    }
+
+    private static async Task<Guid?> LatestSucceededRunIdAsync(
+        AppDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        return await dbContext.BackgroundJobRuns.AsNoTracking()
+            .Where(run => run.JobName == "Recommendations" && run.Status == JobRunStatus.Succeeded)
+            .OrderByDescending(run => run.CompletedAtUtc ?? run.CreatedAtUtc)
+            .Select(run => run.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    private sealed record ScopedItems(DateTime? GeneratedAtUtc, IReadOnlyList<RecommendationItemDto> Items);
+
+    private static async Task<ScopedItems> LoadScopeItemsAsync(
+        AppDbContext dbContext,
+        Guid jobRunId,
+        RecommendationScope scope,
+        string audienceKey,
+        Guid? branchId,
+        int limit,
+        DateTime nowUtc,
+        CancellationToken cancellationToken)
+    {
+        var rows = await dbContext.RecommendationResults.AsNoTracking()
+            .Where(result => result.JobRunId == jobRunId
+                && result.Scope == scope
+                && result.AudienceKey == audienceKey
+                && result.ExpiresAtUtc > nowUtc)
+            .OrderBy(result => result.Rank)
+            .Take(limit * 4)
+            .ToListAsync(cancellationToken);
+
+        if (rows.Count == 0)
+        {
+            return new ScopedItems(null, []);
+        }
+
+        var generatedAtUtc = rows[0].GeneratedAtUtc;
+        var productIds = rows.Select(row => row.RecommendedProductId).Distinct().ToArray();
+
+        var products = await dbContext.Products.AsNoTracking()
+            .Include(product => product.Brand)
+            .Where(product => product.IsActive
+                && product.Brand!.IsActive
+                && productIds.Contains(product.Id))
+            .ToDictionaryAsync(product => product.Id, cancellationToken);
+
+        Dictionary<Guid, int> availability = [];
+        if (branchId.HasValue)
+        {
+            availability = await dbContext.BranchInventories.AsNoTracking()
+                .Where(inventory => inventory.BranchId == branchId.Value
+                    && productIds.Contains(inventory.ProductId))
+                .ToDictionaryAsync(inventory => inventory.ProductId,
+                    inventory => inventory.AvailableQuantity, cancellationToken);
+        }
+
+        var items = new List<RecommendationItemDto>();
+        foreach (var row in rows)
+        {
+            if (items.Count >= limit)
+            {
+                break;
+            }
+
+            if (!products.TryGetValue(row.RecommendedProductId, out var product))
+            {
+                continue;
+            }
+
+            if (branchId.HasValue)
+            {
+                if (!availability.TryGetValue(product.Id, out var availableQuantity) || availableQuantity <= 0)
+                {
+                    continue;
+                }
+
+                items.Add(new RecommendationItemDto(
+                    product.Id, product.Name, product.Slug, product.ImageUrl,
+                    product.BasePrice, availableQuantity, row.Score, row.Reason));
+            }
+            else
+            {
+                items.Add(new RecommendationItemDto(
+                    product.Id, product.Name, product.Slug, product.ImageUrl,
+                    product.BasePrice, null, row.Score, row.Reason));
+            }
+        }
+
+        return new ScopedItems(generatedAtUtc, items);
     }
 }
