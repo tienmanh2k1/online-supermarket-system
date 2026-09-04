@@ -31,3 +31,7 @@ public sealed record RecommendationSampleItemDto(
     [property: JsonPropertyName("score")] decimal Score,
     [property: JsonPropertyName("rank")] int Rank,
     [property: JsonPropertyName("reason")] string Reason);
+
+public sealed record TriggerRecommendationRunResponse(
+    [property: JsonPropertyName("jobRunId")] Guid JobRunId,
+    [property: JsonPropertyName("statusUrl")] string StatusUrl);

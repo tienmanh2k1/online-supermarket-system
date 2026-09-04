@@ -76,6 +76,7 @@ public class BackgroundJobRun : Entity
 
         Status = JobRunStatus.Succeeded;
         CompletedAtUtc = completedAtUtc;
+        ReleaseLockSlot();
     }
 
     public void MarkAsFailed(string token, DateTime completedAtUtc, string error)
@@ -93,5 +94,16 @@ public class BackgroundJobRun : Entity
         Status = JobRunStatus.Failed;
         CompletedAtUtc = completedAtUtc;
         ErrorSummary = error;
+        ReleaseLockSlot();
+    }
+
+    // Terminal rows must not hold the (JobName, LockKey) unique slot, otherwise a
+    // recurring job can never be queued twice. The released key stays non-null and unique.
+    private void ReleaseLockSlot()
+    {
+        if (!LockKey.StartsWith("released:"))
+        {
+            LockKey = $"released:{Id}";
+        }
     }
 }

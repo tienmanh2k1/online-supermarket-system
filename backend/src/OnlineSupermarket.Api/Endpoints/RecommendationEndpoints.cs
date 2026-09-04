@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Recommendation;
 using OnlineSupermarket.Domain.Jobs;
 using OnlineSupermarket.Domain.Recommendations;
+using OnlineSupermarket.Infrastructure.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Recommendations;
 
@@ -37,6 +38,20 @@ public static class RecommendationEndpoints
             .WithName("GetProductRecommendations")
             .Produces<RecommendationResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        var adminGroup = routes.MapGroup("/api/admin")
+            .WithTags("Admin Recommendations")
+            .RequireAuthorization("AdminOnly");
+
+        adminGroup.MapGet("/recommendations/results", GetAdminRecommendationResultsAsync)
+            .WithName("GetAdminRecommendationResults")
+            .Produces<RecommendationSampleResponse>()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+
+        adminGroup.MapPost("/jobs/recommendations/runs", TriggerRecommendationRunAsync)
+            .WithName("TriggerRecommendationRun")
+            .Produces(StatusCodes.Status202Accepted)
+            .ProducesProblem(StatusCodes.Status409Conflict);
 
         return routes;
     }
@@ -187,6 +202,89 @@ public static class RecommendationEndpoints
 
         return Results.Ok(new RecommendationResponse(
             nameof(RecommendationScope.Global), global.GeneratedAtUtc, global.Items));
+    }
+
+    private static async Task<IResult> GetAdminRecommendationResultsAsync(
+        [FromQuery] string? scope,
+        [FromQuery] int limit = 10,
+        [FromServices] AppDbContext dbContext = null!,
+        CancellationToken cancellationToken = default)
+    {
+        if (limit < 1 || limit > 50)
+        {
+            return Results.BadRequest(new { message = "Limit must be between 1 and 50." });
+        }
+
+        if (!string.IsNullOrWhiteSpace(scope)
+            && !Enum.TryParse<RecommendationScope>(scope, true, out var _))
+        {
+            return Results.BadRequest(new { message = "Invalid recommendation scope." });
+        }
+
+        var jobRunId = await LatestSucceededRunIdAsync(dbContext, cancellationToken);
+        if (jobRunId == null)
+        {
+            return Results.Ok(new RecommendationSampleResponse(
+                Guid.Empty, DateTime.MinValue, DateTime.MinValue, string.Empty, []));
+        }
+
+        var nowUtc = DateTime.UtcNow;
+        var query = dbContext.RecommendationResults.AsNoTracking()
+            .Where(result => result.JobRunId == jobRunId.Value && result.ExpiresAtUtc > nowUtc);
+
+        if (!string.IsNullOrWhiteSpace(scope)
+            && Enum.TryParse<RecommendationScope>(scope, true, out var scopeValue))
+        {
+            query = query.Where(result => result.Scope == scopeValue);
+        }
+
+        var rows = await query
+            .OrderBy(result => result.Scope)
+            .ThenBy(result => result.Rank)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+
+        var generatedAt = rows.Count > 0 ? rows[0].GeneratedAtUtc : DateTime.MinValue;
+        var expiresAt = rows.Count > 0 ? rows[0].ExpiresAtUtc : DateTime.MinValue;
+        var algorithmVersion = rows.Count > 0 ? rows[0].AlgorithmVersion : string.Empty;
+
+        var items = rows
+            .Select(result => new RecommendationSampleItemDto(
+                result.RecommendedProductId,
+                result.Scope.ToString(),
+                result.AudienceKey,
+                result.Score,
+                result.Rank,
+                result.Reason))
+            .ToList();
+
+        return Results.Ok(new RecommendationSampleResponse(
+            jobRunId.Value, generatedAt!, expiresAt!, algorithmVersion, items));
+    }
+
+    private static async Task<IResult> TriggerRecommendationRunAsync(
+        [FromServices] JobRunCoordinator coordinator,
+        [FromServices] AppDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        var accepted = await coordinator.TryQueueAsync("Recommendations", "global", cancellationToken);
+        if (!accepted)
+        {
+            return Results.Conflict(new { message = "A recommendation run is already active." });
+        }
+
+        var run = await dbContext.BackgroundJobRuns.AsNoTracking()
+            .Where(item => item.JobName == "Recommendations"
+                && item.LockKey == "global"
+                && item.Status == JobRunStatus.Queued)
+            .OrderByDescending(item => item.CreatedAtUtc)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var runId = run?.Id ?? Guid.Empty;
+        return Results.Accepted(
+            run != null ? $"/api/admin/jobs/{run.Id}" : null,
+            new TriggerRecommendationRunResponse(
+                runId, run != null ? $"/api/admin/jobs/{run.Id}" : string.Empty));
     }
 
     private static async Task<Guid?> LatestSucceededRunIdAsync(
