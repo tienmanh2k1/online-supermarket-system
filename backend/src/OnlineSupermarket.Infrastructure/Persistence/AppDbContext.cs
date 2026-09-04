@@ -54,6 +54,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
     // Recommendations
     public DbSet<ProductViewEvent> ProductViewEvents => Set<ProductViewEvent>();
+    public DbSet<RecommendationResult> RecommendationResults => Set<RecommendationResult>();
 
     // Jobs
     public DbSet<BackgroundJobRun> BackgroundJobRuns => Set<BackgroundJobRun>();
