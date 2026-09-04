@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OnlineSupermarket.Infrastructure.Identity;
 using OnlineSupermarket.Infrastructure.Inventory;
+using OnlineSupermarket.Infrastructure.Intelligence;
 using OnlineSupermarket.Infrastructure.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Recommendations;
@@ -32,6 +33,8 @@ public static class DependencyInjection
         services.AddScoped<IProductViewEventStore, ProductViewEventStore>();
         services.AddScoped<IBackgroundJobHandler, RecommendationJobHandler>();
         services.AddScoped<IRecurringJobSchedule, RecommendationRecurringSchedule>();
+        services.AddScoped<IBackgroundJobHandler, ForecastJobHandler>();
+        services.AddScoped<IRecurringJobSchedule, ForecastRecurringSchedule>();
 
         services.Configure<Jobs.IntelligenceJobsOptions>(
             configuration.GetSection(Jobs.IntelligenceJobsOptions.SectionName));
