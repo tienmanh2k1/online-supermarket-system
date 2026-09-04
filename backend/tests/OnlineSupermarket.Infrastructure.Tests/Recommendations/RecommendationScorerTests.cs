@@ -115,19 +115,19 @@ public sealed class RecommendationScorerTests
             .ToArray()));
     }
 
-    [Fact]
+[Fact]
     public void ScoreSimilar_TieBreaksByProductIdAscending()
     {
         var builder = new InputBuilder();
         var first = builder.AddProduct(Guid.NewGuid(), _categoryA, _brandA);
-        var second = builder.AddProduct(Guid.NewGuid(), _categoryA, _brandB);
+        var second = builder.AddProduct(Guid.NewGuid(), _categoryA, _brandA);
         builder.AddProduct(_sourceProductId, _categoryA, _brandA);
 
         var ranked = RecommendationScorer.ScoreSimilarProducts(builder.Build(), _sourceProductId);
 
         Assert.Equal(2, ranked.Count);
-        var expectedFirst = first.ToString().CompareTo(second.ToString()) < 0 ? first : second;
-        Assert.Equal(expectedFirst, ranked[0].ProductId);
+        Assert.Equal((first.ToString().CompareTo(second.ToString()) < 0 ? first : second), ranked[0].ProductId);
+        Assert.Equal((first.ToString().CompareTo(second.ToString()) < 0 ? second : first), ranked[1].ProductId);
     }
 
     [Fact]

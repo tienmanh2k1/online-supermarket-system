@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OnlineSupermarket.Infrastructure.Identity;
 using OnlineSupermarket.Infrastructure.Inventory;
+using OnlineSupermarket.Infrastructure.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Recommendations;
 using OnlineSupermarket.Infrastructure.Services;
@@ -29,6 +30,11 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IInventoryMutationService, InventoryMutationService>();
         services.AddScoped<IProductViewEventStore, ProductViewEventStore>();
+        services.AddScoped<IBackgroundJobHandler, RecommendationJobHandler>();
+        services.AddScoped<IRecurringJobSchedule, RecommendationRecurringSchedule>();
+
+        services.Configure<Jobs.IntelligenceJobsOptions>(
+            configuration.GetSection(Jobs.IntelligenceJobsOptions.SectionName));
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
@@ -91,10 +97,12 @@ public static class DependencyInjection
         {
             services.AddHostedService<BackgroundServices.RefreshTokenCleanupService>();
             services.AddHostedService<Jobs.IntelligenceWorker>();
+            services.AddHostedService<Jobs.RecurringJobScheduler>();
         }
 
         services.AddSingleton<Jobs.IJobQueue>(sp => new Jobs.ChannelJobQueue());
         services.AddScoped<Jobs.JobRunCoordinator>();
+        services.AddScoped<Jobs.JobLeaseService>();
 
         return services;
     }

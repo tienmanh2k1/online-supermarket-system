@@ -14,7 +14,7 @@ internal sealed class RecommendationResultConfiguration : IEntityTypeConfigurati
         builder.ToTable("recommendation_results", table =>
         {
             table.HasCheckConstraint("ck_recommendation_results_rank", "rank > 0");
-            table.HasCheckConstraint("ck_recommendation_results_score", "score >= 0 AND score <= 1");
+            table.HasCheckConstraint("ck_recommendation_results_score", "score + 0 >= 0 AND score + 0 <= 1");
         });
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id").HasColumnType("char(36)").ValueGeneratedNever();

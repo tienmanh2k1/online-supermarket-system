@@ -1057,7 +1057,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         {
                             t.HasCheckConstraint("ck_recommendation_results_rank", "rank > 0");
 
-                            t.HasCheckConstraint("ck_recommendation_results_score", "score >= 0 AND score <= 1");
+                            t.HasCheckConstraint("ck_recommendation_results_score", "score + 0 >= 0 AND score + 0 <= 1");
                         });
                 });
 

@@ -33,7 +33,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_recommendation_results", x => x.id);
                     table.CheckConstraint("ck_recommendation_results_rank", "rank > 0");
-                    table.CheckConstraint("ck_recommendation_results_score", "score >= 0 AND score <= 1");
+                    table.CheckConstraint("ck_recommendation_results_score", "score + 0 >= 0 AND score + 0 <= 1");
                     table.ForeignKey(
                         name: "FK_recommendation_results_background_job_runs_job_run_id",
                         column: x => x.job_run_id,
