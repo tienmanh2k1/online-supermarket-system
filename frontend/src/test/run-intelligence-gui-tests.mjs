@@ -299,8 +299,15 @@ async function runE2E() {
   }
 }
 
-runE2E();
-runForecastE2E();
+async function main() {
+  await runE2E();
+  await runForecastE2E();
+}
+
+main().catch((error) => {
+  console.error('❌ GUI test run failed:', error);
+  process.exit(1);
+});
 
 async function runForecastE2E() {
   console.log('--- Running Inventory -> Forecast Admin Flow E2E Test ---');

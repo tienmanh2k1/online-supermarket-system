@@ -267,24 +267,16 @@ public static class RecommendationEndpoints
         [FromServices] AppDbContext dbContext,
         CancellationToken cancellationToken)
     {
-        var accepted = await coordinator.TryQueueAsync("Recommendations", "global", cancellationToken);
-        if (!accepted)
+        var run = await coordinator.TryQueueAsync("Recommendations", "global", cancellationToken);
+        if (run == null)
         {
             return Results.Conflict(new { message = "A recommendation run is already active." });
         }
 
-        var run = await dbContext.BackgroundJobRuns.AsNoTracking()
-            .Where(item => item.JobName == "Recommendations"
-                && item.LockKey == "global"
-                && item.Status == JobRunStatus.Queued)
-            .OrderByDescending(item => item.CreatedAtUtc)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        var runId = run?.Id ?? Guid.Empty;
+        var statusUrl = $"/api/admin/jobs/{run.Value}";
         return Results.Accepted(
-            run != null ? $"/api/admin/jobs/{run.Id}" : null,
-            new TriggerRecommendationRunResponse(
-                runId, run != null ? $"/api/admin/jobs/{run.Id}" : string.Empty));
+            statusUrl,
+            new TriggerRecommendationRunResponse(run.Value, statusUrl));
     }
 
     private static async Task<Guid?> LatestSucceededRunIdAsync(

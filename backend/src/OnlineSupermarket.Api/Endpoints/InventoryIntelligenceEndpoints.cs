@@ -190,23 +190,16 @@ public static class InventoryIntelligenceEndpoints
         }
 
         var lockKey = BranchLockPrefix + request.BranchId;
-        var accepted = await coordinator.TryQueueAsync(ForecastJobName, lockKey, cancellationToken);
-        if (!accepted)
+        var run = await coordinator.TryQueueAsync(
+            ForecastJobName, lockKey, cancellationToken, request.BranchId);
+        if (run == null)
         {
             return Results.Conflict(new { message = "A forecast run for this branch is already active." });
         }
 
-        var run = await dbContext.BackgroundJobRuns.AsNoTracking()
-            .Where(item => item.JobName == ForecastJobName
-                && item.LockKey == lockKey
-                && item.Status == JobRunStatus.Queued)
-            .OrderByDescending(item => item.CreatedAtUtc)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        var runId = run?.Id ?? Guid.Empty;
-        var statusUrl = run != null ? $"/api/admin/jobs/{run.Id}" : string.Empty;
+        var statusUrl = $"/api/admin/jobs/{run.Value}";
         return Results.Accepted(
-            run != null ? $"/api/admin/jobs/{run.Id}" : null,
-            new TriggerForecastRunResponse(runId, statusUrl));
+            statusUrl,
+            new TriggerForecastRunResponse(run.Value, statusUrl));
     }
 }

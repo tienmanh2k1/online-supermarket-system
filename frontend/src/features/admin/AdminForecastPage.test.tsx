@@ -48,6 +48,23 @@ const forecastRows = [
   },
 ]
 
+const forecastRun = {
+  id: 'job-00001',
+  jobName: 'Forecast',
+  status: 'Succeeded',
+  createdAtUtc: '2026-09-04T01:00:00Z',
+  startedAtUtc: '2026-09-04T01:00:01Z',
+  completedAtUtc: '2026-09-04T01:00:05Z',
+  errorSummary: null,
+}
+
+const runHistoryResponse = {
+  items: [forecastRun],
+  totalCount: 1,
+  page: 1,
+  pageSize: 20,
+}
+
 function renderPage() {
   return render(
     <MemoryRouter>
@@ -59,6 +76,7 @@ function renderPage() {
 function stubForecastApi() {
   vi.spyOn(branchApi, 'getBranches').mockResolvedValue(branches)
   vi.spyOn(inventoryIntelligenceApi, 'getForecast').mockResolvedValue(forecastRows)
+  vi.spyOn(inventoryIntelligenceApi, 'getForecastRuns').mockResolvedValue(runHistoryResponse)
 }
 
 describe('AdminForecastPage', () => {
@@ -75,6 +93,18 @@ describe('AdminForecastPage', () => {
     expect(screen.getByText('Nước ép cam 1L')).toBeInTheDocument()
     expect(screen.getByText('Đủ')).toBeInTheDocument()
     expect(screen.getByText('Phần hoàn')).toBeInTheDocument()
+  })
+
+  it('renders the latest run status and history for the branch', async () => {
+    stubForecastApi()
+
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText(/Lượt gần nhất #job-0000/)).toBeInTheDocument()
+    })
+    expect(screen.getByRole('table', { name: 'Lịch sử lượt dự báo' })).toBeInTheDocument()
+    expect(screen.getAllByText('Succeeded').length).toBeGreaterThan(0)
   })
 
   it('switches between strict 7 and 14 day forecasts', async () => {

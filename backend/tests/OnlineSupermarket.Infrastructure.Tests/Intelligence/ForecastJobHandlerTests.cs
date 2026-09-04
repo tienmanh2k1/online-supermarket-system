@@ -126,7 +126,7 @@ public sealed class ForecastJobHandlerTests : IDisposable
 
     private async Task<Guid> CreateRunAsync(Guid branchId)
     {
-        var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow);
+        var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow, branchId);
         _db.BackgroundJobRuns.Add(run);
         await _db.SaveChangesAsync();
         return run.Id;
@@ -161,8 +161,35 @@ public sealed class ForecastJobHandlerTests : IDisposable
 
         Assert.Equal(new[] { 7, 14 }, forecasts.Select(x => x.HorizonDays).Order().ToArray());
         Assert.All(forecasts, x => Assert.Equal(ForecastDataQuality.Sufficient, x.DataQuality));
-        Assert.All(forecasts, x => Assert.True(x.PredictedQuantity > 0m));
+        Assert.Equal(14.0m, forecasts.Single(x => x.HorizonDays == 7).PredictedQuantity);
+        Assert.Equal(28.0m, forecasts.Single(x => x.HorizonDays == 14).PredictedQuantity);
         Assert.Equal("sma-v1", forecasts[0].AlgorithmVersion);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CountsSoldQuantityNotLedgerRowCount()
+    {
+        var branch = new Branch("Quantity Branch", "1 Test Street", "0100000000", 10m, 106m);
+        _db.Branches.Add(branch);
+        await _db.SaveChangesAsync();
+        _branchAId = branch.Id;
+
+        var inventoryId = await SeedCatalogAsync(_branchAId);
+        AddSaleTransaction(_db, inventoryId, 10, DateTime.UtcNow.AddDays(-1));
+        AddSaleTransaction(_db, inventoryId, 2, DateTime.UtcNow.AddDays(-2));
+        await _db.SaveChangesAsync();
+
+        var runId = await CreateRunAsync(_branchAId);
+        await _handler.HandleAsync(runId, CancellationToken.None);
+
+        var forecasts = await _db.DemandForecasts
+            .Where(x => x.JobRunId == runId && x.BranchInventoryId == inventoryId)
+            .ToListAsync();
+
+        Assert.Equal(2, forecasts.Single(x => x.HorizonDays == 7).ActualDataDays);
+        // Two sale days: 10 + 2 = 12 units over 2 calendar days -> average 6/day.
+        Assert.Equal(42.0m, forecasts.Single(x => x.HorizonDays == 7).PredictedQuantity);
+        Assert.Equal(84.0m, forecasts.Single(x => x.HorizonDays == 14).PredictedQuantity);
     }
 
     [Fact]

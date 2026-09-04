@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { branchApi, type BranchDto } from '../../api/branchApi'
 import {
   inventoryIntelligenceApi,
@@ -35,12 +35,13 @@ export function AdminForecastPage() {
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [retryKey, setRetryKey] = useState(0)
   const [run, setRun] = useState<ForecastJobRunDto | null>(null)
+  const [runHistory, setRunHistory] = useState<ForecastJobRunDto[]>([])
   const [runState, setRunState] = useState<{ running: boolean; message: string; kind: 'ok' | 'err' }>({
     running: false,
     message: '',
     kind: 'ok',
   })
-  let pollAbort: AbortController | null = null
+  const pollAbortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -58,6 +59,35 @@ export function AdminForecastPage() {
       setBranchId(branches[0].id)
     }
   }, [branchId, branches])
+
+  // Load the latest run status and recent history whenever the branch (or a
+  // manual refresh) changes.
+  useEffect(() => {
+    if (!branchId || !accessToken) return
+    const controller = new AbortController()
+    inventoryIntelligenceApi
+      .getForecastRuns(branchId, { token: accessToken, signal: controller.signal })
+      .then((data) => {
+        setRunHistory(data.items)
+        setRun(data.items.length > 0 ? data.items[0] : null)
+      })
+      .catch((error) => {
+        if (!isAbortError(error)) {
+          setRunHistory([])
+          setRun(null)
+        }
+      })
+    return () => controller.abort()
+  }, [branchId, accessToken, retryKey])
+
+  useEffect(() => {
+    if (pollAbortRef.current) pollAbortRef.current.abort()
+    pollAbortRef.current = null
+    return () => {
+      if (pollAbortRef.current) pollAbortRef.current.abort()
+      pollAbortRef.current = null
+    }
+  }, [branchId])
 
   useEffect(() => {
     if (!branchId || !accessToken) return
@@ -85,8 +115,9 @@ export function AdminForecastPage() {
   function pollUntilTerminal(runId: string) {
     if (!accessToken) return
     const token = accessToken
-    if (pollAbort) pollAbort.abort()
-    pollAbort = new AbortController()
+    if (pollAbortRef.current) pollAbortRef.current.abort()
+    const pollAbort = new AbortController()
+    pollAbortRef.current = pollAbort
     const signal = pollAbort.signal
     let attempts = 0
 
@@ -186,13 +217,44 @@ export function AdminForecastPage() {
         </section>
       )}
 
-      {run && (
+      {branchId && run && (
         <p className="admin-forecast-meta">
-          Lượt #{run.id.slice(0, 8)} · trạng {run.status}
+          Lượt gần nhất #{run.id.slice(0, 8)} · trạng {run.status}
           {run.completedAtUtc
             ? ` · kết lúc ${new Date(run.completedAtUtc).toLocaleString('vi-VN')}`
-            : ''}
+            : ` · tạo lúc ${new Date(run.createdAtUtc).toLocaleString('vi-VN')}`}
         </p>
+      )}
+
+      {branchId && runHistory.length === 0 && (
+        <p className="admin-forecast-meta">Chưa có lượt chạy dự báo cho chi nhánh này.</p>
+      )}
+
+      {branchId && runHistory.length > 0 && (
+        <div className="admin-table-wrap">
+          <table className="admin-table" aria-label="Lịch sử lượt dự báo">
+            <thead>
+              <tr>
+                <th scope="col">Lượt</th>
+                <th scope="col">Trạng</th>
+                <th scope="col">Tạo lúc</th>
+                <th scope="col">Kết lúc</th>
+              </tr>
+            </thead>
+            <tbody>
+              {runHistory.map((item) => (
+                <tr key={item.id}>
+                  <td><code>{item.id.slice(0, 8)}…</code></td>
+                  <td className={`admin-forecast-quality admin-forecast-quality--${runStatusClass(item.status)}`}>
+                    {item.status}
+                  </td>
+                  <td>{new Date(item.createdAtUtc).toLocaleString('vi-VN')}</td>
+                  <td>{item.completedAtUtc ? new Date(item.completedAtUtc).toLocaleString('vi-VN') : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {loadState === 'error' && (
@@ -256,6 +318,17 @@ function qualityClass(quality: string) {
       return 'partial'
     case 'Sufficient':
       return 'sufficient'
+    default:
+      return 'partial'
+  }
+}
+
+function runStatusClass(status: string) {
+  switch (status) {
+    case 'Succeeded':
+      return 'sufficient'
+    case 'Failed':
+      return 'insufficient'
     default:
       return 'partial'
   }

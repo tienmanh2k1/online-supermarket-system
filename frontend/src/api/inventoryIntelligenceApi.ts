@@ -53,6 +53,12 @@ export const inventoryIntelligenceApi = {
       `/admin/jobs/${encodeURIComponent(runId)}`,
       options,
     ),
+
+  getForecastRuns: (branchId: string, options?: { token?: string; signal?: AbortSignal }) =>
+    getJson<PaginatedJobRunsDto>(
+      `/admin/jobs?jobName=Forecast&branchId=${encodeURIComponent(branchId)}&pageSize=20`,
+      options,
+    ),
 }
 
 export interface ForecastDto {
@@ -83,4 +89,11 @@ export interface ForecastJobRunDto {
   startedAtUtc: string | null
   completedAtUtc: string | null
   errorSummary: string | null
+}
+
+export interface PaginatedJobRunsDto {
+  items: ForecastJobRunDto[]
+  totalCount: number
+  page: number
+  pageSize: number
 }

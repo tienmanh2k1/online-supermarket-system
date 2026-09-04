@@ -6,6 +6,7 @@ public class BackgroundJobRun : Entity
 {
     public string JobName { get; private set; }
     public string LockKey { get; private set; }
+    public Guid? BranchId { get; private set; }
     public JobRunStatus Status { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? StartedAtUtc { get; private set; }
@@ -20,7 +21,7 @@ public class BackgroundJobRun : Entity
         LockKey = string.Empty;
     }
 
-    public BackgroundJobRun(string jobName, string lockKey, DateTime createdAtUtc) 
+    public BackgroundJobRun(string jobName, string lockKey, DateTime createdAtUtc, Guid? branchId = null) 
         : base(Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(jobName)) throw new ArgumentException("Job name cannot be empty", nameof(jobName));
@@ -28,6 +29,7 @@ public class BackgroundJobRun : Entity
         
         JobName = jobName;
         LockKey = lockKey;
+        BranchId = branchId;
         Status = JobRunStatus.Queued;
         CreatedAtUtc = createdAtUtc;
     }

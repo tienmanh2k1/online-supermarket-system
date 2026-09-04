@@ -88,7 +88,7 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
 
     private async Task<Guid> QueueRunAsync(Guid branchId)
     {
-        var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow);
+        var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow, branchId);
         _db.BackgroundJobRuns.Add(run);
         await _db.SaveChangesAsync();
         return run.Id;
@@ -165,5 +165,24 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
 
         var request = Assert.Single(due);
         Assert.Equal($"branch:{freshBranchId}", request.LockKey);
+    }
+
+    [Fact]
+    public async Task GetDueJobsAsync_SuccessfulEmptyBranch_IsNotRequeuedWithinSameDay()
+    {
+        var emptyBranchId = await SeedBranchAsync("Empty Forecasted Branch");
+        var runId = await QueueRunAsync(emptyBranchId);
+        var run = await _db.BackgroundJobRuns.SingleAsync(candidate => candidate.Id == runId);
+        var token = Guid.NewGuid().ToString();
+        run.Start(token, DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(5));
+        run.MarkAsSucceeded(token, DateTime.UtcNow);
+        await _db.SaveChangesAsync();
+
+        var queuedBranchId = await SeedBranchAsync("Queued Branch");
+
+        var due = await _schedule.GetDueJobsAsync(AtUtcHour(2), CancellationToken.None);
+
+        var request = Assert.Single(due);
+        Assert.Equal($"branch:{queuedBranchId}", request.LockKey);
     }
 }

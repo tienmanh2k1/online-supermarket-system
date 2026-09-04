@@ -71,6 +71,20 @@ it('loads forecast rows for a branch and horizon', async () => {
   )
 })
 
+it('loads the forecast run history for a branch', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], totalCount: 0, page: 1, pageSize: 20 }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await inventoryIntelligenceApi.getForecastRuns('b-1', { token })
+
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/admin/jobs?jobName=Forecast&branchId=b-1&pageSize=20',
+    expect.objectContaining({
+      headers: expect.objectContaining({ Authorization: 'Bearer jwt-token' }),
+    }),
+  )
+})
+
 it('triggers a forecast run with the branch id', async () => {
   const fetchMock = vi
     .fn()

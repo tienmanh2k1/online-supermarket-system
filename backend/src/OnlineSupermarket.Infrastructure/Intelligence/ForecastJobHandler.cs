@@ -10,7 +10,6 @@ namespace OnlineSupermarket.Infrastructure.Intelligence;
 public class ForecastJobHandler(AppDbContext dbContext, TimeProvider timeProvider) : IBackgroundJobHandler
 {
     private const int MaxObservationDays = 28;
-    private const string BranchLockPrefix = "branch:";
     private const string AlgorithmVersion = "sma-v1";
 
     public string JobName => "Forecast";
@@ -25,7 +24,12 @@ public class ForecastJobHandler(AppDbContext dbContext, TimeProvider timeProvide
             throw new InvalidOperationException($"Forecast job run {runId} not found.");
         }
 
-        var branchId = ParseBranchId(run.LockKey);
+        if (run.BranchId == null || run.BranchId.Value == Guid.Empty)
+        {
+            throw new InvalidOperationException("Forecast run has no branch id.");
+        }
+
+        var branchId = run.BranchId.Value;
         var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
         var observationEnd = DateOnly.FromDateTime(nowUtc.AddDays(-1));
         var windowStartUtc = observationEnd.AddDays(-(MaxObservationDays - 1))
@@ -46,19 +50,24 @@ public class ForecastJobHandler(AppDbContext dbContext, TimeProvider timeProvide
             .Where(transaction => transaction.TransactionType == InventoryTransactionType.Sale
                 && transaction.CreatedAtUtc >= windowStartUtc
                 && inventoryIds.Contains(transaction.BranchInventoryId))
-            .Select(transaction => new { transaction.BranchInventoryId, transaction.CreatedAtUtc })
+            .Select(transaction => new { transaction.BranchInventoryId, transaction.CreatedAtUtc, transaction.QuantityOnHandDelta })
             .ToListAsync(cancellationToken);
 
         var dailySalesByInventory = new Dictionary<Guid, Dictionary<DateOnly, int>>();
         foreach (var sale in sales)
         {
-var daily = dailySalesByInventory.TryGetValue(sale.BranchInventoryId, out var stored)
-            ? stored
-            : new Dictionary<DateOnly, int>();
-        dailySalesByInventory[sale.BranchInventoryId] = daily;
-        var day = DateOnly.FromDateTime(sale.CreatedAtUtc);
-        var count = daily.TryGetValue(day, out var existing) ? existing : 0;
-        daily[day] = count + 1;
+            if (sale.QuantityOnHandDelta >= 0)
+            {
+                continue;
+            }
+
+            var daily = dailySalesByInventory.TryGetValue(sale.BranchInventoryId, out var stored)
+                ? stored
+                : new Dictionary<DateOnly, int>();
+            dailySalesByInventory[sale.BranchInventoryId] = daily;
+            var day = DateOnly.FromDateTime(sale.CreatedAtUtc);
+            var count = daily.TryGetValue(day, out var existing) ? existing : 0;
+            daily[day] = count + Math.Abs(sale.QuantityOnHandDelta);
         }
 
         var rows = new List<DemandForecast>();
@@ -96,22 +105,5 @@ var daily = dailySalesByInventory.TryGetValue(sale.BranchInventoryId, out var st
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
-    }
-
-    private static Guid ParseBranchId(string lockKey)
-    {
-        if (!lockKey.StartsWith(BranchLockPrefix))
-        {
-            throw new InvalidOperationException("Forecast run has no branch lock key.");
-        }
-
-        var value = lockKey.Substring(BranchLockPrefix.Length);
-        var branchId = Guid.TryParse(value, out var parsed) ? parsed : Guid.Empty;
-        if (branchId == Guid.Empty)
-        {
-            throw new InvalidOperationException("Forecast run branch lock key is invalid.");
-        }
-
-        return branchId;
     }
 }

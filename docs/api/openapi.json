@@ -1882,6 +1882,132 @@
         ]
       }
     },
+    "/api/admin/forecast": {
+      "get": {
+        "tags": [
+          "Admin-Forecast"
+        ],
+        "operationId": "GetForecast",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "horizonDays",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForecastDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
+    },
+    "/api/admin/jobs/forecast/runs": {
+      "post": {
+        "tags": [
+          "Admin-Forecast"
+        ],
+        "operationId": "TriggerForecastRun",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerForecastRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
+    },
     "/api/cart": {
       "get": {
         "tags": [
@@ -3815,6 +3941,21 @@
         ],
         "parameters": [
           {
+            "name": "jobName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branchId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "schema": {
@@ -4758,6 +4899,83 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ForecastDto": {
+        "required": [
+          "id",
+          "branchInventoryId",
+          "productId",
+          "productName",
+          "horizonDays",
+          "predictedQuantity",
+          "actualDataDays",
+          "dataQuality",
+          "forecastStartDate",
+          "forecastEndDate",
+          "generatedAtUtc",
+          "jobRunId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "branchInventoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "horizonDays": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "predictedQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "actualDataDays": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "dataQuality": {
+            "type": "string"
+          },
+          "forecastStartDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "forecastEndDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "generatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "jobRunId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },
@@ -6184,6 +6402,18 @@
           }
         }
       },
+      "TriggerForecastRunRequest": {
+        "required": [
+          "branchId"
+        ],
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "UpdateAddressRequest": {
         "required": [
           "recipientName",
@@ -6545,6 +6775,9 @@
     },
     {
       "name": "Admin-Inventory-Intelligence"
+    },
+    {
+      "name": "Admin-Forecast"
     },
     {
       "name": "Cart"

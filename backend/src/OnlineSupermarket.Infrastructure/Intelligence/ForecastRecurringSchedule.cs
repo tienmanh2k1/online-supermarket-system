@@ -42,33 +42,18 @@ public class ForecastRecurringSchedule(
 
         var alreadyForecastedToday = new HashSet<Guid>();
         var startOfTodayUtc = DateOnly.FromDateTime(nowUtc).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
-        var succeededRunIds = await dbContext.BackgroundJobRuns.AsNoTracking()
+        var succeededBranchIds = await dbContext.BackgroundJobRuns.AsNoTracking()
             .Where(run => run.JobName == ForecastJobName
                 && run.Status == JobRunStatus.Succeeded
-                && run.CreatedAtUtc >= startOfTodayUtc)
-            .Select(run => run.Id)
+                && run.CreatedAtUtc >= startOfTodayUtc
+                && run.BranchId != null)
+            .Select(run => run.BranchId!.Value)
+            .Distinct()
             .ToListAsync(cancellationToken);
 
-        if (succeededRunIds.Count > 0)
+        foreach (var branchId in succeededBranchIds)
         {
-            var succeededInventoryIds = await dbContext.DemandForecasts.AsNoTracking()
-                .Where(forecast => succeededRunIds.Contains(forecast.JobRunId))
-                .Select(forecast => forecast.BranchInventoryId)
-                .Distinct()
-                .ToListAsync(cancellationToken);
-
-            if (succeededInventoryIds.Count > 0)
-            {
-                var forecastedBranchIds = await dbContext.BranchInventories.AsNoTracking()
-                    .Where(inventory => succeededInventoryIds.Contains(inventory.Id))
-                    .Select(inventory => inventory.BranchId)
-                    .Distinct()
-                    .ToListAsync(cancellationToken);
-                foreach (var branchId in forecastedBranchIds)
-                {
-                    alreadyForecastedToday.Add(branchId);
-                }
-            }
+            alreadyForecastedToday.Add(branchId);
         }
 
         var dueJobs = new List<RecurringJobRequest>();
