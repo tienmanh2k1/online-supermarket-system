@@ -12,6 +12,7 @@ import { FilterSidebar, type FilterState } from './FilterSidebar'
 import { ProductGrid } from './ProductGrid'
 import { Pagination } from './Pagination'
 import { formatPrice } from './ProductCard'
+import { RecommendationShelfLoader } from '../recommendations/RecommendationShelfLoader'
 import './ProductBrowsePage.css'
 
 export function ProductBrowsePage() {
@@ -201,6 +202,10 @@ export function ProductBrowsePage() {
           </div>
         </div>
       </section>
+
+      <RecommendationShelfLoader
+        branchId={currentFilters.branchId}
+      />
 
       {/* Main Container */}
       <div className="product-browse-layout">
