@@ -300,3 +300,140 @@ async function runE2E() {
 }
 
 runE2E();
+runForecastE2E();
+
+async function runForecastE2E() {
+  console.log('--- Running Inventory -> Forecast Admin Flow E2E Test ---');
+
+  let devServerProc = null;
+  let browser = null;
+
+  try {
+    devServerProc = await ensureDevServer();
+    browser = await chromium.launch({ headless: true });
+
+    const context = await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+    });
+
+    await context.addInitScript(() => {
+      localStorage.setItem('os_access_token', 'mock-jwt-token');
+    });
+
+    const page = await context.newPage();
+
+    const forecastRows = [
+      {
+        id: 'fcst-e2e-1',
+        branchInventoryId: 'inv-1',
+        productId: 'prod-fc-1',
+        productName: 'Nước ép cam nguyên chất 1L',
+        horizonDays: 7,
+        predictedQuantity: 14,
+        actualDataDays: 28,
+        dataQuality: 'Sufficient',
+        forecastStartDate: '2026-08-05',
+        forecastEndDate: '2026-09-01',
+        generatedAtUtc: '2026-09-04T01:00:00Z',
+        jobRunId: 'job-fc-00001',
+      },
+    ];
+
+    let queued = false;
+
+    await page.route((url) => url.pathname.startsWith('/api/'), async (route) => {
+      const url = route.request().url();
+      const method = route.request().method();
+
+      if (url.includes('/api/auth/me')) {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: '00000000-0000-0000-0000-000000000901',
+            email: 'admin@test.com',
+            fullName: 'Admin',
+            role: 'Admin',
+          }),
+        });
+      }
+
+      if (url.includes('/api/branches')) {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            { id: '00000000-0000-0000-0000-000000000801', name: 'Chi nhánh Quận 1', address: '123 Le Loi', phone: '0123456789' },
+          ]),
+        });
+      }
+
+      if (url.includes('/api/admin/forecast') && method === 'GET') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(forecastRows),
+        });
+      }
+
+      if (url.includes('/api/admin/jobs/forecast/runs') && method === 'POST') {
+        queued = true;
+        return route.fulfill({
+          status: 202,
+          contentType: 'application/json',
+          body: JSON.stringify({ jobRunId: 'job-fc-00002', statusUrl: '/api/admin/jobs/job-fc-00002' }),
+        });
+      }
+
+      if (url.includes('/api/admin/jobs/job-fc-00002') && method === 'GET') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: 'job-fc-00002',
+            jobName: 'Forecast',
+            status: 'Succeeded',
+            createdAtUtc: '2026-09-04T01:00:00Z',
+            startedAtUtc: '2026-09-04T01:00:01Z',
+            completedAtUtc: '2026-09-04T01:00:05Z',
+            errorSummary: null,
+          }),
+        });
+      }
+
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    });
+
+    await page.goto(`${BASE_URL}/admin/forecast`, { timeout: 10000, waitUntil: 'networkidle' });
+
+    const table = await page.waitForSelector('table[aria-label="Dự báo nhu cầu"]', { timeout: 5000 });
+    const tableText = await table.textContent();
+    if (!tableText || !tableText.includes('Nước ép cam nguyên chất 1L')) {
+      throw new Error('Expected forecast table to contain the forecasted product.');
+    }
+    if (!tableText || !tableText.includes('Đủ')) {
+      throw new Error('Expected forecast table to show the Sufficient quality label.');
+    }
+    console.log('✅ Forecast result table rendered with product and quality label');
+
+    await page.click('button:has-text("Chạy lại dự báo")');
+    await page.waitForSelector('.admin-note--ok', { timeout: 5000 });
+    const noteText = await page.locator('.admin-note--ok').textContent();
+    if (!noteText || !noteText.includes('Đã đưa vào hàng đợi')) {
+      throw new Error(`Expected queued confirmation note, got: "${noteText}"`);
+    }
+    console.log('✅ Manual forecast run queued successfully');
+
+    console.log('🎉 Inventory -> Forecast Admin Flow E2E PASSED ALL ASSERTIONS!');
+  } catch (err) {
+    console.error('❌ Forecast E2E Test FAILED:', err);
+    process.exitCode = 1;
+    throw err;
+  } finally {
+    if (browser) await browser.close();
+    if (devServerProc) {
+      console.log('Stopping spawned Vite dev server...');
+      devServerProc.kill();
+    }
+  }
+}
