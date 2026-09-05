@@ -43,6 +43,7 @@ Kiến trúc đích gồm bốn tầng:
 - Database guard phải từ chối hostname Production được cấu hình trong danh sách cấm của CI/CD.
 - Không hardcode mật khẩu MySQL trong source test.
 - Không test nào được drop database qua kết nối root tới MySQL local dùng chung.
+- Công cụ reset dữ liệu chỉ được chạy trong Testcontainer độc lập chứa đúng một application database.
 - Production smoke test không gọi migration, seed, truncate, delete hoặc endpoint làm thay đổi đơn hàng/tồn kho.
 - Snapshot Production chỉ được đưa vào Staging sau khi ẩn danh và phải được lưu trong kho artifact có kiểm soát truy cập, không commit vào Git.
 
@@ -66,13 +67,18 @@ Các test sau bắt buộc dùng MySQL 8.4 Testcontainers:
 - Query translation và hành vi provider-specific.
 - Job lease, inventory mutation, product view store và các persistence store khác.
 
-Một collection fixture cấp container và connection string. Schema được tạo bằng migrations thật. Mỗi test class hoặc test case nhận database/schema cô lập theo chiến lược được fixture cung cấp, rồi dọn dữ liệu bằng cách drop database tạm hoặc reset có kiểm soát.
+Một collection fixture cấp container và connection string. Schema được tạo bằng migrations thật. Cleanup dùng hai chiến lược rõ ràng:
+
+- Schema, migration, rollback và destructive persistence tests: tạo database riêng có tên ngẫu nhiên cho từng test case, chạy migrations, rồi drop database qua `TestDatabaseGuard` khi kết thúc. Không bọc test bằng transaction ngoài vì chính hành vi commit/rollback là đối tượng cần kiểm tra.
+- Integration tests thông thường: dùng một application database duy nhất trong container độc lập; trước mỗi test, Respawn xóa dữ liệu nghiệp vụ, giữ `__EFMigrationsHistory`, sau đó `TestDataSeeder` nạp lại baseline.
+
+Không dùng transaction-per-test cho API tests vì một HTTP request có thể tạo nhiều scope, `DbContext` và connection; transaction do test mở không đại diện đúng luồng Production.
 
 ### 4.3 API tests với MySQL
 
 `WebApplicationFactory<Program>` không được gỡ EF MySQL để thay bằng InMemory. Factory nhận connection string từ fixture, đặt environment `Testing`, tắt background services và thay email sender bằng test double. Migrations và seed test được chạy rõ ràng trong fixture trước khi tạo client.
 
-API tests tiếp tục gọi HTTP in-process, nhưng toàn bộ thao tác persistence đi qua MySQL thật. Mỗi test phải tự tạo dữ liệu cần thiết qua seed builder hoặc API setup và không phụ thuộc thứ tự test.
+API tests tiếp tục gọi HTTP in-process, nhưng toàn bộ thao tác persistence đi qua MySQL thật. Trước mỗi API test, database được Respawn về trạng thái trống rồi nạp baseline. Mỗi test tự tạo phần dữ liệu đặc thù qua seed builder hoặc API setup và không phụ thuộc thứ tự test.
 
 ### 4.4 Full E2E trên Staging
 
@@ -101,9 +107,12 @@ Smoke test mặc định là read-only. Nếu sau này cần write canary, dữ 
 ### `MySqlTestContainerFixture`
 
 - Khởi động image `mysql:8.4` một lần cho test collection.
+- Pin image digest trong CI/release automation sau khi đã xác minh digest tương ứng với MySQL 8.4 được chấp thuận.
 - Cấp connection string không chứa database Production/Development.
 - Tạo database test có tên ngẫu nhiên hợp lệ.
 - Chạy EF Core migrations.
+- Chờ readiness bằng wait strategy của Testcontainers và tiếp tục probe `SELECT 1` với exponential backoff có timeout; container ở trạng thái running hoặc port mở chưa được xem là ready.
+- Cấu hình MySQL theo compatibility contract dùng chung với Staging/Production: `utf8mb4`, `utf8mb4_0900_ai_ci`, UTC, strict SQL mode và giới hạn connection đã khai báo.
 - Dọn container khi collection kết thúc.
 
 ### `TestDatabaseGuard`
@@ -119,7 +128,7 @@ Smoke test mặc định là read-only. Nếu sau này cần write canary, dữ 
 - Chỉ chứa dữ liệu dùng cho automated test.
 - Dùng GUID hoặc natural key cố định cho branch, user, product và promotion cốt lõi.
 - Cung cấp tài khoản admin, customer và checkout E2E với password test lấy từ cấu hình test.
-- Có thể chạy lại mà không nhân đôi dữ liệu.
+- Có thể chạy lại mà không nhân đôi dữ liệu: Respawn xóa toàn bộ bảng nghiệp vụ trước, giữ `__EFMigrationsHistory`, sau đó seeder luôn insert baseline từ trạng thái trống. Seeder không dùng check-before-insert hoặc UPSERT để che giấu dữ liệu rò rỉ giữa các test.
 - Tách khỏi `DataSeeder` Development để thay đổi demo data không làm hỏng test.
 
 ### `MySqlApiFactory`
@@ -129,6 +138,21 @@ Smoke test mặc định là read-only. Nếu sau này cần write canary, dữ 
 - Cấu hình `Testing`, tắt hosted services và dùng email sender bộ nhớ.
 - Không thay MySQL bằng InMemory.
 - Không chỉnh biến môi trường process-global rồi khôi phục thủ công.
+
+### `TestDatabaseResetter`
+
+- Khởi tạo một Respawner cho application database duy nhất trong Testcontainer.
+- Chỉ chạy sau khi `TestDatabaseGuard` xác nhận environment, host và database name.
+- Giữ bảng `__EFMigrationsHistory`; xóa dữ liệu ở mọi bảng nghiệp vụ trước mỗi test.
+- Không được dùng với MySQL local, Development, Staging hoặc Production.
+- Sau reset, gọi `TestDataSeeder` để tạo lại baseline.
+
+### `DatabaseCompatibilityOptions`
+
+- Là nguồn cấu hình chung cho Testcontainers và tài liệu vận hành Staging/Production.
+- Giá trị baseline: character set `utf8mb4`, collation `utf8mb4_0900_ai_ci`, timezone `UTC`, `max_connections=200` và SQL mode `STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION`.
+- Test startup truy vấn các system variables tương ứng và fail nếu container không khớp contract.
+- Nếu Production cần giá trị khác, contract phải được cập nhật có chủ đích và xác minh ở Testcontainers/Staging trước khi rollout.
 
 ### E2E runner
 
@@ -152,9 +176,10 @@ Smoke test mặc định là read-only. Nếu sau này cần write canary, dữ 
 ```text
 test runner
   -> khởi động MySQL 8.4 Testcontainer
+  -> wait strategy + SELECT 1 retry xác nhận readiness
   -> TestDatabaseGuard kiểm tra connection string
   -> EF Core áp dụng migrations
-  -> TestDataSeeder nạp baseline
+  -> Respawn reset và TestDataSeeder nạp baseline
   -> test gọi service hoặc HTTP API
   -> assertion đọc lại từ MySQL
   -> container bị hủy
@@ -200,6 +225,8 @@ Baseline production-like tối thiểu phải có:
 - Promotion hợp lệ, hết hạn, chưa đủ minimum và hết lượt.
 - Product view events, recommendation results và demand forecast đủ để kiểm tra các trang intelligence.
 
+Đây là baseline tối thiểu, không phải dữ liệu dùng chung cho mọi kịch bản. Promotion stacking, partial inventory depletion, concurrency và các edge case khác phải bổ sung dữ liệu cục bộ trong test tương ứng.
+
 Dữ liệu phải được tạo qua domain constructors hoặc public setup helpers, không chèn SQL tùy tiện trừ dữ liệu chuyên dùng kiểm tra schema. Test thay đổi tồn kho, order hoặc promotion phải tạo bản ghi riêng theo test ID để tránh phụ thuộc baseline.
 
 ## 8. Migration và schema
@@ -222,11 +249,16 @@ Các nhóm lệnh cần được tách rõ:
 
 Pipeline không truyền `.env` Development vào test. Credentials Testcontainers do library sinh; staging/production secrets lấy từ secret store của CI.
 
+Database-backed tests trong cùng assembly được đặt vào một xUnit collection và chạy tuần tự. Unit-test collections vẫn được phép chạy song song. Các test assembly có container riêng nên có thể chạy song song nếu CI runner đủ CPU/RAM; giới hạn ban đầu là tối đa 2 test assembly database-backed đồng thời. Chỉ tăng mức song song sau khi đo thời gian và theo dõi connection usage.
+
+CI thực hiện một lần `docker pull` cho image MySQL đã pin trước test. Self-hosted runner giữ Docker image cache giữa các job; ephemeral runner dùng registry mirror hoặc cache do nền tảng CI hỗ trợ nếu có. Không thêm cơ chế cache riêng trước khi có số đo cho thấy thời gian pull là bottleneck.
+
 Release bị chặn nếu unit, integration hoặc staging E2E thất bại. Production smoke thất bại sẽ dừng rollout hoặc kích hoạt rollback theo nền tảng deploy.
 
 ## 10. Xử lý lỗi và chẩn đoán
 
-- Container không khởi động: báo rõ Docker/Testcontainers unavailable, không fallback sang InMemory.
+- Container không khởi động: báo `Docker/Testcontainers unavailable; ensure Docker Desktop or the CI Docker service is running`, không fallback sang InMemory.
+- Container chạy nhưng chưa ready: retry `SELECT 1` theo exponential backoff đến timeout, sau đó đính kèm container logs vào lỗi.
 - Migration lỗi: giữ container/log artifact đủ lâu trong CI để chẩn đoán, sau đó cleanup.
 - Seed lỗi: dừng test run trước khi test cases bắt đầu.
 - E2E lỗi: lưu Playwright trace, screenshot, browser console và API logs.
@@ -235,7 +267,7 @@ Release bị chặn nếu unit, integration hoặc staging E2E thất bại. Pro
 
 ## 11. Lộ trình chuyển đổi
 
-1. Xây guard, fixture và seed baseline dùng chung.
+1. Xây compatibility contract, guard, readiness probe, fixture, resetter và seed baseline dùng chung.
 2. Chuyển các MySQL test hardcode local sang fixture.
 3. Chuyển API factory và API endpoint tests sang MySQL.
 4. Phân loại và giữ lại unit tests phù hợp ở InMemory/SQLite.
@@ -252,6 +284,8 @@ Mỗi bước phải giữ test suite chạy được; không thực hiện chuy
 - Không còn test nào kết nối `127.0.0.1:3306` bằng `root/password` hardcode.
 - Integration và API tests chạy thành công trên máy/CI chỉ với Docker và .NET SDK 10.
 - Chạy test hai lần liên tiếp cho cùng kết quả và không để lại database/container.
+- Database-backed test collection chạy tuần tự; hai test assembly không vượt quá giới hạn 2 container đồng thời trong CI.
+- Startup test xác nhận character set, collation, timezone, SQL mode và `max_connections` khớp compatibility contract.
 - Test suite từ chối connection string trỏ vào database Development hoặc Production.
 - Full E2E không intercept route nội bộ `/api` và chạy qua frontend/API/MySQL thật.
 - GUI checkout dùng tài khoản và SKU từ seed chính thức, không hardcode GUID runtime.
