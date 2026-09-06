@@ -304,4 +304,47 @@ public sealed class InventoryMutationEndpointTests
             .SingleAsync(bi => bi.Id == fixture.InventoryId);
         Assert.Equal(0, inventory.ReservedQuantity);
     }
+
+    [Fact]
+    public async Task PaymentFailure_EndToEnd_ReleasesInventoryExactlyOnce()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedCheckoutAsync(factory, inventoryQty: 100, cartQty: 3);
+
+        var checkout = await seed.Client.PostAsJsonAsync("/api/checkout", new CheckoutRequest("Pickup"));
+        Assert.Equal(HttpStatusCode.Created, checkout.StatusCode);
+        var checkoutBody = await checkout.Content.ReadFromJsonAsync<CheckoutResponse>();
+
+        var payment = await seed.Client.PostAsJsonAsync("/api/checkout/payment",
+            new PaymentRequest(checkoutBody!.OrderId, "VNPay"));
+        Assert.Equal(HttpStatusCode.OK, payment.StatusCode);
+
+        var client = factory.CreateClient();
+        for (var i = 0; i < 2; i++)
+        {
+            var response = await client.PostAsJsonAsync("/api/checkout/payment/callback", new
+            {
+                provider = "vnpay",
+                data = SignedVnPayCallback(checkoutBody.OrderId, checkoutBody.TotalAmount, "e2e-fail"),
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var release = Assert.Single(await LoadTransactionsAsync(factory, InventoryTransactionType.Release));
+        Assert.Equal(-3, release.ReservedQuantityDelta);
+        Assert.Equal(0, release.QuantityOnHandDelta);
+        Assert.Equal(seed.InventoryId, release.BranchInventoryId);
+
+        var order = await db.Orders.AsNoTracking().SingleAsync(o => o.Id == checkoutBody.OrderId);
+        Assert.Equal(OrderStatus.Cancelled, order.Status);
+
+        var inventory = await db.BranchInventories.AsNoTracking()
+            .SingleAsync(bi => bi.Id == seed.InventoryId);
+        Assert.Equal(100, inventory.QuantityOnHand);
+        Assert.Equal(0, inventory.ReservedQuantity);
+        Assert.Equal(100, inventory.AvailableQuantity);
+    }
 }

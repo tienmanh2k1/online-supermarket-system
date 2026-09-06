@@ -67,4 +67,29 @@ public sealed class InventoryTransactionTests
         Assert.NotNull(transaction.ActorUserId);
         Assert.Equal("restock", transaction.Note);
     }
+
+    [Theory]
+    [InlineData(InventoryTransactionType.Reserve, 1, 1, 10, 1)]
+    [InlineData(InventoryTransactionType.Release, 0, 1, 10, 1)]
+    [InlineData(InventoryTransactionType.Sale, -3, -2, 7, 1)]
+    [InlineData(InventoryTransactionType.ManualAdjustment, 5, 1, 15, 2)]
+    public void Ledger_Equation_Rejects_TypeSpecificDeltaViolations(
+        InventoryTransactionType type, int onHandDelta, int reservedDelta, int onHandAfter, int reservedAfter)
+    {
+        Assert.Throws<InvalidOperationException>(() => InventoryTransaction.Create(
+            Guid.NewGuid(), type, onHandDelta, reservedDelta, onHandAfter, reservedAfter,
+            InventoryReferenceType.Order, Guid.NewGuid(), "op:key", null, null, DateTime.UtcNow));
+    }
+
+    [Theory]
+    [InlineData(5, 0, 4, 1)]
+    [InlineData(0, 2, 10, 1)]
+    [InlineData(6, 0, 4, 1)]
+    public void Ledger_Equation_Rejects_NegativeReconstructedPreState(int onHandDelta, int reservedDelta, int onHandAfter, int reservedAfter)
+    {
+        Assert.Throws<InvalidOperationException>(() => InventoryTransaction.Create(
+            Guid.NewGuid(), InventoryTransactionType.ManualAdjustment,
+            onHandDelta, reservedDelta, onHandAfter, reservedAfter,
+            InventoryReferenceType.AdminAdjustment, null, "admin:adjust", null, null, DateTime.UtcNow));
+    }
 }
