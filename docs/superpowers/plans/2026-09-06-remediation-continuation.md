@@ -114,10 +114,10 @@ dotnet test backend/tests/OnlineSupermarket.Api.Tests --filter FullyQualifiedNam
 
 **Interfaces:** fixture cấp connection riêng cho mỗi test; mỗi contender dùng AppDbContext riêng. Concurrency dùng barrier/TaskCompletionSource, không hy vọng race xuất hiện nhờ sleep.
 
-- [ ] Seed user, branch, product, inventory reserved, promotion đã dùng, Pending order/payment bằng helpers test thực tế. Fixture failure do migration phải được ghi nhận; DB test business có thể tạo schema từ model trong database disposable riêng, nhưng không tính là migration gate.
-- [ ] Test sequential duplicate, concurrent duplicate, success/failure concurrent, repeated failure, wrong amount, callback sau terminal. Assert count callback=1 cho duplicate, một terminal effect, status order/payment nhất quán, reservation/ledger/promotion chính xác.
-- [ ] Thêm row-lock hoặc retry database có predicate, không process lock. Retry deadlock chỉ với transaction mới, trạng thái tracked mới và giới hạn hữu hạn. Unique conflict chỉ chuyển AlreadyProcessed sau rollback và re-read row thắng; lỗi DB khác phải propagate an toàn.
-- [ ] Chạy test race nhiều lần trong cùng một gate có số lần cố định; teardown database/container trong finally, kiểm tra không để orphan.
+- [x] Seed user, branch, product, inventory reserved, promotion đã dùng, Pending order/payment bằng helpers test thực tế (`SeedOrderWithPaymentAsync`, `SeedOrderAsync`, `SeedCatalogAndBranchAsync`). Fixture `MySqlFixture` chỉ hỗ trợ database cô lập; mỗi test tự DROP/CREATE database riêng + MigrateAsync.
+- [x] Test sequential duplicate, concurrent duplicate, success/failure concurrent, repeated failure, wrong amount, callback sau terminal — 11 test pass. Assert callback count=1 cho duplicate, một terminal effect, status order/payment nhất quán, reservation/ledger/promotion chính xác.
+- [x] Row-lock `SELECT ... FOR UPDATE` trên payment được chọn (predicate atomic, không process lock). Deadlock (MySqlException 1213) retry hữu hạn (max 3) với transaction mới + `ChangeTracker.Clear()`. Unique conflict (1062) chỉ chuyển AlreadyProcessed sau rollback + re-read row `(provider, externalEventId)` thắng; lỗi DB khác propagate an toàn.
+- [x] Race được ép bằng `TaskCompletionSource` barrier tại `BeforePaymentLockTestHook` (cả hai contender cùng qua read trước khi lock) — không sleep. Test `Duplicate_Race_RepeatedFixedCount_OneEffectAlways_OnMySql` chạy 5 vòng cố định trong một gate; teardown database trong finally mỗi vòng; không orphan.
 
 ```powershell
 dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests --filter FullyQualifiedName~MySqlPaymentCallbackTests
