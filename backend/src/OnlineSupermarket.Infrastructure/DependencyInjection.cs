@@ -9,6 +9,7 @@ using OnlineSupermarket.Infrastructure.Inventory;
 using OnlineSupermarket.Infrastructure.Intelligence;
 using OnlineSupermarket.Infrastructure.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
+using OnlineSupermarket.Infrastructure.Payments;
 using OnlineSupermarket.Infrastructure.Recommendations;
 using OnlineSupermarket.Infrastructure.Services;
 
@@ -38,6 +39,10 @@ public static class DependencyInjection
 
         services.Configure<Jobs.IntelligenceJobsOptions>(
             configuration.GetSection(Jobs.IntelligenceJobsOptions.SectionName));
+        services.Configure<PaymentWebhookOptions>(
+            configuration.GetSection(PaymentWebhookOptions.SectionName));
+        services.AddScoped<IPaymentCallbackVerifier, VnPayCallbackVerifier>();
+        services.AddScoped<IPaymentCallbackVerifier, MomoCallbackVerifier>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
