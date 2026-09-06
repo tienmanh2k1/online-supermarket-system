@@ -26,4 +26,6 @@ public interface IJobRunStore
         DateTime nowUtc,
         string error,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<JobRequest>> GetQueuedRequestsAsync(CancellationToken cancellationToken);
 }

@@ -117,6 +117,13 @@ public sealed class JobRunStore(AppDbContext dbContext, TimeProvider timeProvide
         return stale.Count;
     }
 
+    public async Task<IReadOnlyList<JobRequest>> GetQueuedRequestsAsync(CancellationToken cancellationToken)
+        => await dbContext.BackgroundJobRuns
+            .Where(x => x.Status == JobRunStatus.Queued)
+            .OrderBy(x => x.CreatedAtUtc)
+            .Select(x => new JobRequest(x.Id, x.JobName))
+            .ToListAsync(cancellationToken);
+
     private static string Truncate(string? value, int maxLength)
     {
         if (string.IsNullOrEmpty(value)) return string.Empty;
