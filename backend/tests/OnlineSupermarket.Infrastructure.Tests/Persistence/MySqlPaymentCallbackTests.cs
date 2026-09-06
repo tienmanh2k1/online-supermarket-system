@@ -122,6 +122,178 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
     }
 
     [Fact]
+    public async Task Sequential_Duplicate_Callback_IsIdempotent_OnMySql()
+    {
+        await using var db = CreateContext();
+        var seed = await SeedOrderWithPaymentAsync(db, OrderStatus.Pending, reserveInventory: false);
+
+        var first = await ProcessAsync(seed.Order.Id, seed.Payment.Amount, true, "seq-dup-1");
+        var second = await ProcessAsync(seed.Order.Id, seed.Payment.Amount, true, "seq-dup-1");
+
+        Assert.Equal(PaymentCallbackOutcome.Processed, first);
+        Assert.Equal(PaymentCallbackOutcome.AlreadyProcessed, second);
+
+        await using var verify = CreateContext();
+        Assert.Equal(1, await verify.PaymentCallbacks.CountAsync(x => x.ExternalEventId == "seq-dup-1"));
+        var payment = await verify.Payments.AsNoTracking().SingleAsync(p => p.Id == seed.Payment.Id);
+        Assert.Equal(PaymentStatus.Completed, payment.Status);
+    }
+
+    [Fact]
+    public async Task Duplicate_Race_RepeatedFixedCount_OneEffectAlways_OnMySql()
+    {
+        const int rounds = 5;
+        for (var round = 0; round < rounds; round++)
+        {
+            try
+            {
+                await using var db = CreateContext();
+                var seed = await SeedOrderWithPaymentAsync(db, OrderStatus.Pending, reserveInventory: false);
+                var eventId = $"race-round-{round}";
+
+                var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                var ready = new SemaphoreSlim(0, 2);
+
+                async Task<PaymentCallbackOutcome> RaceOnceAsync()
+                {
+                    await using var ctx = CreateContext();
+                    var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
+                    processor.BeforePaymentLockTestHook = () =>
+                    {
+                        ready.Release();
+                        return gate.Task;
+                    };
+                    return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, true, eventId), CancellationToken.None);
+                }
+
+                var task1 = Task.Run(RaceOnceAsync);
+                var task2 = Task.Run(RaceOnceAsync);
+
+                await ready.WaitAsync();
+                await ready.WaitAsync();
+                gate.SetResult();
+                var outcomes = await Task.WhenAll(task1, task2);
+
+                Assert.Contains(PaymentCallbackOutcome.Processed, outcomes);
+                Assert.Contains(PaymentCallbackOutcome.AlreadyProcessed, outcomes);
+
+                await using var verify = CreateContext();
+                Assert.Equal(1, await verify.PaymentCallbacks.CountAsync(x => x.ExternalEventId == eventId));
+                var payment = await verify.Payments.AsNoTracking().SingleAsync(p => p.Id == seed.Payment.Id);
+                Assert.Equal(PaymentStatus.Completed, payment.Status);
+                var order = await verify.Orders.AsNoTracking().SingleAsync(o => o.Id == seed.Order.Id);
+                Assert.Equal(OrderStatus.Confirmed, order.Status);
+            }
+            finally
+            {
+                // Drop the per-round database so an early failure cannot leak
+                // rows into the next round of the same race gate.
+                await using var master = new MySqlConnection(_fixture.MasterConnectionString);
+                await master.OpenAsync();
+                await using var drop = new MySqlCommand("DROP DATABASE IF EXISTS " + TestDatabase + ";", master);
+                await drop.ExecuteNonQueryAsync();
+                await using var create = new MySqlCommand("CREATE DATABASE " + TestDatabase + " CHARACTER SET utf8mb4;", master);
+                await create.ExecuteNonQueryAsync();
+                await using var db = new AppDbContext(Options);
+                await db.Database.MigrateAsync();
+            }
+        }
+    }
+
+    [Fact]
+    public async Task Forced_Race_Two_Callbacks_SameEventId_OneEffect_OnMySql()
+    {
+        await using var db = CreateContext();
+        var seed = await SeedOrderWithPaymentAsync(db, OrderStatus.Pending, reserveInventory: false);
+
+        var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var ready = new SemaphoreSlim(0, 2);
+
+        async Task<PaymentCallbackOutcome> RaceOnceAsync()
+        {
+            await using var ctx = CreateContext();
+            var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
+            processor.BeforePaymentLockTestHook = () =>
+            {
+                ready.Release();
+                return gate.Task;
+            };
+            return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, true, "race-forced"), CancellationToken.None);
+        }
+
+        var task1 = Task.Run(RaceOnceAsync);
+        var task2 = Task.Run(RaceOnceAsync);
+
+        await ready.WaitAsync();
+        await ready.WaitAsync();
+        gate.SetResult();
+        var outcomes = await Task.WhenAll(task1, task2);
+
+        Assert.Contains(PaymentCallbackOutcome.Processed, outcomes);
+        Assert.Contains(PaymentCallbackOutcome.AlreadyProcessed, outcomes);
+
+        await using var verify = CreateContext();
+        Assert.Equal(1, await verify.PaymentCallbacks.CountAsync(x => x.ExternalEventId == "race-forced"));
+        var payment = await verify.Payments.AsNoTracking().SingleAsync(p => p.Id == seed.Payment.Id);
+        Assert.Equal(PaymentStatus.Completed, payment.Status);
+        var order = await verify.Orders.AsNoTracking().SingleAsync(o => o.Id == seed.Order.Id);
+        Assert.Equal(OrderStatus.Confirmed, order.Status);
+    }
+
+    [Fact]
+    public async Task Forced_Race_Success_And_Failure_OneTerminal_OnMySql()
+    {
+        var promotion = Promotion.Create("MYRACE", DiscountType.Percentage, 10, 0, usageLimit: 50);
+        await using var db = CreateContext();
+        promotion.IncrementUsage();
+        var seed = await SeedOrderWithPaymentAsync(db, OrderStatus.Confirmed, reserveInventory: true, promotion);
+
+        var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var ready = new SemaphoreSlim(0, 2);
+
+        async Task<PaymentCallbackOutcome> RaceOnceAsync(bool success, string eventId)
+        {
+            await using var ctx = CreateContext();
+            var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
+            processor.BeforePaymentLockTestHook = () =>
+            {
+                ready.Release();
+                return gate.Task;
+            };
+            return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, success, eventId), CancellationToken.None);
+        }
+
+        var task1 = Task.Run(() => RaceOnceAsync(true, "race-succ"));
+        var task2 = Task.Run(() => RaceOnceAsync(false, "race-fail"));
+
+        await ready.WaitAsync();
+        await ready.WaitAsync();
+        gate.SetResult();
+        var outcomes = await Task.WhenAll(task1, task2);
+
+        Assert.Contains(PaymentCallbackOutcome.Processed, outcomes);
+        Assert.Contains(PaymentCallbackOutcome.Conflict, outcomes);
+
+        await using var verify = CreateContext();
+        var payment = await verify.Payments.AsNoTracking().SingleAsync(p => p.Id == seed.Payment.Id);
+        var order = await verify.Orders.AsNoTracking().SingleAsync(o => o.Id == seed.Order.Id);
+        Assert.True(
+            (payment.Status == PaymentStatus.Completed && order.Status == OrderStatus.Confirmed) ||
+            (payment.Status == PaymentStatus.Failed && order.Status == OrderStatus.Cancelled),
+            $"Inconsistent terminal state: payment={payment.Status} order={order.Status}");
+        var releases = await verify.InventoryTransactions.AsNoTracking().CountAsync(t => t.TransactionType == InventoryTransactionType.Release);
+        if (payment.Status == PaymentStatus.Failed)
+        {
+            Assert.Equal(1, releases);
+            Assert.Equal(0, (await verify.Promotions.AsNoTracking().SingleAsync(p => p.Id == promotion.Id)).UsageCount);
+        }
+        else
+        {
+            Assert.Equal(0, releases);
+        }
+    }
+
+    [Fact]
     public async Task Racing_Callbacks_EffectsExactlyOnce_OnMySql()
     {
         await using var db = CreateContext();

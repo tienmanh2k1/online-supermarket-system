@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using OnlineSupermarket.Domain.Orders;
 using OnlineSupermarket.Domain.Payments;
 using OnlineSupermarket.Infrastructure.Inventory;
@@ -9,6 +10,8 @@ namespace OnlineSupermarket.Infrastructure.Payments;
 
 public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryMutationService mutationService) : IPaymentCallbackProcessor
 {
+    private const int MaxDeadlockRetries = 3;
+
     public async Task<PaymentCallbackOutcome> ProcessAsync(
         string provider,
         PaymentCallbackVerificationResult callback,
@@ -17,6 +20,29 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
         if (!callback.IsValidSignature)
             throw new InvalidOperationException("Callback must be signature-verified before processing.");
 
+        for (var attempt = 0; attempt < MaxDeadlockRetries; attempt++)
+        {
+            try
+            {
+                return await ProcessOnceAsync(provider, callback, cancellationToken);
+            }
+            catch (Exception error) when (IsDeadlockError(error))
+            {
+                dbContext.ChangeTracker.Clear();
+                if (attempt == MaxDeadlockRetries - 1)
+                    throw;
+                await Task.Delay(TimeSpan.FromMilliseconds(50 * (attempt + 1)), cancellationToken);
+            }
+        }
+
+        throw new InvalidOperationException("Payment callback could not be processed after retries.");
+    }
+
+    private async Task<PaymentCallbackOutcome> ProcessOnceAsync(
+        string provider,
+        PaymentCallbackVerificationResult callback,
+        CancellationToken cancellationToken)
+    {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
         var duplicate = await dbContext.PaymentCallbacks.AnyAsync(
@@ -29,6 +55,30 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
             .ThenByDescending(x => x.Id)
             .FirstOrDefaultAsync(cancellationToken);
         if (payment is null) return PaymentCallbackOutcome.PaymentNotFound;
+
+        // Test seam: both contenders can reach this point concurrently because the
+        // payment read above is non-locking; only the FOR UPDATE below serializes.
+        if (BeforePaymentLockTestHook is not null)
+            await BeforePaymentLockTestHook();
+
+        // Row-lock the selected payment so a concurrent conflicting callback
+        // (different externalEventId) serializes here and observes the
+        // committed terminal state instead of both writing a reversal.
+        if (dbContext.Database.IsRelational())
+        {
+            await dbContext.Payments
+                .FromSqlInterpolated($"SELECT * FROM payments WHERE Id = {payment.Id} FOR UPDATE")
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+        await dbContext.Entry(payment).ReloadAsync(cancellationToken);
+
+        // We may have blocked on the row lock while the winning transaction
+        // committed the very callback we are about to insert; re-check the
+        // unique (provider, externalEventId) after serialization.
+        var duplicateAfterLock = await dbContext.PaymentCallbacks.AnyAsync(
+            x => x.Provider == provider && x.ExternalEventId == callback.ExternalEventId, cancellationToken);
+        if (duplicateAfterLock) return PaymentCallbackOutcome.AlreadyProcessed;
 
         var expectedMethod = PaymentMethodExpected(provider);
         if (expectedMethod is null
@@ -66,21 +116,66 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
             order.SetStatus(OrderStatus.Cancelled, "Payment failed - inventory released");
         }
 
+        if (BeforeSaveTestHook is not null)
+            await BeforeSaveTestHook();
+
         try
         {
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateException error) when (IsDuplicateKeyError(error))
         {
-            var duplicateEntry = ex.Message.Contains("Duplicate entry", StringComparison.OrdinalIgnoreCase);
             await transaction.RollbackAsync(cancellationToken);
-            if (duplicateEntry)
+            await transaction.DisposeAsync();
+            dbContext.ChangeTracker.Clear();
+            var winner = await dbContext.PaymentCallbacks.AnyAsync(
+                x => x.Provider == provider && x.ExternalEventId == callback.ExternalEventId, cancellationToken);
+            if (winner)
                 return PaymentCallbackOutcome.AlreadyProcessed;
             throw;
         }
 
         await transaction.CommitAsync(cancellationToken);
         return PaymentCallbackOutcome.Processed;
+    }
+
+    internal Func<Task>? BeforeSaveTestHook { get; set; }
+    internal Func<Task>? BeforePaymentLockTestHook { get; set; }
+
+    private static bool IsDuplicateKeyError(Exception error)
+    {
+        Exception? current = error;
+        while (current is not null)
+        {
+            if (current is MySqlException { Number: 1062 })
+                return true;
+            var message = current.Message ?? string.Empty;
+            if (message.Contains("1062", StringComparison.OrdinalIgnoreCase)
+                || message.Contains("Duplicate entry", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            current = current.InnerException;
+        }
+        return false;
+    }
+
+    private static bool IsDeadlockError(Exception error)
+    {
+        Exception? current = error;
+        while (current is not null)
+        {
+            if (current is MySqlException { Number: 1213 })
+                return true;
+            var message = current.Message ?? string.Empty;
+            if (message.Contains("1213", StringComparison.OrdinalIgnoreCase)
+                || message.Contains("Deadlock found", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            current = current.InnerException;
+        }
+        return false;
     }
 
     private static PaymentMethod? PaymentMethodExpected(string provider)
