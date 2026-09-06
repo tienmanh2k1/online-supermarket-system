@@ -12,6 +12,7 @@ namespace OnlineSupermarket.Api.Tests;
 
 public class TestApiFactory : WebApplicationFactory<Program>
 {
+    public const string TestSecret = "test-webhook-secret";
     private const string VariableName = "ConnectionStrings__DefaultConnection";
     private readonly string? _originalConnectionString;
     private readonly string _dbName = Guid.NewGuid().ToString();
@@ -34,6 +35,9 @@ public class TestApiFactory : WebApplicationFactory<Program>
         builder.UseSetting("ASPNETCORE_ENVIRONMENT", "Development");
         builder.UseSetting("Email:UseDevMode", "true");
         builder.UseSetting("Infrastructure:DisableBackgroundServices", "true");
+        builder.UseSetting("Payments:Webhooks:VNPay:Secret", TestSecret);
+        builder.UseSetting("Payments:Webhooks:MoMo:Secret", TestSecret);
+        builder.UseSetting("Payments:Webhooks:MoMo:AccessKey", "test-access-key");
 
         builder.ConfigureLogging(logging =>
         {

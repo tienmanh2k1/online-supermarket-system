@@ -40,14 +40,14 @@ SHOW FULL PROCESSLIST;
 ### Bước 3: Kiểm tra trạng thái metadata hiện tại
 Xác định phiên bản migration hiện tại trong database:
 ```sql
-SELECT MigrationId, ProductVersion 
-FROM `__EFMigrationsHistory` 
+SELECT MigrationId, ProductVersion
+FROM `__EFMigrationsHistory`
 ORDER BY MigrationId DESC;
 ```
 Kiểm tra cấu trúc bảng `background_job_runs`:
 ```sql
-SELECT COLUMN_NAME, DATA_TYPE 
-FROM information_schema.COLUMNS 
+SELECT COLUMN_NAME, DATA_TYPE
+FROM information_schema.COLUMNS
 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'background_job_runs';
 ```
 
@@ -117,25 +117,25 @@ Xác minh tính đúng đắn của cơ sở dữ liệu sau khi nâng cấp:
 1. **Kiểm tra số lượng bảng nghiệp vụ** (đủ 23 bảng):
 ```sql
 SELECT COUNT(*) FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE() 
-  AND TABLE_TYPE = 'BASE TABLE' 
+WHERE TABLE_SCHEMA = DATABASE()
+  AND TABLE_TYPE = 'BASE TABLE'
   AND TABLE_NAME <> '__EFMigrationsHistory';
 ```
 *(Kết quả kỳ vọng: 23)*
 
 2. **Kiểm tra Check Constraints trên recommendation_results**:
 ```sql
-SELECT CONSTRAINT_NAME, ENFORCED 
-FROM information_schema.TABLE_CONSTRAINTS 
-WHERE TABLE_SCHEMA = DATABASE() 
-  AND TABLE_NAME = 'recommendation_results' 
+SELECT CONSTRAINT_NAME, ENFORCED
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = DATABASE()
+  AND TABLE_NAME = 'recommendation_results'
   AND CONSTRAINT_TYPE = 'CHECK';
 ```
 *(Kết quả kỳ vọng: cả `ck_recommendation_results_rank` và `ck_recommendation_results_score` đều có ENFORCED = 'YES')*
 
 3. **Kiểm tra backfill dữ liệu branch_id**:
 ```sql
-SELECT COUNT(*) FROM background_job_runs 
+SELECT COUNT(*) FROM background_job_runs
 WHERE job_name = 'Forecast' AND lock_key LIKE 'branch:%' AND branch_id IS NULL;
 ```
 *(Kết quả kỳ vọng: 0)*

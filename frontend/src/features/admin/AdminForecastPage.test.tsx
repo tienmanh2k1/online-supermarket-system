@@ -198,4 +198,28 @@ describe('AdminForecastPage', () => {
       expect(screen.getByText(/Đã đưa vào hàng đợi/)).toBeInTheDocument()
     })
   })
+
+it('polls the run until terminal status and then stops', async () => {
+    stubForecastApi()
+    const getRun = vi
+      .spyOn(inventoryIntelligenceApi, 'getForecastRun')
+      .mockResolvedValueOnce({ ...forecastRun, status: 'Running' })
+      .mockResolvedValue(forecastRun)
+    vi.spyOn(inventoryIntelligenceApi, 'triggerForecast').mockResolvedValue({
+      jobRunId: 'job-p1',
+      statusUrl: '/api/admin/jobs/job-p1',
+    })
+
+    renderPage()
+    await screen.findByRole('table', { name: 'Dự báo nhu cầu' })
+    await userEvent.click(screen.getByRole('button', { name: 'Chạy lại dự báo' }))
+
+    await waitFor(() => {
+      expect(getRun).toHaveBeenCalledTimes(2)
+    }, { timeout: 5000 })
+
+const callsAfterTerminal = getRun.mock.calls.length
+    await new Promise((resolve) => setTimeout(resolve, 700))
+    expect(getRun).toHaveBeenCalledTimes(callsAfterTerminal)
+  })
 })

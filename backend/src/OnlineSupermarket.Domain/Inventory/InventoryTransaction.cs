@@ -64,7 +64,7 @@ public sealed class InventoryTransaction : Entity
         string? note,
         DateTime createdAtUtc)
     {
-        if (quantityOnHandAfter < 0 || reservedQuantityAfter < 0)
+if (quantityOnHandAfter < 0 || reservedQuantityAfter < 0)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(quantityOnHandAfter),
@@ -77,6 +77,7 @@ public sealed class InventoryTransaction : Entity
         }
 
         var trimmedKey = operationKey?.Trim();
+        ValidateLedgerEquation(transactionType, quantityOnHandDelta, reservedQuantityDelta, quantityOnHandAfter, reservedQuantityAfter);
         return new InventoryTransaction(
             branchInventoryId,
             transactionType,
@@ -90,5 +91,43 @@ public sealed class InventoryTransaction : Entity
             actorUserId,
             note?.Trim(),
             createdAtUtc);
+    }
+
+    private static void ValidateLedgerEquation(
+        InventoryTransactionType transactionType,
+        int quantityOnHandDelta,
+        int reservedQuantityDelta,
+        int quantityOnHandAfter,
+        int reservedQuantityAfter)
+    {
+        // The pre-transaction snapshot reconstructed with (after - delta) must never be negative.
+        if (quantityOnHandAfter - quantityOnHandDelta < 0
+            || reservedQuantityAfter - reservedQuantityDelta < 0)
+        {
+            throw new InvalidOperationException(
+                "Ledger equation violated: reconstructed pre-transaction snapshot is negative.");
+        }
+
+        switch (transactionType)
+        {
+            case InventoryTransactionType.Reserve:
+                if (quantityOnHandDelta != 0 || reservedQuantityDelta <= 0)
+                    throw new InvalidOperationException("Reserve must keep quantity on hand unchanged and increase reserved quantity.");
+                break;
+            case InventoryTransactionType.Release:
+                if (quantityOnHandDelta != 0 || reservedQuantityDelta >= 0)
+                    throw new InvalidOperationException("Release must keep quantity on hand unchanged and decrease reserved quantity.");
+                break;
+            case InventoryTransactionType.Sale:
+                if (quantityOnHandDelta >= 0 || reservedQuantityDelta >= 0 || quantityOnHandDelta != reservedQuantityDelta)
+                    throw new InvalidOperationException("Sale must decrease both balances by the same amount.");
+                break;
+            case InventoryTransactionType.ManualAdjustment:
+                if (reservedQuantityDelta != 0)
+                    throw new InvalidOperationException("Manual adjustment must not change reserved quantity.");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(transactionType));
+        }
     }
 }

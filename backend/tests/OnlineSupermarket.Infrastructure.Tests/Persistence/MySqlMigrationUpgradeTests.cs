@@ -220,7 +220,7 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
                 VALUES ('{branchId}', 'Test Branch', '123 Test St', '0901234567', 10.76, 106.66, 1);
 
                 INSERT INTO `background_job_runs` (`Id`, `JobName`, `LockKey`, `Status`, `CreatedAtUtc`, `LockToken`)
-                VALUES 
+                VALUES
                     ('{forecastRunId}', 'Forecast', 'branch:{branchId}', 'Queued', NOW(6), '{lockToken}'),
                     ('{recRunId}', 'Recommendations', 'global', 'Succeeded', NOW(6), NULL);
             ");
@@ -283,7 +283,7 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
 
             await using var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-                WHERE TABLE_SCHEMA = DATABASE() 
+                WHERE TABLE_SCHEMA = DATABASE()
                   AND TABLE_NAME = 'recommendation_results'
                   AND CONSTRAINT_TYPE = 'CHECK'
                   AND CONSTRAINT_NAME IN ('ck_recommendation_results_rank', 'ck_recommendation_results_score')
@@ -327,7 +327,7 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
 
             await using var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-                WHERE TABLE_SCHEMA = DATABASE() 
+                WHERE TABLE_SCHEMA = DATABASE()
                   AND TABLE_NAME = 'recommendation_results'
                   AND CONSTRAINT_TYPE = 'CHECK'
                   AND CONSTRAINT_NAME IN ('ck_recommendation_results_rank', 'ck_recommendation_results_score')
@@ -572,8 +572,8 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
             await conn.OpenAsync();
             await using var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-                WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_NAME = 'recommendation_results' 
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'recommendation_results'
                   AND CONSTRAINT_NAME = 'ck_recommendation_results_rank'
                   AND ENFORCED = 'YES';", conn);
 
@@ -620,8 +620,8 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
             await conn.OpenAsync();
             await using var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-                WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_NAME = 'recommendation_results' 
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'recommendation_results'
                   AND CONSTRAINT_NAME = 'ck_recommendation_results_score'
                   AND ENFORCED = 'YES';", conn);
 
@@ -994,8 +994,8 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
             // 8. Verify all 23 base tables exist
             await using (var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLES
-                WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_TYPE = 'BASE TABLE' 
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_TYPE = 'BASE TABLE'
                   AND TABLE_NAME <> '__EFMigrationsHistory';", conn))
             {
                 var tableCount = Convert.ToInt64(await cmd.ExecuteScalarAsync());
@@ -1004,9 +1004,9 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
 
             // 9. Verify RestoreRecommendationConstraints check constraints are enforced
             await using (var cmd = new MySqlCommand(@"
-                SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS 
-                WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_NAME = 'recommendation_results' 
+                SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'recommendation_results'
                   AND CONSTRAINT_TYPE = 'CHECK'
                   AND CONSTRAINT_NAME IN ('ck_recommendation_results_rank', 'ck_recommendation_results_score')
                   AND ENFORCED = 'YES';", conn))
@@ -1198,8 +1198,8 @@ public sealed class MySqlMigrationUpgradeTests(MySqlFixture fixture)
 
             await using var cmd = new MySqlCommand(@"
                 SELECT COUNT(*) FROM information_schema.TABLES
-                WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_TYPE = 'BASE TABLE' 
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_TYPE = 'BASE TABLE'
                   AND TABLE_NAME <> '__EFMigrationsHistory';", conn);
 
             var count = Convert.ToInt64(await cmd.ExecuteScalarAsync());

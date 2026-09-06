@@ -1491,8 +1491,3 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
         }
     }
 }
-
-
-
-
-

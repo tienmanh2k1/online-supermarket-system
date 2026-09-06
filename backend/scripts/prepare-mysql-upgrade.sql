@@ -28,7 +28,7 @@ proc_main: BEGIN
     -- 1. Kiểm tra bảng background_job_runs có tồn tại trong database hiện tại không
     SELECT COUNT(*) INTO v_table_exists
     FROM information_schema.TABLES
-    WHERE TABLE_SCHEMA = DATABASE() 
+    WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME = 'background_job_runs';
 
     IF v_table_exists = 0 THEN
@@ -258,7 +258,7 @@ proc_main: BEGIN
     END IF;
 
     IF v_old_idx > 0 THEN
-        SELECT 
+        SELECT
             COUNT(*),
             MAX(NON_UNIQUE),
             COUNT(SUB_PART),
@@ -275,10 +275,10 @@ proc_main: BEGIN
                 SET MESSAGE_TEXT = 'Index IX_background_job_runs_JobName_LockKey is invalid: must be UNIQUE on full columns (job_name, lock_key).';
         END IF;
 
-        ALTER TABLE `background_job_runs` 
+        ALTER TABLE `background_job_runs`
         RENAME INDEX `IX_background_job_runs_JobName_LockKey` TO `IX_background_job_runs_job_name_lock_key`;
     ELSEIF v_new_idx > 0 THEN
-        SELECT 
+        SELECT
             COUNT(*),
             MAX(NON_UNIQUE),
             COUNT(SUB_PART),

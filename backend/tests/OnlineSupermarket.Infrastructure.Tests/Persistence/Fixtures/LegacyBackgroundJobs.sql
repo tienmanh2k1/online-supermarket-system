@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS `background_job_runs` (
     CONSTRAINT `PK_background_job_runs` PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE UNIQUE INDEX `IX_background_job_runs_JobName_LockKey` 
+CREATE UNIQUE INDEX `IX_background_job_runs_JobName_LockKey`
     ON `background_job_runs` (`JobName`, `LockKey`);
 
 -- -----------------------------------------------------------------------------
 -- 2. Đăng ký migration lịch sử vào __EFMigrationsHistory
 -- -----------------------------------------------------------------------------
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`) 
+INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
 VALUES ('20260903170019_AddBackgroundJobRuns', '10.0.9')
 ON DUPLICATE KEY UPDATE `ProductVersion` = VALUES(`ProductVersion`);
