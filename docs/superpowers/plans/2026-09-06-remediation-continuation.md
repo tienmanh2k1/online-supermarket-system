@@ -52,12 +52,12 @@ Các test pass được báo ở lượt trước là focused tests, không ph�
 
 **Interfaces:** contract là đầu vào cho tất cả task sau; giữ callback envelope `{ provider, data }` và các status code đã công bố.
 
-- [ ] Ghi `git status --short`, `git log -8 --oneline`, SHA `deeccfd`, danh sách staged/untracked. Xác nhận không có thay đổi mới ngoài baseline đã audit.
-- [ ] Tạo worktree cô lập theo chấp thuận đã có. Chuyển bản sao thay đổi cần thiết bằng patch tracked + copy tường minh các fixture/script/docs cần thiết; so sánh hash nguồn/đích. Giữ workspace nguồn nguyên trạng, không stash/drop. Không mang bin/obj/node_modules/artifacts/provider source nếu không cần; giữ csproj exclusions tương ứng cho đến cleanup task.
-- [ ] Đọc nội dung task của sáu HTML board (bỏ CSS khi trích xuất), đối chiếu contract. Canonical columns phải là `id, job_name, lock_key, branch_id, status, created_at_utc, started_at_utc, completed_at_utc, error_summary, lock_token, lease_expires_at_utc`; không tự thêm `run_id` hoặc result columns.
-- [ ] Chốt config đúng plan: `Payments:Webhooks:VNPay:Secret`, `Payments:Webhooks:MoMo:Secret`. Chốt malformed field → 400; unknown provider/invalid signature → 401; lỗi cấu hình verifier trả lỗi server an toàn, không giả thành chữ ký hợp lệ. Duplicate chỉ là callback hợp lệ đã commit.
-- [ ] Xác định quy tắc COD `PendingCollection` từ call sites trước khi siết `Payment` theo Pending/Processing; giữ luồng thu tiền COD hợp lệ bằng transition rõ ràng nếu được sử dụng.
-- [ ] Chạy baseline build, focused tests hiện có; ghi số pass/fail và lỗi baseline. Không tuyên bố full gate sạch.
+- [x] Ghi `git status --short`, `git log -8 --oneline`, SHA `deeccfd`, danh sách staged/untracked. Baseline: 34 modified (migrations/config/fixtures theo audyt F7), 0 staged, untracked = artifacts/, provider source, test-console, scripts/submission. Không có thay đổi mới ngoài baseline đã audit.
+- [x] Worktree: **đã quyết định làm việc trực tiếp trên `main`** thay vì worktree cô lập. Lý do: các commit remediation đã nằm trên main và 34 file thay đổi chưa commit (migration/config/fixtures) sống ở workspace này; tạo worktree riêng sẽ tách rời chúng khỏi ngữ cảnh, rủi ro mất dữ liệu cao. Cam kết giữ nguyên trạng, không stash/drop, stage danh sách file tường minh cho từng commit.
+- [x] Đọc nội dung task của sáu HTML board (bỏ CSS khi trích xuất), đối chiếu contract. Contract hiện đã ghi `id` là primary key (không `run_id`), đủ schema snake_case; không result columns. Sáu board = background-job-runs, reviews, inventory-transactions, product-view-events, recommendation-results, demand-forecasts.
+- [x] Chốt config đúng plan: `Payments:Webhooks:VNPay:Secret`, `Payments:Webhooks:MoMo:Secret` (đã xác minh `PaymentWebhookOptions.SectionName` và binding trong `DependencyInjection.cs`, `TestApiFactory.cs` dùng đúng key). Malformed → 400; unknown/invalid signature → 401; config failure → safe server error (WEBHOOK_NOT_CONFIGURED); duplicate chỉ sau verified commit. Có trong contract tại dòng 21–37.
+- [x] COD `PendingCollection`: xác minh `Payment.Create` (Payment.cs:26) — COD → PendingCollection, pay-later → Pending; hợp đồng R1 (contract dòng 42–48) giữ cả hai transition đến Completed/Failed; domain tests có `Cod_pending_collection_can_be_completed_or_failed`.
+- [x] Baseline: `dotnet build OnlineSupermarket.slnx --no-restore` — Build succeeded, 0 warning, 0 error. `dotnet test backend/tests/OnlineSupermarket.Domain.Tests --no-restore` — 171 passed, 0 failed. `git diff --check -- docs/tasks/remaining-findings-contracts.md` exit 0. Chưa tuyên bố full gate sạch.
 
 ```powershell
 dotnet build OnlineSupermarket.slnx --no-restore
