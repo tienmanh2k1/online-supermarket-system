@@ -122,7 +122,7 @@ export function AdminForecastPage() {
     let attempts = 0
 
     async function tick() {
-      if (attempts >= 12) return
+      if (attempts >= 200) return
       attempts++
       await new Promise((resolve) => setTimeout(resolve, 600))
       if (signal.aborted) return
