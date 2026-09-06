@@ -69,12 +69,27 @@ public sealed class PaymentCallbackEndpointsTests
         object? body) =>
         factory.CreateClient().PostAsJsonAsync("/api/checkout/payment/callback", body);
 
-    [Fact]
+[Fact]
     public async Task Unknown_Provider_Returns401_AndDoesNotCallProcessor()
     {
         using var factory = new CallbackTestFactory();
 
-        var response = await PostCallbackAsync(factory, new { provider = "AMEX", data = new Dictionary<string, string> { ["vnp_TxnRef"] = OrderGuid.ToString() } });
+        var response = await PostCallbackAsync(factory, new { provider = "AMEX", data = new Dictionary<string, string>() });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal(0, factory.Processor.Calls);
+    }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("\"\"")]
+    public async Task Missing_Or_Empty_Provider_Returns401_Not500(string providerJson)
+    {
+        using var factory = new CallbackTestFactory();
+        var body = $"{{\"provider\":{providerJson},\"data\":{{\"vnp_TxnRef\":\"{OrderGuid}\"}}}}";
+        var content = new StringContent(body, System.Text.Encoding.UTF8, "application/json");
+
+        var response = await factory.CreateClient().PostAsync("/api/checkout/payment/callback", content);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Equal(0, factory.Processor.Calls);

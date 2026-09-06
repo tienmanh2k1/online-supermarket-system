@@ -306,7 +306,8 @@ public static class CheckoutEndpoints
         [FromServices] IPaymentCallbackProcessor processor,
         CancellationToken cancellationToken)
     {
-        var verifier = verifiers.FirstOrDefault(x => x.Provider.Equals(request.Provider, StringComparison.OrdinalIgnoreCase));
+        var callbackProvider = request.Provider ?? string.Empty;
+        var verifier = verifiers.FirstOrDefault(x => x.Provider.Equals(callbackProvider, StringComparison.OrdinalIgnoreCase));
         if (verifier is null) return Results.Unauthorized();
 
         if (request.Data is null || request.Data.Count == 0)
