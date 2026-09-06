@@ -71,6 +71,11 @@ public sealed class DemandForecast : Entity
             throw new ArgumentOutOfRangeException(nameof(actualDataDays), "Actual data days must be between 0 and 28.");
         }
 
+        if (!Enum.IsDefined(dataQuality))
+        {
+            throw new ArgumentOutOfRangeException(nameof(dataQuality));
+        }
+
         if (forecastStartDate > forecastEndDate)
         {
             throw new ArgumentException("Forecast start date cannot be after end date.", nameof(forecastStartDate));

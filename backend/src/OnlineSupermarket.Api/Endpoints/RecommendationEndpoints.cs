@@ -76,6 +76,12 @@ public static class RecommendationEndpoints
             return Results.NotFound(new { message = "Product not found." });
         }
 
+        if (request.BranchId.HasValue && !await dbContext.Branches.AnyAsync(
+                b => b.Id == request.BranchId.Value, cancellationToken))
+        {
+            return Results.NotFound(new { code = "BRANCH_NOT_FOUND" });
+        }
+
         var userId = TryGetUserId(httpContext.User);
         var view = userId.HasValue
             ? ProductViewEvent.Create(productId, userId, null, request.BranchId, DateTime.UtcNow)
