@@ -1,8 +1,14 @@
 namespace OnlineSupermarket.Infrastructure.Payments;
 
-public sealed class PaymentWebhookOptions
+public sealed class VnPayWebhookOptions
 {
-    public const string SectionName = "PaymentWebhooks";
-    public string VnPaySecret { get; set; } = string.Empty;
-    public string MoMoSecret { get; set; } = string.Empty;
+    public const string SectionName = "Payments:Webhooks:VNPay";
+    public string Secret { get; set; } = string.Empty;
+}
+
+public sealed class MoMoWebhookOptions
+{
+    public const string SectionName = "Payments:Webhooks:MoMo";
+    public string Secret { get; set; } = string.Empty;
+    public string AccessKey { get; set; } = string.Empty;
 }

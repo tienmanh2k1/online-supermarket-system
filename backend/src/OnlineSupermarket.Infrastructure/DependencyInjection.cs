@@ -39,8 +39,10 @@ public static class DependencyInjection
 
         services.Configure<Jobs.IntelligenceJobsOptions>(
             configuration.GetSection(Jobs.IntelligenceJobsOptions.SectionName));
-        services.Configure<PaymentWebhookOptions>(
-            configuration.GetSection(PaymentWebhookOptions.SectionName));
+        services.Configure<VnPayWebhookOptions>(
+            configuration.GetSection(VnPayWebhookOptions.SectionName));
+        services.Configure<MoMoWebhookOptions>(
+            configuration.GetSection(MoMoWebhookOptions.SectionName));
         services.AddScoped<IPaymentCallbackVerifier, VnPayCallbackVerifier>();
         services.AddScoped<IPaymentCallbackVerifier, MomoCallbackVerifier>();
         services.AddScoped<IPaymentCallbackProcessor, PaymentCallbackProcessor>();
