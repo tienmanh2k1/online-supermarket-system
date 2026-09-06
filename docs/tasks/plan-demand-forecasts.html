@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Demand Forecasts | AptechMart Task Board</title>
+  <title>Demand Forecasts + ML.NET | AptechMart Task Board</title>
   <style>
     :root{--navy:#083e61;--blue:#0b5c8e;--cyan:#28a8b8;--green:#2e7d5b;--orange:#c85f2d;--red:#a83f45;--ink:#14283a;--muted:#607287;--paper:#f4f8fb;--panel:#fff;--line:#c9d7e2;--display:Bahnschrift,"Arial Narrow","Segoe UI",sans-serif;--body:"Segoe UI Variable","Segoe UI",sans-serif;--mono:"Cascadia Code",Consolas,monospace}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.55 var(--body);background:linear-gradient(rgba(11,92,142,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(11,92,142,.045) 1px,transparent 1px),var(--paper);background-size:24px 24px}
@@ -18,9 +18,9 @@
 <body>
   <header class="hero" data-code="FCST">
     <p class="eyebrow">AptechMart / Engineering task board / FCST</p>
-    <h1>Demand Forecasts</h1>
-    <p class="lead">Moving average 7/14 ngày từ Sale ledger, materialize theo chi nhánh và cung cấp workspace Admin với manual rerun.</p>
-    <div class="meta"><span>7 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-inventory-forecast-alerts.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+    <h1>Demand Forecasts + ML.NET</h1>
+    <p class="lead">Ba deliverable để dự báo nhu cầu 7/14 ngày bằng SSA và refresh thủ công.</p>
+    <div class="meta"><span>3 task</span><span>BUILD → VERIFY → DEMO</span><a href="../superpowers/plans/2026-09-03-inventory-forecast-alerts.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Yêu cầu Background Job Runs và Inventory Transactions. Stock alerts là deferred, không tạo table/API/UI/test trong board này.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Cần completed-sales daily series từ Inventory/Orders. Không có schedule, job status hay stock alerts.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -38,148 +38,66 @@
     const BOARD={
   "slug": "demand-forecasts",
   "code": "FCST",
-  "title": "Demand Forecasts",
-  "intro": "Moving average 7/14 ngày từ Sale ledger, materialize theo chi nhánh và cung cấp workspace Admin với manual rerun.",
-  "dependency": "Yêu cầu Background Job Runs và Inventory Transactions. Stock alerts là deferred, không tạo table/API/UI/test trong board này.",
+  "title": "Demand Forecasts + ML.NET",
+  "intro": "Ba deliverable để dự báo nhu cầu 7/14 ngày bằng SSA và refresh thủ công.",
+  "dependency": "Cần completed-sales daily series từ Inventory/Orders. Không có schedule, job status hay stock alerts.",
   "planHref": "../superpowers/plans/2026-09-03-inventory-forecast-alerts.md",
   "tasks": [
     {
       "id": "FCST-01",
-      "phase": "CALCULATION",
-      "title": "Forecast domain và calculator",
-      "purpose": "Tính average trên tối đa 28 complete UTC days với quality Insufficient/Partial/Sufficient.",
+      "phase": "ML MODEL",
+      "title": "Daily series và SSA model",
+      "purpose": "Biến completed sales thành time series và dự báo bằng ForecastBySsa.",
       "steps": [
-        "Viết boundary tests horizon 7/14 và quality 0/6/7/13/14/28.",
-        "Test zero-sale calendar days và invalid horizon.",
-        "Tạo DemandForecast + ForecastDataQuality.",
-        "Cài deterministic calculator bằng decimal/DateOnly.",
-        "Chạy calculator tests rồi commit."
+        "Group branch/product/day và điền zero-sale days.",
+        "Train ForecastBySsa cho horizon 7/14.",
+        "Clamp âm về 0, tính MAE holdout khi đủ data.",
+        "Test deterministic series và InsufficientData."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~DemandForecastCalculator",
-      "commit": "feat(forecast): calculate demand forecasts",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~DemandForecastModel",
+      "commit": "feat(ai): train demand forecast model",
       "files": [
-        "backend/src/OnlineSupermarket.Domain/Intelligence/DemandForecast.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Intelligence/DemandForecastCalculator.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/DemandForecastCalculatorTests.cs"
+        "backend/src/OnlineSupermarket.Infrastructure/AI/DemandForecastModelService.cs",
+        "backend/src/OnlineSupermarket.Infrastructure/OnlineSupermarket.Infrastructure.csproj",
+        "backend/tests/OnlineSupermarket.Infrastructure.Tests/AI/DemandForecastModelServiceTests.cs"
       ]
     },
     {
       "id": "FCST-02",
-      "phase": "PERSISTENCE",
-      "title": "Schema demand_forecasts",
-      "purpose": "Lưu rows 7/14 theo job run, inventory và algorithm version.",
+      "phase": "DATA + API",
+      "title": "Forecast results và refresh API",
+      "purpose": "Ghi batch 7/14 atomically và trả result mới nhất.",
       "steps": [
-        "Viết metadata tests cho FK/check/index.",
-        "Thêm configuration + DbSet.",
-        "Generate migration AddDemandForecasts.",
-        "Inspect migration không chứa stock_alerts.",
-        "Chạy persistence tests rồi commit."
+        "Tạo entity/config/migration với batch_id.",
+        "Cài POST Admin refresh đồng bộ trả 200.",
+        "Cài GET với branch và strict horizon 7|14.",
+        "Test auth, validation, metric và insufficient data."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~DemandForecastConfiguration",
-      "commit": "feat(forecast): persist demand forecasts",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ForecastEndpoints",
+      "commit": "feat(ai): materialize demand forecasts",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/DemandForecastConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
+        "backend/src/OnlineSupermarket.Domain/Forecasts/DemandForecast.cs",
+        "backend/src/OnlineSupermarket.Api/Endpoints/ForecastEndpoints.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddDemandForecasts.cs"
       ]
     },
     {
       "id": "FCST-03",
-      "phase": "JOB",
-      "title": "Branch forecast handler",
-      "purpose": "Đọc Sale 28 ngày, ghi hai horizon atomically và giữ history cũ.",
+      "phase": "ADMIN UI",
+      "title": "Forecast view và demo",
+      "purpose": "Admin xem 7/14 ngày, last refresh, MAE và tự refresh model.",
       "steps": [
-        "Viết handler tests two rows/branch isolation/no history.",
-        "Test ignore Reserve/Release/ManualAdjustment.",
-        "Cài query/group/calculation batch.",
-        "Rollback cả batch khi write lỗi.",
-        "Chạy handler tests rồi commit."
+        "Tạo branch selector, horizon switch và table.",
+        "Nút Refresh disable trong request, show success/error.",
+        "Test loading, empty, InsufficientData và response mapping.",
+        "Demo completed sales→refresh→forecast."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~ForecastJobHandler",
-      "commit": "feat(forecast): materialize branch forecasts",
+      "command": "npm --prefix frontend test -- --run && npm --prefix frontend run build",
+      "commit": "feat(admin): show ai demand forecasts",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Intelligence/ForecastJobHandler.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/ForecastJobHandlerTests.cs"
-      ]
-    },
-    {
-      "id": "FCST-04",
-      "phase": "SCHEDULE",
-      "title": "Daily per-branch schedule",
-      "purpose": "Queue từng active branch với lock branch:{id}; các branch có thể chạy song song.",
-      "steps": [
-        "Viết due/not-due/already-success tests với TimeProvider.",
-        "Tạo ForecastRecurringSchedule.",
-        "Đăng ký handler + schedule.",
-        "Test manual và scheduled cùng lock.",
-        "Chạy worker tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~ForecastRecurringSchedule",
-      "commit": "feat(forecast): schedule branch runs",
-      "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Intelligence/ForecastRecurringSchedule.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs"
-      ]
-    },
-    {
-      "id": "FCST-05",
-      "phase": "ADMIN API",
-      "title": "Forecast query và manual rerun",
-      "purpose": "Strict 7|14, latest successful batch, 202 status URL và 409 active lock.",
-      "steps": [
-        "Viết 400/401/403/404/409 tests.",
-        "Tạo ForecastDto và query endpoint.",
-        "Tạo POST admin forecast runs.",
-        "Filter failed/running materialization.",
-        "Chạy API tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ForecastEndpoints",
-      "commit": "feat(forecast): expose admin forecast api",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Inventory/InventoryIntelligenceContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/InventoryIntelligenceEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Program.cs"
-      ]
-    },
-    {
-      "id": "FCST-06",
-      "phase": "FRONTEND",
-      "title": "Admin forecast workspace",
-      "purpose": "Branch selector, 7/14 controls, quality labels, status/history và manual refresh.",
-      "steps": [
-        "Viết API client tests.",
-        "Viết RTL route/loading/empty/error/409 tests.",
-        "Tạo AdminForecastPage + scoped CSS.",
-        "Map route/nav và bounded polling.",
-        "Chạy Vitest + build rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/admin/AdminForecastPage.test.tsx src/App.test.tsx && npm --prefix frontend run build",
-      "commit": "feat(frontend): add demand forecast workspace",
-      "files": [
-        "frontend/src/api/inventoryIntelligenceApi.ts",
-        "frontend/src/features/admin/AdminForecastPage.tsx",
-        "frontend/src/features/admin/AdminLayout.tsx",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "FCST-07",
-      "phase": "RELEASE GATE",
-      "title": "MySQL, E2E và performance",
-      "purpose": "Xác nhận schema active 23 bảng, forecast batch, flow Admin và target 100 branches.",
-      "steps": [
-        "Chạy MySQL migration/schema tests.",
-        "Assert chính xác 23 physical tables.",
-        "Chạy inventory→forecast Playwright flow.",
-        "Chạy 100-branch performance smoke dưới 5 phút.",
-        "Lưu evidence, rà diff và commit fixes đúng scope."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~MySql && node frontend/src/test/run-intelligence-gui-tests.mjs",
-      "commit": "test(forecast): verify materialized forecast release",
-      "files": [
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlSchemaTests.cs",
-        "frontend/src/test/run-intelligence-gui-tests.mjs",
-        "scripts/run-intelligence-performance-smoke.ps1"
+        "frontend/src/api/aiApi.ts",
+        "frontend/src/features/admin/AdminAiDashboardPage.tsx",
+        "frontend/src/features/admin/AdminAiDashboardPage.test.tsx"
       ]
     }
   ]

@@ -1,125 +1,68 @@
-# Reviews, Inventory Intelligence, and Recommendations Implementation Plan
+# Roadmap Reviews, Inventory và AI Intelligence (đơn giản hóa)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For implementers:** Thực hiện theo dependency bên dưới. Mỗi board chỉ còn 3 task đủ để giao cho một người.
 
-**Goal:** Điều phối việc triển khai end-to-end reviews, inventory ledger/forecast/alerts và recommendations trên nền job bền vững dùng chung.
+**Goal:** Hoàn thành 5 bảng active và hai pipeline ML.NET demo được end-to-end mà không cần background job infrastructure.
 
-**Architecture:** Phạm vi được chia thành bốn plan triển khai độc lập theo thứ tự phụ thuộc, sau đó một plan release hợp nhất E2E, performance smoke và tài liệu. Mỗi plan tạo phần mềm chạy được, có migration/test riêng; không tạo một migration khổng lồ hoặc một endpoint file chứa nhiều miền.
+**Architecture:** API refresh đồng bộ → train/predict ML.NET → ghi materialized batch → UI đọc batch mới nhất.
 
-**Tech Stack:** .NET 10, C# 14, ASP.NET Core Minimal API, EF Core 10.0.9, MySQL 8.4, xUnit 2.9.3, Testcontainers.MySql 4.14.0, React 19.2.8, TypeScript 5.9.3, Vitest 4.1.10, React Testing Library 16.3.2, Playwright 1.62.1.
+**Tech Stack:** .NET 8, EF Core/MySQL, ML.NET (`Microsoft.ML`, `Microsoft.ML.Recommender`, `Microsoft.ML.TimeSeries`), React/Vite, Vitest/RTL, Playwright.
 
-**Spec:** `docs/superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md`
+## Scope gate
 
-## Global Constraints
+- Baseline 17 bảng; thêm 5 bảng active; mục tiêu **22 bảng**.
+- Active: `reviews`, `inventory_transactions`, `product_view_events`, `recommendation_results`, `demand_forecasts`.
+- Deferred, không có task: `stock_alerts`, `background_job_runs`.
+- Không có worker, scheduler, channel, lease, lock hoặc polling.
 
-- Baseline schema là 17 bảng; phạm vi active của roadmap phải kết thúc ở đúng 23 bảng.
-- Sáu bảng active là `reviews`, `inventory_transactions`, `product_view_events`, `recommendation_results`, `demand_forecasts`, `background_job_runs`.
-- `stock_alerts` được giữ trong design ở trạng thái **Deferred — Requires Phase 2B forecast completion**; không có task, migration, API, UI hoặc test triển khai trong roadmap này. Khi capability này được kích hoạt sau, tổng schema mới tăng từ 23 lên 24 bảng.
-- Không tạo `roles`, `user_roles`, `promotion_usages` hoặc `user_product_affinities`.
-- Domain không phụ thuộc ASP.NET Core hoặc EF Core.
-- Mọi timestamp lưu UTC `datetime(6)`; `Guid` dùng convention `char(36)` hiện có.
-- Inventory mutation và ledger row phải commit/rollback cùng nhau ở isolation `Serializable`; khóa batch theo `BranchInventory.Id` tăng dần.
-- Forecast chỉ hỗ trợ horizon 7 và 14 ngày; recommendation là content-based, không dùng ML.NET hoặc dịch vụ AI ngoài.
-- Background job là safe-to-retry theo `jobRunId`, không tuyên bố exactly-once; inventory dùng `operation_key` để chống áp delta lặp.
-- API lỗi dùng Problem Details và các mã 400/401/403/404/409 đã duyệt.
-- Mỗi task theo RED -> GREEN -> REFACTOR -> COMMIT; chỉ stage file thuộc task.
+## Dependency map
 
----
-
-## Plan Set và thứ tự thực hiện
-
-### Phase 1: Shared job foundation
-
-Plan: `docs/superpowers/plans/2026-09-03-background-job-foundation.md`
-
-Deliverable: `background_job_runs`, durable coordinator, channel worker, lease/recovery, Admin run-history API và MySQL concurrency fixture.
-
-Gate:
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --no-restore
-dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --no-restore
-dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --no-restore
+```text
+Contracts
+  ├── Reviews (độc lập)
+  ├── Inventory Transactions ──> Demand Forecast ML
+  └── Product View Events ─────> Recommendation ML
+                    Forecast + Recommendation ──> AI Dashboard
+                                                   └── Release gate
 ```
 
-### Phase 2A: Verified reviews
+## Sáu task board active
 
-Plan: `docs/superpowers/plans/2026-09-03-verified-reviews.md`
+1. [Reviews](../../tasks/plan-reviews.html) — 3 task.
+2. [Inventory Transactions](../../tasks/plan-inventory-transactions.html) — 3 task.
+3. [Product View Events](../../tasks/plan-product-view-events.html) — 3 task.
+4. [Recommendation Results](../../tasks/plan-recommendation-results.html) — 3 task.
+5. [Demand Forecasts](../../tasks/plan-demand-forecasts.html) — 3 task.
+6. [AI Dashboard](../../tasks/plan-ai-dashboard.html) — 3 task.
 
-Consumes Phase 1 only for shared conventions. Deliverable: `reviews`, verified-purchase APIs, order eligibility DTOs và customer UI.
+Tổng cộng **18 task**. Board Background Job Runs đã được loại khỏi scope active.
 
-### Phase 2B: Inventory intelligence
+## Phân công gợi ý
 
-Plan: `docs/superpowers/plans/2026-09-03-inventory-forecast-alerts.md`
+| Người | Board chính | Handoff |
+|---|---|---|
+| Thành viên 2 | Product View Events + Recommendation Results | DTO source/result ổn định |
+| Thành viên 3 | Inventory Transactions + Demand Forecasts | daily-sales/result DTO ổn định |
+| Thành viên 4 | AI Dashboard + completed-order contract | mock theo contract trước, nối API sau |
+| Người còn lại | Reviews + release support | review/order-item DTO |
 
-Consumes Phase 1. Deliverable: immutable ledger, atomic reserve/release/sale/manual adjustment, `demand_forecasts`, forecast worker/API và Admin UI. `stock_alerts` là out-of-scope của Phase 2B hiện tại.
+Reviews, Inventory Transactions và Product View Events có thể bắt đầu song song. Hai board ML bắt đầu sau source-data contract tương ứng. Dashboard dựng bằng mock sau khi contract chốt, không cần chờ backend hoàn tất.
 
-### Phase 2C: Recommendations
+## Milestones
 
-Plan: `docs/superpowers/plans/2026-09-03-product-recommendations.md`
+### M1 — Data contracts và persistence
 
-Consumes Phase 1; may run in parallel with 2A after the shared migration is merged, but must not run concurrently with 2B if both branches edit `AppDbContext`, `DependencyInjection`, `Program`, `App`, or the EF snapshot. Deliverable: view capture/session merge, materialized recommendations, customer shelves và Admin diagnostics.
+Hoàn thành schema/domain/API capture cho Reviews, Inventory Transactions, Product View Events. Gate: migration hướng tới 22 bảng và có seed source data.
 
-### Phase 3: Release validation and documentation
+### M2 — Hai model ML.NET
 
-Plan: `docs/superpowers/plans/2026-09-03-intelligence-release-validation.md`
+Hoàn thành Matrix Factorization và SSA, synchronous refresh, materialized batches và model tests. Gate: sample dataset train/predict thành công; refresh API trả 200.
 
-Consumes all previous phases. Deliverable: deterministic demo seed, portable Playwright E2E, performance smoke output, 23-table assertion, OpenAPI regeneration và synchronized README/ERD/DFD/sitemap/requirements.
+### M3 — UI và demo
 
-## HTML Task Boards
+Hoàn thành product/order/home integrations và AI Dashboard. Gate: backend tests, frontend build và ba Playwright smoke flow pass.
 
-Các board dưới đây là checklist thực thi theo deliverable. Chúng lưu trạng thái cục bộ trong trình duyệt và liên kết ngược về plan/spec nguồn:
+## Deferred roadmap
 
-- `docs/tasks/plan-background-job-runs.html`
-- `docs/tasks/plan-reviews.html`
-- `docs/tasks/plan-inventory-transactions.html`
-- `docs/tasks/plan-product-view-events.html`
-- `docs/tasks/plan-recommendation-results.html`
-- `docs/tasks/plan-demand-forecasts.html`
-
-Không tạo board cho `stock_alerts` trong phạm vi active.
-
----
-
-## Integration order for shared files
-
-Apply changes to these collision-prone files in this order:
-
-1. `backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs`: JobRun -> Review -> Inventory -> Recommendation DbSets.
-2. `backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs`: job coordinator/worker -> inventory services/forecast handler -> recommendation handler.
-3. `backend/src/OnlineSupermarket.Api/Program.cs`: job status -> review -> inventory intelligence -> recommendation endpoint maps.
-4. `frontend/src/App.tsx`: forecast and recommendation admin routes after feature components exist.
-5. EF migrations: preserve timestamp order and regenerate snapshot after each capability migration.
-
-Do not hand-edit an already generated migration from another phase to combine schemas. Rebase on the latest migration, generate the next migration, inspect SQL/model snapshot, then run the MySQL migration test.
-
-## Final verification gate
-
-- [ ] Run all backend tests.
-
-```powershell
-dotnet test OnlineSupermarket.slnx --no-restore
-```
-
-- [ ] Run all frontend tests and production build.
-
-```powershell
-npm --prefix frontend test -- --run
-npm --prefix frontend run build
-```
-
-- [ ] Start the full stack and run Playwright flows.
-
-```powershell
-docker compose up -d --build
-node frontend/src/test/run-intelligence-gui-tests.mjs
-```
-
-- [ ] Verify generated schema and OpenAPI are synchronized.
-
-```powershell
-dotnet ef migrations script --idempotent --project backend/src/OnlineSupermarket.Infrastructure --startup-project backend/src/OnlineSupermarket.Api
-dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --no-restore --filter "FullyQualifiedName~MySqlSchema"
-```
-
-Expected: 23 physical tables, all tests pass, frontend build succeeds, E2E report contains three passing cross-capability flows.
+- `stock_alerts`: mở sau khi forecast ổn định.
+- `background_job_runs`: mở nếu có yêu cầu scheduled/async/multi-instance execution.

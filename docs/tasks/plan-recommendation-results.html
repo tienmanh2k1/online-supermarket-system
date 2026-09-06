@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Recommendation Results | AptechMart Task Board</title>
+  <title>Recommendation Results + ML.NET | AptechMart Task Board</title>
   <style>
     :root{--navy:#083e61;--blue:#0b5c8e;--cyan:#28a8b8;--green:#2e7d5b;--orange:#c85f2d;--red:#a83f45;--ink:#14283a;--muted:#607287;--paper:#f4f8fb;--panel:#fff;--line:#c9d7e2;--display:Bahnschrift,"Arial Narrow","Segoe UI",sans-serif;--body:"Segoe UI Variable","Segoe UI",sans-serif;--mono:"Cascadia Code",Consolas,monospace}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.55 var(--body);background:linear-gradient(rgba(11,92,142,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(11,92,142,.045) 1px,transparent 1px),var(--paper);background-size:24px 24px}
@@ -18,9 +18,9 @@
 <body>
   <header class="hero" data-code="REC">
     <p class="eyebrow">AptechMart / Engineering task board / REC</p>
-    <h1>Recommendation Results</h1>
-    <p class="lead">Materialize Global, User và SimilarProduct rankings; API tự fallback và customer/admin UI chỉ đọc batch thành công mới nhất.</p>
-    <div class="meta"><span>9 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-product-recommendations.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+    <h1>Recommendation Results + ML.NET</h1>
+    <p class="lead">Ba deliverable để train Matrix Factorization, materialize kết quả và hiển thị gợi ý.</p>
+    <div class="meta"><span>3 task</span><span>BUILD → VERIFY → DEMO</span><a href="../superpowers/plans/2026-09-03-product-recommendations.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Yêu cầu Background Job Runs và Product View Events. Job lock là global; kết quả history theo jobRunId và có expiresAtUtc.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Cần Product View Events và completed-order DTO. Không phụ thuộc background_job_runs; refresh trả 200 đồng bộ.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -38,194 +38,66 @@
     const BOARD={
   "slug": "recommendation-results",
   "code": "REC",
-  "title": "Recommendation Results",
-  "intro": "Materialize Global, User và SimilarProduct rankings; API tự fallback và customer/admin UI chỉ đọc batch thành công mới nhất.",
-  "dependency": "Yêu cầu Background Job Runs và Product View Events. Job lock là global; kết quả history theo jobRunId và có expiresAtUtc.",
+  "title": "Recommendation Results + ML.NET",
+  "intro": "Ba deliverable để train Matrix Factorization, materialize kết quả và hiển thị gợi ý.",
+  "dependency": "Cần Product View Events và completed-order DTO. Không phụ thuộc background_job_runs; refresh trả 200 đồng bộ.",
   "planHref": "../superpowers/plans/2026-09-03-product-recommendations.md",
   "tasks": [
     {
       "id": "REC-01",
-      "status": "done",
-      "phase": "DOMAIN",
-      "title": "Recommendation result model",
-      "purpose": "Khóa scope, audience_key, rank, score, expiry và source product semantics.",
+      "phase": "ML MODEL",
+      "title": "Training data và Matrix Factorization",
+      "purpose": "Học gợi ý cá nhân từ views và completed purchases.",
       "steps": [
-        "Viết tests cho ba scope và audience key.",
-        "Test invalid rank/score/expiry.",
-        "Tạo RecommendationResult + enum.",
-        "Giữ constructor EF private.",
-        "Chạy domain tests rồi commit."
+        "Tổng hợp view=1, purchase=5 theo user/product.",
+        "Train MatrixFactorizationTrainer và score unseen products.",
+        "Tính RMSE holdout khi đủ dữ liệu.",
+        "Test finite scores, exclude seen và insufficient-data fallback."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~RecommendationResult",
-      "commit": "feat(recommendations): add result domain",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~RecommendationModel",
+      "commit": "feat(ai): train recommendation model",
       "files": [
-        "backend/src/OnlineSupermarket.Domain/Recommendations/RecommendationResult.cs",
-        "backend/src/OnlineSupermarket.Domain/Recommendations/RecommendationScope.cs"
+        "backend/src/OnlineSupermarket.Infrastructure/AI/RecommendationModelService.cs",
+        "backend/src/OnlineSupermarket.Infrastructure/OnlineSupermarket.Infrastructure.csproj",
+        "backend/tests/OnlineSupermarket.Infrastructure.Tests/AI/RecommendationModelServiceTests.cs"
       ]
     },
     {
       "id": "REC-02",
-      "status": "done",
-      "phase": "PERSISTENCE",
-      "title": "Schema recommendation_results",
-      "purpose": "Tạo unique batch/audience/product và indexes latest materialization.",
+      "phase": "DATA + API",
+      "title": "Materialized results và refresh API",
+      "purpose": "Ghi batch atomically, trả 200 summary và phục vụ fallback read API.",
       "steps": [
-        "Viết metadata tests.",
-        "Thêm configuration + DbSet.",
-        "Generate migration AddRecommendationResults.",
-        "Inspect audience_key non-null.",
-        "Chạy persistence tests rồi commit."
+        "Tạo entity/config/migration với batch_id.",
+        "Cài Admin refresh đồng bộ và transaction batch.",
+        "Cài Personal→Global, Similar→Global read paths.",
+        "Test auth, 200 summary, expiry, availability và empty data."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~RecommendationResultConfiguration",
-      "commit": "feat(recommendations): persist materialized results",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~RecommendationEndpoints",
+      "commit": "feat(ai): materialize recommendation results",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/RecommendationResultConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
+        "backend/src/OnlineSupermarket.Domain/Recommendations/RecommendationResult.cs",
+        "backend/src/OnlineSupermarket.Api/Endpoints/RecommendationEndpoints.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddRecommendationResults.cs"
       ]
     },
     {
       "id": "REC-03",
-      "status": "done",
-      "phase": "RANKING",
-      "title": "Deterministic scoring engine",
-      "purpose": "Tính Global/User/Similar theo views, completed sales, category, brand và recency.",
+      "phase": "CUSTOMER UI",
+      "title": "Homepage/PDP recommendations và demo",
+      "purpose": "Hiển thị personalized hoặc Global fallback mà không làm hỏng trang chính.",
       "steps": [
-        "Viết exact-score/rank tests với fixed clock.",
-        "Test source exclusion, inactive exclusion và daily view cap.",
-        "Cài RecommendationScorer thuần.",
-        "Tie-break bằng productId deterministic.",
-        "Chạy scorer tests rồi commit."
+        "Thêm section ở Homepage và Product detail.",
+        "Hiển thị đúng sourceScope, loading/empty/error.",
+        "Chạy Vitest/RTL và production build.",
+        "Demo anonymous view→merge→refresh→personalized."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~RecommendationScorer",
-      "commit": "feat(recommendations): rank content signals",
+      "command": "npm --prefix frontend test -- --run && npm --prefix frontend run build",
+      "commit": "feat(frontend): show ai recommendations",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Recommendations/RecommendationScorer.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Recommendations/RecommendationScorerTests.cs"
-      ]
-    },
-    {
-      "id": "REC-04",
-      "status": "done",
-      "phase": "JOB",
-      "title": "Materialization handler và schedule",
-      "purpose": "Ghi toàn bộ scopes trong transaction theo jobRunId và chạy hourly global lock.",
-      "steps": [
-        "Viết handler tests batch/rollback/rerun.",
-        "Query raw signals theo window cấu hình.",
-        "Materialize ranks và expiry atomically.",
-        "Đăng ký handler + recurring schedule.",
-        "Chạy worker tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~RecommendationJobHandler",
-      "commit": "feat(recommendations): materialize scheduled results",
-      "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Recommendations/RecommendationJobHandler.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Recommendations/RecommendationRecurringSchedule.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs"
-      ]
-    },
-    {
-      "id": "REC-05",
-      "status": "done",
-      "phase": "CUSTOMER API",
-      "title": "Read API và fallback",
-      "purpose": "Homepage User→Global; product Similar→Global; luôn 200 + sourceScope hoặc empty.",
-      "steps": [
-        "Viết fallback/expiry/branch availability tests.",
-        "Tạo recommendation response contracts.",
-        "Cài GET /api/recommendations.",
-        "Cài GET product similar recommendations.",
-        "Chạy API tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~RecommendationRead",
-      "commit": "feat(recommendations): expose fallback queries",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Recommendation/RecommendationContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/RecommendationEndpoints.cs"
-      ]
-    },
-    {
-      "id": "REC-06",
-      "status": "done",
-      "phase": "ADMIN API",
-      "title": "Manual run và sample output",
-      "purpose": "Admin trigger 202/409, xem status/history và latest successful sample.",
-      "steps": [
-        "Viết 401/403/202/409 tests.",
-        "Cài global lock trigger.",
-        "Cài results scope/limit filters.",
-        "Không trả rows expired/failed batch.",
-        "Chạy API tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~AdminRecommendation",
-      "commit": "feat(recommendations): expose admin diagnostics",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/RecommendationEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/RecommendationEndpointsTests.cs"
-      ]
-    },
-    {
-      "id": "REC-07",
-      "status": "done",
-      "phase": "HOMEPAGE",
-      "title": "Sản phẩm gợi ý cho bạn",
-      "purpose": "Shelf trên homepage không che catalog khi empty/error.",
-      "steps": [
-        "Viết typed client tests.",
-        "Viết RTL loading/empty/error/sourceScope tests.",
-        "Tạo RecommendationShelf reusable.",
-        "Mount trên ProductBrowsePage.",
-        "Chạy Vitest + build rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/recommendations/RecommendationShelf.test.tsx",
-      "commit": "feat(frontend): add homepage recommendations",
-      "files": [
-        "frontend/src/api/recommendationApi.ts",
-        "frontend/src/features/recommendations/RecommendationShelf.tsx",
-        "frontend/src/features/products/ProductBrowsePage.tsx"
-      ]
-    },
-    {
-      "id": "REC-08",
-      "status": "done",
-      "phase": "PRODUCT UI",
-      "title": "Có thể bạn cũng thích",
-      "purpose": "Render SimilarProduct fallback shelf theo product + branch hiện tại.",
-      "steps": [
-        "Viết product shelf tests.",
-        "Reuse RecommendationShelf với sourceProductId.",
-        "Reset query khi route product đổi.",
-        "Giữ product content khi API lỗi.",
-        "Chạy frontend tests rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/products/ProductDetailPage.test.tsx",
-      "commit": "feat(frontend): add similar products shelf",
-      "files": [
-        "frontend/src/features/recommendations/RecommendationShelf.tsx",
-        "frontend/src/features/products/ProductDetailPage.tsx"
-      ]
-    },
-    {
-      "id": "REC-09",
-      "status": "done",
-      "phase": "ADMIN + E2E",
-      "title": "Admin recommendations workspace",
-      "purpose": "Xem last run/sample, trigger manual và xác minh anonymous→login→personalized.",
-      "steps": [
-        "Viết route/page/manual refresh tests.",
-        "Tạo AdminRecommendationsPage + nav.",
-        "Poll bounded status URL sau 202.",
-        "Chạy Vitest + build.",
-        "Chạy personalized Playwright flow rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/admin/AdminRecommendationsPage.test.tsx src/App.test.tsx && npm --prefix frontend run build",
-      "commit": "feat(frontend): add recommendation diagnostics",
-      "files": [
-        "frontend/src/features/admin/AdminRecommendationsPage.tsx",
-        "frontend/src/features/admin/AdminLayout.tsx",
-        "frontend/src/App.tsx",
-        "frontend/src/test/run-intelligence-gui-tests.mjs"
+        "frontend/src/api/recommendationsApi.ts",
+        "frontend/src/features/home/*Recommendation*",
+        "frontend/src/features/products/*Recommendation*"
       ]
     }
   ]

@@ -19,8 +19,8 @@
   <header class="hero" data-code="REV">
     <p class="eyebrow">AptechMart / Engineering task board / REV</p>
     <h1>Verified Reviews</h1>
-    <p class="lead">Đánh giá 1–5 sao gắn đúng OrderItem đã hoàn tất, hiển thị ở product detail và bắt đầu từ order detail.</p>
-    <div class="meta"><span>7 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-verified-reviews.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+    <p class="lead">Ba deliverable end-to-end để khách review đúng OrderItem đã hoàn tất.</p>
+    <div class="meta"><span>3 task</span><span>BUILD → VERIFY → DEMO</span><a href="../superpowers/plans/2026-09-03-verified-reviews.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Có thể triển khai sau conventions chung. Không phụ thuộc forecast/recommendations; giữ unique order_item_id làm hàng rào race cuối.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Độc lập với inventory và AI. Unique order_item_id là data-integrity gate.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -39,148 +39,65 @@
   "slug": "reviews",
   "code": "REV",
   "title": "Verified Reviews",
-  "intro": "Đánh giá 1–5 sao gắn đúng OrderItem đã hoàn tất, hiển thị ở product detail và bắt đầu từ order detail.",
-  "dependency": "Có thể triển khai sau conventions chung. Không phụ thuộc forecast/recommendations; giữ unique order_item_id làm hàng rào race cuối.",
+  "intro": "Ba deliverable end-to-end để khách review đúng OrderItem đã hoàn tất.",
+  "dependency": "Độc lập với inventory và AI. Unique order_item_id là data-integrity gate.",
   "planHref": "../superpowers/plans/2026-09-03-verified-reviews.md",
   "tasks": [
     {
       "id": "REV-01",
-      "phase": "DOMAIN",
-      "title": "Review invariants",
-      "purpose": "Chuẩn hóa rating, comment và timestamps trong domain.",
+      "phase": "DATA",
+      "title": "Domain và migration reviews",
+      "purpose": "Tạo entity, validation, FK và unique OrderItem.",
       "steps": [
-        "Viết failing tests rating 0/6 và comment quá 2.000 ký tự.",
-        "Test trim/null comment và Update.",
-        "Tạo Review.Create và Review.Update tối thiểu.",
-        "Chạy domain tests.",
-        "Commit entity và tests."
+        "Viết Review domain tests trước.",
+        "Tạo entity/config/DbSet và migration.",
+        "Inspect FK Restrict, unique order_item_id, indexes.",
+        "Chạy focused domain/persistence tests."
       ],
       "command": "dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~ReviewTests",
-      "commit": "feat(reviews): add review domain model",
+      "commit": "feat(reviews): add review data model",
       "files": [
         "backend/src/OnlineSupermarket.Domain/Reviews/Review.cs",
-        "backend/tests/OnlineSupermarket.Domain.Tests/Reviews/ReviewTests.cs"
-      ]
-    },
-    {
-      "id": "REV-02",
-      "phase": "PERSISTENCE",
-      "title": "Schema reviews và unique OrderItem",
-      "purpose": "Tạo FK Restrict, unique order_item_id và query indexes.",
-      "steps": [
-        "Viết metadata test cho table/FK/index.",
-        "Thêm ReviewConfiguration và DbSet.",
-        "Generate migration AddReviews.",
-        "Inspect SQL/model snapshot.",
-        "Chạy persistence tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~Review_HasUnique",
-      "commit": "feat(reviews): persist verified reviews",
-      "files": [
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/ReviewConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddReviews.cs"
       ]
     },
     {
+      "id": "REV-02",
+      "phase": "API",
+      "title": "Verified review API",
+      "purpose": "Xác minh JWT → OrderItem → owned Completed Order và trả eligibility.",
+      "steps": [
+        "Chốt request/response contracts.",
+        "Cài POST, PUT, list và eligibility.",
+        "Bổ sung canReview/reviewId vào order detail.",
+        "Test auth, ownership, duplicate 409 và pagination."
+      ],
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ReviewEndpointsTests",
+      "commit": "feat(reviews): expose verified review api",
+      "files": [
+        "backend/src/OnlineSupermarket.Api/Endpoints/ReviewEndpoints.cs",
+        "backend/src/OnlineSupermarket.Api/Contracts/Reviews/ReviewContracts.cs",
+        "backend/tests/OnlineSupermarket.Api.Tests/Reviews/ReviewEndpointsTests.cs"
+      ]
+    },
+    {
       "id": "REV-03",
-      "phase": "API WRITE",
-      "title": "Create và update review",
-      "purpose": "Suy ra user/product từ JWT + OrderItem và chặn duplicate/wrong owner/non-completed.",
+      "phase": "UI + TEST",
+      "title": "Product/Order UI và regression",
+      "purpose": "Hoàn thiện luồng viết, sửa và xem review.",
       "steps": [
-        "Viết API tests cho 401/403/404/409 và happy path.",
-        "Tạo request/response contracts.",
-        "Cài POST /api/reviews và PUT /api/reviews/{id}.",
-        "Map DbUpdate unique violation sang 409.",
-        "Chạy API tests rồi commit."
+        "Thêm reviews/form ở Product detail.",
+        "Thêm CTA viết/sửa ở Order detail.",
+        "Test loading, empty, validation và errors.",
+        "Chạy frontend build và completed-order smoke flow."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ReviewEndpoints",
-      "commit": "feat(reviews): add verified review commands",
+      "command": "npm --prefix frontend test -- --run && npm --prefix frontend run build",
+      "commit": "feat(frontend): add verified review flow",
       "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Review/ReviewContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/ReviewEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Program.cs"
-      ]
-    },
-    {
-      "id": "REV-04",
-      "phase": "API READ",
-      "title": "Product reviews và eligibility",
-      "purpose": "Trả aggregate/list phân trang và order item đủ điều kiện gần nhất.",
-      "steps": [
-        "Viết tests aggregate, sorting, pagination và anonymous read.",
-        "Viết eligibility tests cho eligible/edit/none.",
-        "Cài GET product reviews.",
-        "Cài GET review-eligibility từ current JWT.",
-        "Chạy focused tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ReviewEligibility",
-      "commit": "feat(reviews): expose review queries",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/ReviewEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/ReviewEndpointsTests.cs"
-      ]
-    },
-    {
-      "id": "REV-05",
-      "phase": "ORDER CONTRACT",
-      "title": "Order detail canReview/reviewId",
-      "purpose": "Enrich từng order item để frontend không tự suy luận business rule.",
-      "steps": [
-        "Viết order-detail contract test completed/reviewed/non-completed.",
-        "Thêm OrderItemId, CanReview, ReviewId vào DTO.",
-        "Batch-query reviews tránh N+1.",
-        "Giữ authorization owner hiện tại.",
-        "Chạy order tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~OrderDetail",
-      "commit": "feat(reviews): expose order review eligibility",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Order/OrderContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/OrderEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/OrderEndpointsTests.cs"
-      ]
-    },
-    {
-      "id": "REV-06",
-      "phase": "PRODUCT UI",
-      "title": "Product review list và form",
-      "purpose": "Hiển thị aggregate/list và đúng trạng thái login/eligible/edit/conflict.",
-      "steps": [
-        "Viết reviewApi contract tests.",
-        "Viết RTL tests cho loading/empty/create/edit/error.",
-        "Tạo ProductReviews và ReviewForm.",
-        "Mount vào ProductDetailPage.",
-        "Chạy Vitest + build rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/api/reviewApi.test.ts src/features/reviews/ProductReviews.test.tsx",
-      "commit": "feat(frontend): add product reviews",
-      "files": [
-        "frontend/src/api/reviewApi.ts",
-        "frontend/src/features/reviews/ProductReviews.tsx",
-        "frontend/src/features/reviews/ReviewForm.tsx",
-        "frontend/src/features/products/ProductDetailPage.tsx"
-      ]
-    },
-    {
-      "id": "REV-07",
-      "phase": "ORDER UI + E2E",
-      "title": "Order review action",
-      "purpose": "Đưa khách từ completed order item đến đúng product/review state.",
-      "steps": [
-        "Cập nhật orderApi types.",
-        "Viết RTL tests cho Viết đánh giá/Sửa đánh giá/ẩn action.",
-        "Implement deep-link/focus review section.",
-        "Chạy frontend suite và production build.",
-        "Chạy completed-order → review E2E rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/orders/OrderDetailPage.test.tsx && npm --prefix frontend run build",
-      "commit": "feat(frontend): link completed orders to reviews",
-      "files": [
-        "frontend/src/api/orderApi.ts",
-        "frontend/src/features/orders/OrderDetailPage.tsx",
-        "frontend/src/features/orders/OrderDetailPage.test.tsx",
-        "frontend/src/test/run-intelligence-gui-tests.mjs"
+        "frontend/src/features/products/*Review*",
+        "frontend/src/features/orders/*OrderDetail*",
+        "frontend/src/**/*.test.tsx"
       ]
     }
   ]

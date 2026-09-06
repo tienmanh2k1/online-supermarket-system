@@ -19,8 +19,8 @@
   <header class="hero" data-code="VIEW">
     <p class="eyebrow">AptechMart / Engineering task board / VIEW</p>
     <h1>Product View Events</h1>
-    <p class="lead">Ghi nhận lượt xem riêng tư cho khách và người dùng đăng nhập, sau đó merge session an toàn khi authentication hoàn tất.</p>
-    <div class="meta"><span>7 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-product-recommendations.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+    <p class="lead">Ba deliverable privacy-friendly để cung cấp training data cho recommendation AI.</p>
+    <div class="meta"><span>3 task</span><span>BUILD → VERIFY → DEMO</span><a href="../superpowers/plans/2026-09-03-product-recommendations.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Triển khai schema/capture trước Recommendation Results. Không lưu IP hoặc user-agent; anonymousSessionId là GUID do frontend giữ trong localStorage.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Độc lập với inventory. REC-01 chỉ bắt đầu sau khi event/order DTO contract ổn định.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -39,145 +39,65 @@
   "slug": "product-view-events",
   "code": "VIEW",
   "title": "Product View Events",
-  "intro": "Ghi nhận lượt xem riêng tư cho khách và người dùng đăng nhập, sau đó merge session an toàn khi authentication hoàn tất.",
-  "dependency": "Triển khai schema/capture trước Recommendation Results. Không lưu IP hoặc user-agent; anonymousSessionId là GUID do frontend giữ trong localStorage.",
+  "intro": "Ba deliverable privacy-friendly để cung cấp training data cho recommendation AI.",
+  "dependency": "Độc lập với inventory. REC-01 chỉ bắt đầu sau khi event/order DTO contract ổn định.",
   "planHref": "../superpowers/plans/2026-09-03-product-recommendations.md",
   "tasks": [
     {
       "id": "VIEW-01",
-      "phase": "DOMAIN",
-      "title": "View event model",
-      "purpose": "Định nghĩa ownership nullable, product, session và occurred timestamp.",
+      "phase": "DATA",
+      "title": "Event schema",
+      "purpose": "Lưu product, user hoặc anonymous session và thời điểm xem.",
       "steps": [
-        "Viết domain tests cho user/anonymous ownership.",
-        "Test invalid empty identity và GUID.",
-        "Tạo ProductViewEvent factories.",
-        "Giữ entity không chứa IP/user-agent.",
-        "Chạy domain tests rồi commit."
+        "Viết metadata/validation tests.",
+        "Tạo entity/config/DbSet.",
+        "Generate/inspect migration và indexes.",
+        "Xác nhận không lưu IP/user-agent."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~ProductViewEvent",
-      "commit": "feat(views): add product view event domain",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~ProductViewEvent",
+      "commit": "feat(recommendations): add product view events",
       "files": [
         "backend/src/OnlineSupermarket.Domain/Recommendations/ProductViewEvent.cs",
-        "backend/tests/OnlineSupermarket.Domain.Tests/Recommendations/ProductViewEventTests.cs"
-      ]
-    },
-    {
-      "id": "VIEW-02",
-      "phase": "PERSISTENCE",
-      "title": "Schema product_view_events",
-      "purpose": "Ánh xạ user nullable, anonymous GUID và indexes phục vụ merge/scoring.",
-      "steps": [
-        "Viết metadata tests cho FK và indexes.",
-        "Thêm configuration + DbSet.",
-        "Generate migration AddProductViewEvents.",
-        "Inspect migration không có IP/user-agent.",
-        "Chạy persistence tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ProductViewEventConfiguration",
-      "commit": "feat(views): persist product view events",
-      "files": [
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/ProductViewEventConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddProductViewEvents.cs"
       ]
     },
     {
+      "id": "VIEW-02",
+      "phase": "API",
+      "title": "Capture và merge API",
+      "purpose": "Ghi view cho guest/user và claim anonymous rows sau login.",
+      "steps": [
+        "Tạo capture contract/endpoint.",
+        "Tạo authenticated session merge endpoint.",
+        "Giữ events, chỉ claim rows chưa có owner.",
+        "Test GUID, auth, missing product và idempotent merge."
+      ],
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ProductView",
+      "commit": "feat(recommendations): capture and merge views",
+      "files": [
+        "backend/src/OnlineSupermarket.Api/Endpoints/ProductViewEndpoints.cs",
+        "backend/src/OnlineSupermarket.Api/Contracts/Recommendations/*",
+        "backend/tests/OnlineSupermarket.Api.Tests/Recommendations/*View*Tests.cs"
+      ]
+    },
+    {
       "id": "VIEW-03",
-      "phase": "CAPTURE API",
-      "title": "Public product-view endpoint",
-      "purpose": "Nhận product + anonymous GUID, ưu tiên JWT owner khi có authentication.",
-      "steps": [
-        "Viết tests guest/user/invalid GUID/missing product.",
-        "Tạo capture request contract.",
-        "Cài POST /api/products/{id}/view-events.",
-        "Không nhận userId từ body.",
-        "Chạy API tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ProductViewEventEndpoints",
-      "commit": "feat(views): capture product views",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Recommendation/ProductViewContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/RecommendationEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Program.cs"
-      ]
-    },
-    {
-      "id": "VIEW-04",
-      "phase": "MERGE STORE",
-      "title": "Atomic anonymous-session merge",
-      "purpose": "Chỉ claim rows chưa có owner và giữ toàn bộ event để scoring dùng recency.",
-      "steps": [
-        "Viết store tests owned rows không bị đổi.",
-        "Cài ExecuteUpdate với user_id IS NULL predicate.",
-        "Trả mergedCount deterministic.",
-        "Test gọi merge lặp lại trả 0.",
-        "Chạy MySQL store tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~ProductViewEventStore",
-      "commit": "feat(views): merge anonymous session events",
-      "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Recommendations/ProductViewEventStore.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Recommendations/ProductViewEventStoreTests.cs"
-      ]
-    },
-    {
-      "id": "VIEW-05",
-      "phase": "MERGE API",
-      "title": "Authenticated merge contract",
-      "purpose": "Gán anonymous history cho JWT user mà không cần bảng mapping.",
-      "steps": [
-        "Viết 401/invalid GUID/repeated merge tests.",
-        "Tạo POST /api/recommendations/session/merge.",
-        "Map store result sang mergedCount.",
-        "Bảo đảm body không nhận userId.",
-        "Chạy endpoint tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~SessionMerge",
-      "commit": "feat(views): expose session merge api",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/RecommendationEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/RecommendationEndpointsTests.cs"
-      ]
-    },
-    {
-      "id": "VIEW-06",
       "phase": "FRONTEND",
-      "title": "Anonymous identity và login merge",
-      "purpose": "Tạo GUID một lần và merge đúng một lần sau login/session restoration.",
+      "title": "PDP tracking và login merge",
+      "purpose": "Tạo anonymous GUID, gửi view ổn định và merge best-effort.",
       "steps": [
-        "Viết tests helper stable GUID.",
-        "Viết AuthContext merge-once tests.",
-        "Tạo recommendationSession helper.",
-        "Gọi merge sau token restoration.",
-        "Chạy Vitest rồi commit."
+        "Tạo localStorage session helper.",
+        "Track một lần mỗi product/page session.",
+        "Gọi merge sau login không chặn navigation.",
+        "Test guest/user/re-render paths."
       ],
-      "command": "npm --prefix frontend test -- --run src/features/recommendations/recommendationSession.test.ts src/features/auth/AuthContext.test.tsx",
-      "commit": "feat(frontend): merge anonymous view session",
+      "command": "npm --prefix frontend test -- --run",
+      "commit": "feat(frontend): track product views",
       "files": [
-        "frontend/src/features/recommendations/recommendationSession.ts",
-        "frontend/src/features/recommendations/recommendationSession.test.ts",
-        "frontend/src/features/auth/AuthContext.tsx"
-      ]
-    },
-    {
-      "id": "VIEW-07",
-      "phase": "PDP + GATE",
-      "title": "Fire-once view capture",
-      "purpose": "Product detail gửi một event mỗi mounted product route và không chặn nội dung khi lỗi.",
-      "steps": [
-        "Viết API client tests.",
-        "Viết ProductDetail route-change/fire-once tests.",
-        "Cài non-blocking capture effect.",
-        "Test guest và authenticated payload.",
-        "Chạy frontend build + MySQL merge race gate rồi commit."
-      ],
-      "command": "npm --prefix frontend test -- --run src/api/recommendationApi.test.ts src/features/products/ProductDetailPage.test.tsx && npm --prefix frontend run build",
-      "commit": "feat(frontend): record product detail views",
-      "files": [
-        "frontend/src/api/recommendationApi.ts",
-        "frontend/src/features/products/ProductDetailPage.tsx",
-        "frontend/src/features/products/ProductDetailPage.test.tsx"
+        "frontend/src/api/recommendationsApi.ts",
+        "frontend/src/features/products/*ProductDetail*",
+        "frontend/src/features/auth/*"
       ]
     }
   ]

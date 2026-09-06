@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Background Job Runs | AptechMart Task Board</title>
+  <title>AI Dashboard & Integration | AptechMart Task Board</title>
   <style>
     :root{--navy:#083e61;--blue:#0b5c8e;--cyan:#28a8b8;--green:#2e7d5b;--orange:#c85f2d;--red:#a83f45;--ink:#14283a;--muted:#607287;--paper:#f4f8fb;--panel:#fff;--line:#c9d7e2;--display:Bahnschrift,"Arial Narrow","Segoe UI",sans-serif;--body:"Segoe UI Variable","Segoe UI",sans-serif;--mono:"Cascadia Code",Consolas,monospace}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.55 var(--body);background:linear-gradient(rgba(11,92,142,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(11,92,142,.045) 1px,transparent 1px),var(--paper);background-size:24px 24px}
@@ -16,11 +16,11 @@
   </style>
 </head>
 <body>
-  <header class="hero" data-code="JOB">
-    <p class="eyebrow">AptechMart / Engineering task board / JOB</p>
-    <h1>Background Job Runs</h1>
-    <p class="lead">Nền chạy job bền vững cho forecast và recommendations: audit, queue, lease, recovery, manual trigger và quan sát trạng thái.</p>
-    <div class="meta"><span>7 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-background-job-foundation.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+  <header class="hero" data-code="AI">
+    <p class="eyebrow">AptechMart / Engineering task board / AI</p>
+    <h1>AI Dashboard & Integration</h1>
+    <p class="lead">Ba deliverable để chốt contract, nối hai model ML.NET và chuẩn bị demo đồ án.</p>
+    <div class="meta"><span>3 task</span><span>CONTRACT → INTEGRATE → DEMO</span><a href="../superpowers/plans/2026-09-03-intelligence-release-validation.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Hoàn thành board này trước Demand Forecasts và Recommendation Results. MySQL là nguồn lock bền vững; Channel chỉ đánh thức worker trong process.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Cần DTO contracts ổn định; UI có thể bắt đầu bằng mock. Chỉ nối backend sau REC-02 và FCST-02.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -36,150 +36,69 @@
   </main>
   <script>
     const BOARD={
-  "slug": "background-job-runs",
-  "code": "JOB",
-  "title": "Background Job Runs",
-  "intro": "Nền chạy job bền vững cho forecast và recommendations: audit, queue, lease, recovery, manual trigger và quan sát trạng thái.",
-  "dependency": "Hoàn thành board này trước Demand Forecasts và Recommendation Results. MySQL là nguồn lock bền vững; Channel chỉ đánh thức worker trong process.",
-  "planHref": "../superpowers/plans/2026-09-03-background-job-foundation.md",
+  "slug": "ai-dashboard",
+  "code": "AI",
+  "title": "AI Dashboard & Integration",
+  "intro": "Ba deliverable để chốt contract, nối hai model ML.NET và chuẩn bị demo đồ án.",
+  "dependency": "Cần DTO contracts ổn định; UI có thể bắt đầu bằng mock. Chỉ nối backend sau REC-02 và FCST-02.",
+  "planHref": "../superpowers/plans/2026-09-03-intelligence-release-validation.md",
   "tasks": [
     {
-      "id": "JOB-01",
-      "phase": "DOMAIN",
-      "title": "Mô hình vòng đời JobRun",
-      "purpose": "Khóa invariant Queued → Running → Succeeded/Failed và quyền sở hữu bằng token.",
+      "id": "AI-01",
+      "phase": "CONTRACT",
+      "title": "Chốt AI data contracts",
+      "purpose": "Thành viên 2/3/4 thống nhất source, refresh summary và result DTO trước khi handoff.",
       "steps": [
-        "Viết domain tests cho transition hợp lệ và transition bị cấm.",
-        "Chạy focused test để xác nhận RED.",
-        "Tạo BackgroundJobRun, enums và token guards tối thiểu.",
-        "Chạy lại domain tests để xác nhận GREEN.",
-        "Rà API domain không phụ thuộc EF/ASP.NET rồi commit."
+        "Chốt completed-order và daily-sales inputs.",
+        "Chốt recommendation/forecast result DTO.",
+        "Chốt hai refresh endpoints trả 200.",
+        "Tạo mock fixtures để frontend làm độc lập."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~BackgroundJobRunTests",
-      "commit": "feat(jobs): add durable job run domain",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~AiContract",
+      "commit": "docs(ai): stabilize dashboard contracts",
       "files": [
-        "backend/src/OnlineSupermarket.Domain/Jobs/BackgroundJobRun.cs",
-        "backend/src/OnlineSupermarket.Domain/Jobs/JobRunStatus.cs",
-        "backend/tests/OnlineSupermarket.Domain.Tests/Jobs/BackgroundJobRunTests.cs"
+        "backend/src/OnlineSupermarket.Api/Contracts/AI/*",
+        "frontend/src/api/aiApi.ts",
+        "frontend/src/test/fixtures/aiFixtures.ts"
       ]
     },
     {
-      "id": "JOB-02",
-      "phase": "PERSISTENCE",
-      "title": "Bảng background_job_runs",
-      "purpose": "Ánh xạ audit fields, lease fields và unique (job_name, lock_key) theo MySQL.",
+      "id": "AI-02",
+      "phase": "DASHBOARD",
+      "title": "Admin AI Dashboard và manual refresh",
+      "purpose": "Một trang xem model status/results và bấm refresh Recommendation/Forecast.",
       "steps": [
-        "Viết metadata test cho columns, FK và unique index.",
-        "Chạy test xác nhận model chưa có entity.",
-        "Thêm configuration, DbSet và migration AddBackgroundJobRuns.",
-        "Inspect migration và model snapshot.",
-        "Chạy model test rồi commit đúng file migration."
+        "Tạo cards last refresh, metric và result count.",
+        "Tạo recommendation samples và forecast table 7/14.",
+        "Nối hai refresh actions; disable button khi request.",
+        "Test loading, success, failure và insufficient data."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~BackgroundJobRun",
-      "commit": "feat(jobs): persist background job runs",
+      "command": "npm --prefix frontend test -- --run src/features/admin/AdminAiDashboardPage.test.tsx && npm --prefix frontend run build",
+      "commit": "feat(admin): add ai dashboard",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/BackgroundJobRunConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddBackgroundJobRuns.cs"
+        "frontend/src/features/admin/AdminAiDashboardPage.tsx",
+        "frontend/src/features/admin/AdminAiDashboardPage.test.tsx",
+        "frontend/src/App.tsx"
       ]
     },
     {
-      "id": "JOB-03",
-      "phase": "QUEUE",
-      "title": "Durable coordinator và Channel queue",
-      "purpose": "Tạo run trước khi enqueue, trả 409 khi lock đang được giữ và không mất audit row.",
+      "id": "AI-03",
+      "phase": "DEMO GATE",
+      "title": "Integration, E2E và tài liệu demo",
+      "purpose": "Chứng minh input → ML.NET → result table → UI bằng ba flow ngắn.",
       "steps": [
-        "Viết failing coordinator tests cho accepted/conflict/cancelled enqueue.",
-        "Khai báo JobRequest, IJobQueue và bounded Channel implementation.",
-        "Cài TryQueueAsync transactionally với lock key/token.",
-        "Test channel failure không làm mất Queued row.",
-        "Chạy suite coordinator và commit."
+        "Seed đủ views, purchases và daily sales.",
+        "Chạy review, recommendation và forecast smoke flows.",
+        "Xác nhận schema active 22 bảng và deferred scope.",
+        "Cập nhật README/ERD/DFD/API docs và chụp evidence."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~JobRunCoordinator",
-      "commit": "feat(jobs): coordinate durable queued work",
+      "command": "dotnet test backend/OnlineSupermarket.sln && npm --prefix frontend test -- --run && npm --prefix frontend run build",
+      "commit": "test(ai): verify end-to-end demo",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/IJobQueue.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/ChannelJobQueue.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/JobRunCoordinator.cs"
-      ]
-    },
-    {
-      "id": "JOB-04",
-      "phase": "WORKER",
-      "title": "Worker dispatch có giới hạn",
-      "purpose": "Dispatch handler theo JobName, tạo scope riêng và cô lập lỗi từng run.",
-      "steps": [
-        "Viết worker tests cho dispatch, unknown handler và exception isolation.",
-        "Tạo IBackgroundJobHandler contract.",
-        "Cài IntelligenceWorker với IServiceScopeFactory.",
-        "Giới hạn MaxConcurrentJobs và dừng sạch khi cancellation.",
-        "Chạy worker tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~IntelligenceWorker",
-      "commit": "feat(jobs): execute queued intelligence jobs",
-      "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/IBackgroundJobHandler.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/IntelligenceWorker.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs"
-      ]
-    },
-    {
-      "id": "JOB-05",
-      "phase": "LEASE",
-      "title": "Lease renewal và startup recovery",
-      "purpose": "Phục hồi queued work, fail atomic stale runs và ngăn owner cũ hoàn tất run mới.",
-      "steps": [
-        "Viết failing tests cho renewal, token mismatch và expired recovery.",
-        "Cài conditional updates có runId + lockToken.",
-        "Sanitize/truncate error_summary trước khi lưu.",
-        "Requeue Queued rows khi startup.",
-        "Chạy recovery tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~JobLease",
-      "commit": "feat(jobs): recover and renew leased runs",
-      "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/JobLeaseService.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Jobs/JobErrorSanitizer.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/JobLeaseTests.cs"
-      ]
-    },
-    {
-      "id": "JOB-06",
-      "phase": "API",
-      "title": "Admin run history và status",
-      "purpose": "Cung cấp audit history/status ổn định cho forecast và recommendation UI.",
-      "steps": [
-        "Viết 401/403, pagination và not-found API tests.",
-        "Tạo JobRun DTOs và AdminJobEndpoints.",
-        "Map routes trong Program.",
-        "Đảm bảo error trả Problem Details.",
-        "Chạy API tests và commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~AdminJobEndpoints",
-      "commit": "feat(jobs): expose admin job status api",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Contracts/Jobs/JobRunContracts.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/AdminJobEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Program.cs"
-      ]
-    },
-    {
-      "id": "JOB-07",
-      "phase": "MYSQL GATE",
-      "title": "Concurrency và unique-null thực",
-      "purpose": "Chứng minh chỉ một instance claim lock và nhiều terminal NULL lock coexist trên MySQL.",
-      "steps": [
-        "Khởi tạo Testcontainers.MySql fixture.",
-        "Viết race test bằng hai DbContext/connections thật.",
-        "Assert một accepted, một conflict và không duplicate active lock.",
-        "Test recovery với conditional token update.",
-        "Chạy MySQL suite và commit fixture/tests."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~MySqlJob",
-      "commit": "test(jobs): prove mysql job lock concurrency",
-      "files": [
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlFixture.cs",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlJobRunConcurrencyTests.cs"
+        "backend/src/OnlineSupermarket.Infrastructure/Persistence/Seed/*",
+        "frontend/e2e/*ai*.spec.ts",
+        "README.md",
+        "docs/architecture/*"
       ]
     }
   ]

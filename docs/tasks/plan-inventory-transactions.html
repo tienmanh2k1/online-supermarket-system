@@ -19,8 +19,8 @@
   <header class="hero" data-code="INV">
     <p class="eyebrow">AptechMart / Engineering task board / INV</p>
     <h1>Inventory Transactions</h1>
-    <p class="lead">Ledger kho bất biến, nguyên tử với mọi thay đổi tồn; Reserve, Release, Sale và ManualAdjustment có nguồn tham chiếu rõ ràng.</p>
-    <div class="meta"><span>7 task</span><span>RED → GREEN → VERIFY → COMMIT</span><a href="../superpowers/plans/2026-09-03-inventory-forecast-alerts.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
+    <p class="lead">Ba deliverable để mọi thay đổi tồn kho có ledger, atomicity và màn hình audit.</p>
+    <div class="meta"><span>3 task</span><span>BUILD → VERIFY → DEMO</span><a href="../superpowers/plans/2026-09-03-inventory-forecast-alerts.md">Plan nguồn</a><a href="../superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md">Design spec</a></div>
   </header>
   <div class="controls"><div class="controls-inner">
     <div class="progress"><div class="progress-copy"><span>Tiến độ checklist</span><strong data-progress>0%</strong></div><div class="track" role="progressbar" aria-label="Tiến độ checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-progressbar><div class="fill" data-fill></div></div></div>
@@ -28,7 +28,7 @@
     <button class="reset" type="button" data-reset>Đặt lại board</button>
   </div></div>
   <main>
-    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Triển khai trước Demand Forecasts vì forecast chỉ đọc transaction loại Sale. Mọi batch dùng Serializable và lock BranchInventory.Id tăng dần.</p></section>
+    <section class="dependency" aria-labelledby="dependency-title"><strong id="dependency-title">Dependency gate</strong><p>Có thể làm song song Reviews và Product Views. Forecast bắt đầu khi daily-sales contract ổn định.</p></section>
     <nav class="rail" data-rail aria-label="Đi đến task"></nav>
     <section class="tasks" data-tasks aria-label="Danh sách task"></section>
     <p class="empty" data-empty hidden>Không có task ở trạng thái này.</p>
@@ -39,147 +39,65 @@
   "slug": "inventory-transactions",
   "code": "INV",
   "title": "Inventory Transactions",
-  "intro": "Ledger kho bất biến, nguyên tử với mọi thay đổi tồn; Reserve, Release, Sale và ManualAdjustment có nguồn tham chiếu rõ ràng.",
-  "dependency": "Triển khai trước Demand Forecasts vì forecast chỉ đọc transaction loại Sale. Mọi batch dùng Serializable và lock BranchInventory.Id tăng dần.",
+  "intro": "Ba deliverable để mọi thay đổi tồn kho có ledger, atomicity và màn hình audit.",
+  "dependency": "Có thể làm song song Reviews và Product Views. Forecast bắt đầu khi daily-sales contract ổn định.",
   "planHref": "../superpowers/plans/2026-09-03-inventory-forecast-alerts.md",
   "tasks": [
     {
       "id": "INV-01",
-      "phase": "DOMAIN",
-      "title": "Ledger entity và CompleteSale",
-      "purpose": "Khóa delta/snapshot invariants và chuyển reserve thành sale đúng số lượng.",
+      "phase": "DATA",
+      "title": "Ledger domain và migration",
+      "purpose": "Tạo immutable inventory_transactions và constraints.",
       "steps": [
-        "Viết tests delta, snapshot, invalid quantity và CompleteSale.",
-        "Chạy RED.",
-        "Tạo InventoryTransaction + enums.",
-        "Thêm BranchInventory.CompleteSale.",
-        "Chạy GREEN rồi commit."
+        "Viết entity/metadata tests.",
+        "Tạo entity, enum, mapping và DbSet.",
+        "Generate/inspect migration.",
+        "Xác nhận operation_key unique khi supplied."
       ],
       "command": "dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~InventoryTransaction",
-      "commit": "feat(inventory): add immutable transaction domain",
+      "commit": "feat(inventory): add transaction ledger",
       "files": [
         "backend/src/OnlineSupermarket.Domain/Inventory/InventoryTransaction.cs",
-        "backend/src/OnlineSupermarket.Domain/Inventory/InventoryTransactionType.cs",
-        "backend/src/OnlineSupermarket.Domain/Inventory/BranchInventory.cs"
-      ]
-    },
-    {
-      "id": "INV-02",
-      "phase": "PERSISTENCE",
-      "title": "Schema inventory_transactions",
-      "purpose": "Tạo append-only ledger, operation_key nullable unique và indexes truy vấn nguồn.",
-      "steps": [
-        "Viết metadata tests cho columns/FK/index.",
-        "Thêm configuration + DbSet.",
-        "Generate migration AddInventoryTransactions.",
-        "Inspect migration/model snapshot.",
-        "Chạy tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~InventoryTransactionConfiguration",
-      "commit": "feat(inventory): persist transaction ledger",
-      "files": [
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/InventoryTransactionConfiguration.cs",
-        "backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddInventoryTransactions.cs"
       ]
     },
     {
-      "id": "INV-03",
+      "id": "INV-02",
       "phase": "SERVICE",
-      "title": "Atomic InventoryMutationService",
-      "purpose": "Một service áp delta và thêm ledger row trong cùng transaction Serializable.",
+      "title": "Atomic inventory mutations",
+      "purpose": "Reserve, Release, Sale và Adjustment cập nhật stock + ledger cùng transaction.",
       "steps": [
-        "Viết tests yêu cầu active transaction và sort inventory IDs.",
-        "Khai báo command/result/service interfaces.",
-        "Cài mutation + snapshot + operation-key guard.",
-        "Test rollback khi ledger insert lỗi.",
-        "Chạy service tests rồi commit."
+        "Test bốn mutation types và replay key.",
+        "Tạo InventoryMutationService.",
+        "Chuyển checkout/order/admin callers sang service.",
+        "Test rollback và lock batch theo InventoryId tăng dần."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~InventoryMutationService",
-      "commit": "feat(inventory): centralize atomic mutations",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~InventoryMutation",
+      "commit": "feat(inventory): make mutations auditable",
       "files": [
-        "backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationCommand.cs",
         "backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationService.cs",
+        "backend/src/OnlineSupermarket.Api/Endpoints/OrderEndpoints.cs",
         "backend/tests/OnlineSupermarket.Infrastructure.Tests/Inventory/InventoryMutationServiceTests.cs"
       ]
     },
     {
-      "id": "INV-04",
-      "phase": "CHECKOUT",
-      "title": "Reserve transaction khi checkout",
-      "purpose": "Thay direct Reserve bằng service và ledger reference Order.",
+      "id": "INV-03",
+      "phase": "ADMIN",
+      "title": "Transaction history API và UI",
+      "purpose": "Admin xem lịch sử tồn kho theo inventory và type.",
       "steps": [
-        "Viết endpoint test cho reserve row cùng order commit.",
-        "Refactor checkout sang InventoryMutationService.",
-        "Dùng operation key order:{id}:reserve:{inventoryId}.",
-        "Test insufficient stock rollback cả order và ledger.",
-        "Chạy checkout regression rồi commit."
+        "Tạo paginated/filter endpoint Admin-only.",
+        "Hiển thị delta, after snapshot, source và time.",
+        "Test 401/403, pagination, empty/error UI.",
+        "Chạy backend focused tests và frontend build."
       ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~Checkout",
-      "commit": "feat(inventory): log checkout reservations",
+      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~InventoryTransaction && npm --prefix frontend run build",
+      "commit": "feat(admin): show inventory transaction history",
       "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/CheckoutEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryMutationEndpointTests.cs"
-      ]
-    },
-    {
-      "id": "INV-05",
-      "phase": "ORDER",
-      "title": "Release và Sale transactions",
-      "purpose": "Payment fail/cancel release reserve; Completed ghi Sale với hai delta âm.",
-      "steps": [
-        "Viết tests Release và Completed idempotency.",
-        "Refactor payment callback release.",
-        "Refactor admin order status completion/cancel.",
-        "Assert Sale chỉ xảy ra khi Completed.",
-        "Chạy order/payment tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~InventoryMutationEndpointTests",
-      "commit": "feat(inventory): ledger order release and sale",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/CheckoutEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/OrderEndpoints.cs",
-        "backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryMutationEndpointTests.cs"
-      ]
-    },
-    {
-      "id": "INV-06",
-      "phase": "ADMIN API",
-      "title": "Manual adjustment và ledger query",
-      "purpose": "Admin adjustment dùng cùng service; history phân trang theo inventory.",
-      "steps": [
-        "Viết authorization, adjustment và pagination tests.",
-        "Refactor BranchEndpoints manual adjustment.",
-        "Thêm GET inventory/{id}/transactions.",
-        "Project actor/reference/snapshot DTO.",
-        "Chạy API tests rồi commit."
-      ],
-      "command": "dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~InventoryIntelligenceEndpoints",
-      "commit": "feat(inventory): expose immutable ledger api",
-      "files": [
-        "backend/src/OnlineSupermarket.Api/Endpoints/BranchEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Endpoints/InventoryIntelligenceEndpoints.cs",
-        "backend/src/OnlineSupermarket.Api/Contracts/Inventory/InventoryIntelligenceContracts.cs"
-      ]
-    },
-    {
-      "id": "INV-07",
-      "phase": "UI + MYSQL",
-      "title": "Admin history UI và atomicity gate",
-      "purpose": "Hiển thị lịch sử kho và chứng minh concurrency/rollback trên MySQL thật.",
-      "steps": [
-        "Viết RTL tests dialog loading/empty/error.",
-        "Tạo typed getTransactions client và dialog accessible.",
-        "Chạy Vitest + build.",
-        "Chạy hai connection race/rollback tests trên MySQL.",
-        "Commit UI và persistence evidence."
-      ],
-      "command": "npm --prefix frontend test -- --run src/features/admin/AdminInventoryTransactions.test.tsx && dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~MySqlInventoryTransaction",
-      "commit": "feat(inventory): complete ledger observability",
-      "files": [
-        "frontend/src/api/inventoryIntelligenceApi.ts",
-        "frontend/src/features/admin/AdminInventoryTransactions.tsx",
-        "backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlInventoryTransactionTests.cs"
+        "backend/src/OnlineSupermarket.Api/Endpoints/InventoryEndpoints.cs",
+        "frontend/src/features/admin/*Inventory*",
+        "frontend/src/**/*.test.tsx"
       ]
     }
   ]

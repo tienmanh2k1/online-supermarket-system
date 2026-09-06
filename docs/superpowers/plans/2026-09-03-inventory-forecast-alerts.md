@@ -1,643 +1,71 @@
-# Inventory Ledger and Demand Forecast Implementation Plan
+# Inventory Transactions và Demand Forecast ML — Implementation Plan đơn giản
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+**Goal:** Có inventory ledger tin cậy và forecast 7/14 ngày bằng ML.NET SSA, chạy thủ công từ Admin.
 
-**Goal:** Ghi ledger nguyên tử cho mọi inventory mutation, chuyển reservation thành sale đúng một lần khi order hoàn tất, rồi materialize forecast 7/14 ngày cho Admin.
+**Architecture:** Mọi inventory mutation đi qua một service và ghi ledger cùng transaction. Forecast refresh đồng bộ đọc completed sales/daily series, train SSA, ghi batch rồi trả 200.
 
-**Architecture:** `InventoryMutationService` là đường duy nhất cho on-hand/reserved mutations và yêu cầu caller đang ở trong transaction `Serializable`; service load inventory theo `Id` tăng dần và thêm immutable ledger rows. `ForecastJobHandler` đọc `Sale` transactions, tính moving average 28 ngày và ghi hai horizon theo `jobRunId`; API/UI chỉ đọc latest successful materialization.
+**Tech Stack:** .NET 8, EF Core/MySQL, ML.NET TimeSeries, React, Vitest/RTL.
 
-**Tech Stack:** .NET 10, C# 14, EF Core 10.0.9, MySQL 8.4, ASP.NET Core Minimal API, xUnit, React 19.2.8, TypeScript 5.9.3, Vitest, React Testing Library.
+**Dependency:** INV-01..03 có thể làm song song với Reviews/Views. FCST-01 cần daily-sales contract từ Inventory/Orders; FCST-02..03 tiếp tục sau FCST-01. `stock_alerts` và `background_job_runs` đều deferred.
 
-**Spec:** `docs/superpowers/specs/2026-09-03-reviews-inventory-intelligence-design.md`
+### INV-01: Ledger domain và migration
 
-## Global Constraints
+**Files:** inventory entity/configuration, `AppDbContext`, migration `AddInventoryTransactions`, domain/persistence tests.
 
-- Plan nền `2026-09-03-background-job-foundation.md` phải hoàn tất trước Task 6.
-- `inventory_transactions` append-only; API không có update/delete.
-- `operation_key` chống apply lại order reserve/release/sale; unique violation là no-op có kiểm chứng, không apply delta lần hai.
-- Mọi batch sort `BranchInventory.Id` tăng dần trước khi query/mutate.
-- Mọi endpoint inventory mutation dùng transaction `Serializable`; retry tạo transaction mới.
-- Demand chỉ lấy `Sale`; không lấy reservation, release hoặc manual adjustment.
-- Forecast observation dùng tối đa 28 complete UTC days; horizon chỉ 7/14.
-- `stock_alerts` được giữ trong design như capability deferred, yêu cầu Phase 2B forecast hoàn tất; plan này không tạo table, API, UI hoặc task alert.
-- Mỗi task theo RED -> GREEN -> REFACTOR -> COMMIT; không stage thay đổi ngoài scope.
+1. Tạo immutable transaction entity với type, deltas, after snapshots, reference và operation key.
+2. Map FK/index/unique nullable operation key; thêm DbSet và migration.
+3. Test metadata, delta validation và append-only convention.
 
----
+**Verify:** `dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --filter FullyQualifiedName~InventoryTransaction`
 
-## File Structure
+### INV-02: Atomic mutation service
 
-- Create `backend/src/OnlineSupermarket.Domain/Inventory/InventoryTransaction.cs` and enums: immutable ledger.
-- Modify `backend/src/OnlineSupermarket.Domain/Inventory/BranchInventory.cs`: complete-sale mutation.
-- Create `backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/InventoryTransactionConfiguration.cs`.
-- Create `backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationCommand.cs`.
-- Create `backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationService.cs`.
-- Modify checkout/order/branch endpoints to use the service and serializable transaction scope.
-- Create `backend/src/OnlineSupermarket.Domain/Intelligence/DemandForecast.cs` and calculation enums.
-- Create `backend/src/OnlineSupermarket.Infrastructure/Intelligence/DemandForecastCalculator.cs`.
-- Create EF configurations and migration `AddInventoryIntelligence`.
-- Create `ForecastJobHandler` and `ForecastRecurringSchedule`.
-- Create Admin inventory intelligence contracts/endpoints.
-- Create `frontend/src/api/inventoryIntelligenceApi.ts`.
-- Create `AdminInventoryTransactions.tsx` and enhance `AdminInventoryPage.tsx`.
-- Create `AdminForecastPage.tsx`, tests, route, nav, and scoped CSS.
+**Files:** `InventoryMutationService`, checkout/order/admin callers và integration tests.
 
----
+1. Viết focused tests cho Reserve, Release, Sale, ManualAdjustment và replay operation key.
+2. Ghi BranchInventory + ledger trong cùng explicit transaction; batch lock inventories theo Id tăng dần.
+3. Chuyển các caller hiện tại sang service chung; test rollback khi ledger insert lỗi.
 
-### Task 1: Inventory transaction domain and sale mutation
+**Verify:** `dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~InventoryMutation`
 
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Domain/Inventory/InventoryTransaction.cs`
-- Create: `backend/src/OnlineSupermarket.Domain/Inventory/InventoryTransactionType.cs`
-- Create: `backend/src/OnlineSupermarket.Domain/Inventory/InventoryReferenceType.cs`
-- Modify: `backend/src/OnlineSupermarket.Domain/Inventory/BranchInventory.cs`
-- Modify: `backend/tests/OnlineSupermarket.Domain.Tests/Inventory/BranchInventoryTests.cs`
-- Create: `backend/tests/OnlineSupermarket.Domain.Tests/Inventory/InventoryTransactionTests.cs`
+### INV-03: Admin history UI
 
-**Interfaces:**
-- Produces: `BranchInventory.CompleteSale(int quantity): void`.
-- Produces: `InventoryTransaction.Create(..., DateTime createdAtUtc)` with exact post-mutation snapshots.
-- Produces: enum values `Reserve`, `Release`, `Sale`, `ManualAdjustment` and `Order`, `AdminAdjustment`, `System`.
+**Files:** Admin inventory transaction endpoint/contracts, Inventory page/panel và tests.
 
-- [ ] **Step 1: Write failing sale and ledger tests**
+1. Tạo paginated/filter API owner Admin-only.
+2. Hiển thị type, delta, resulting quantities, reference và timestamp.
+3. Test auth, filters, empty/error UI và frontend build.
 
-```csharp
-[Fact]
-public void CompleteSale_DecrementsOnHandAndReservedTogether()
-{
-    var inventory = BranchInventory.Create(Guid.NewGuid(), Guid.NewGuid(), 10m, 100, 20);
-    inventory.Reserve(10);
+**Verify:** `dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~InventoryTransaction && npm --prefix frontend run build`
 
-    inventory.CompleteSale(10);
+### FCST-01: Daily series và SSA model
 
-    Assert.Equal(90, inventory.QuantityOnHand);
-    Assert.Equal(0, inventory.ReservedQuantity);
-    Assert.Equal(90, inventory.AvailableQuantity);
-}
+**Files:** forecast input/output classes, `DemandForecastModelService`, ML.NET package references và model tests.
 
-[Fact]
-public void Transaction_CapturesSignedDeltasAndAfterState()
-{
-    var transaction = InventoryTransaction.Create(
-        Guid.NewGuid(), InventoryTransactionType.Sale,
-        -10, -10, 90, 0, InventoryReferenceType.Order,
-        Guid.NewGuid(), "order:o:inventory:i:sale", null, null, DateTime.UtcNow);
+1. Group completed sales theo branch/product/ngày; điền ngày zero-sale; chốt tối thiểu dữ liệu và holdout.
+2. Train `ForecastBySsa`, dự đoán 7/14 ngày, clamp giá trị âm về 0 và tính MAE khi đủ data.
+3. Test tiny deterministic series, invalid horizon và `InsufficientData`.
 
-    Assert.Equal(-10, transaction.QuantityOnHandDelta);
-    Assert.Equal(-10, transaction.ReservedQuantityDelta);
-    Assert.Equal(90, transaction.QuantityOnHandAfter);
-}
-```
+**Verify:** `dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --filter FullyQualifiedName~DemandForecastModel`
 
-Add tests that sale quantity must be positive, cannot exceed both on-hand and reserved, snapshots cannot be negative, and `operationKey` is trimmed.
+### FCST-02: Materialized batch và refresh API
 
-- [ ] **Step 2: Run RED**
+**Files:** `DemandForecast` entity/config/migration, refresh/query endpoints và API tests.
 
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --no-restore --filter "FullyQualifiedName~BranchInventoryTests|FullyQualifiedName~InventoryTransactionTests"
-```
+1. Tạo `demand_forecasts` với `batch_id`, horizons 7/14, predicted quantity, metric/model/generated time.
+2. `POST /api/admin/ai/forecast/refresh?branchId=` train + persist atomically và trả 200 summary.
+3. GET đọc batch mới nhất; validate Admin và strict horizon 7|14.
 
-- [ ] **Step 3: Implement domain behavior**
+**Verify:** `dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter FullyQualifiedName~ForecastEndpoints`
 
-```csharp
-public void CompleteSale(int quantity)
-{
-    if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
-    if (quantity > ReservedQuantity || quantity > QuantityOnHand)
-        throw new InvalidOperationException("Sale exceeds reserved inventory.");
-    QuantityOnHand -= quantity;
-    ReservedQuantity -= quantity;
-    UpdatedAtUtc = DateTime.UtcNow;
-}
-```
+### FCST-03: Forecast UI và demo
 
-`InventoryTransaction` has a private EF constructor, only `Create`, no mutation methods, validates the two after-state snapshots, and requires an explicit UTC `createdAtUtc`. Runtime services pass `TimeProvider.GetUtcNow()`; deterministic seed data may pass historical UTC timestamps.
+**Files:** Admin AI/Forecast UI client/components và Vitest/RTL tests.
 
-- [ ] **Step 4: Run GREEN and commit**
+1. Tạo branch selector, 7/14 switch, table, last refresh, MAE/insufficient-data label.
+2. Nút Refresh disable trong request, hiển thị success/error và reload result.
+3. Chạy UI tests/build và completed sales → refresh → forecast smoke flow.
 
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj --no-restore --filter "FullyQualifiedName~BranchInventoryTests|FullyQualifiedName~InventoryTransactionTests"
-git add backend/src/OnlineSupermarket.Domain/Inventory backend/tests/OnlineSupermarket.Domain.Tests/Inventory
-git commit -m "feat(inventory): add immutable stock transaction model"
-```
+**Verify:** `npm --prefix frontend test -- --run && npm --prefix frontend run build`
 
----
-
-### Task 2: Persist inventory ledger
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/InventoryTransactionConfiguration.cs`
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs`
-- Generate: EF migration named `AddInventoryTransactions` and its designer.
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs`
-- Modify: `backend/tests/OnlineSupermarket.Api.Tests/Persistence/ModelConfigurationTests.cs`
-
-**Interfaces:**
-- Produces: `AppDbContext.InventoryTransactions`.
-- Produces: unique nullable `operation_key`, index `(branch_inventory_id, created_at_utc)`, and Restrict FKs.
-
-- [ ] **Step 1: Write failing EF model test**
-
-```csharp
-[Fact]
-public void InventoryTransaction_HasLedgerIndexesAndNoCascadeDelete()
-{
-    using var context = CreateContext();
-    var entity = context.Model.FindEntityType(typeof(InventoryTransaction))!;
-
-    Assert.Equal("inventory_transactions", entity.GetTableName());
-    Assert.True(entity.GetIndexes().Single(i =>
-        i.Properties.Single().Name == nameof(InventoryTransaction.OperationKey)).IsUnique);
-    Assert.All(entity.GetForeignKeys(), fk => Assert.Equal(DeleteBehavior.Restrict, fk.DeleteBehavior));
-}
-```
-
-- [ ] **Step 2: Add config/DbSet and generate migration**
-
-```csharp
-builder.ToTable("inventory_transactions");
-builder.Property(x => x.TransactionType).HasColumnName("transaction_type").HasConversion<string>().HasMaxLength(30);
-builder.Property(x => x.ReferenceType).HasColumnName("reference_type").HasConversion<string>().HasMaxLength(30);
-builder.Property(x => x.OperationKey).HasColumnName("operation_key").HasMaxLength(180);
-builder.HasIndex(x => x.OperationKey).IsUnique().HasDatabaseName("ix_inventory_transactions_operation_key");
-builder.HasIndex(x => new { x.BranchInventoryId, x.CreatedAtUtc })
-    .HasDatabaseName("ix_inventory_transactions_inventory_created");
-```
-
-```powershell
-dotnet ef migrations add AddInventoryTransactions --project backend/src/OnlineSupermarket.Infrastructure --startup-project backend/src/OnlineSupermarket.Api
-```
-
-- [ ] **Step 3: Verify mapping and commit**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --no-restore --filter "FullyQualifiedName~ModelConfigurationTests"
-rg -n "inventory_transactions|operation_key" backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations
-git add backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/InventoryTransactionConfiguration.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddInventoryTransactions.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddInventoryTransactions.Designer.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs backend/tests/OnlineSupermarket.Api.Tests/Persistence/ModelConfigurationTests.cs
-git commit -m "feat(inventory): persist stock transaction ledger"
-```
-
----
-
-### Task 3: Central inventory mutation service
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationCommand.cs`
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Inventory/IInventoryMutationService.cs`
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Inventory/InventoryMutationService.cs`
-- Create: `backend/tests/OnlineSupermarket.Infrastructure.Tests/Inventory/InventoryMutationServiceTests.cs`
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs`
-
-**Interfaces:**
-- Produces: command factories `Reserve`, `Release`, `Sale`, `ManualAdjustment`.
-- Produces: `ApplyBatchAsync(IReadOnlyCollection<InventoryMutationCommand>, CancellationToken): Task`.
-- Requires: `AppDbContext.Database.CurrentTransaction` is non-null.
-
-- [ ] **Step 1: Write failing sorted/atomic/idempotent tests**
-
-```csharp
-[Fact]
-public async Task ApplyBatchAsync_LoadsByAscendingInventoryId_AndAddsLedgerRows()
-{
-    await using var transaction = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-    var commands = new[]
-    {
-        InventoryMutationCommand.Reserve(_highId, 2, _orderId, _userId),
-        InventoryMutationCommand.Reserve(_lowId, 1, _orderId, _userId),
-    };
-
-    await _service.ApplyBatchAsync(commands, CancellationToken.None);
-    await _db.SaveChangesAsync();
-
-    var ledgerOrder = _db.ChangeTracker.Entries<InventoryTransaction>()
-        .Select(entry => entry.Entity.BranchInventoryId)
-        .ToArray();
-    Assert.Equal(new[] { _lowId, _highId }, ledgerOrder);
-    Assert.Equal(2, await _db.InventoryTransactions.CountAsync());
-}
-
-[Fact]
-public async Task ApplyBatchAsync_WithoutTransaction_Throws()
-{
-    await Assert.ThrowsAsync<InvalidOperationException>(() =>
-        _service.ApplyBatchAsync(
-            new[] { InventoryMutationCommand.Reserve(_lowId, 1, _orderId, _userId) },
-            CancellationToken.None));
-}
-```
-
-The assertion observes EF's tracked insert order; no test-only property is added to
-the production service.
-
-- [ ] **Step 2: Implement exact command shape**
-
-```csharp
-public sealed record InventoryMutationCommand(
-    Guid BranchInventoryId,
-    InventoryTransactionType TransactionType,
-    int Quantity,
-    int? AbsoluteQuantityOnHand,
-    InventoryReferenceType ReferenceType,
-    Guid? ReferenceId,
-    string? OperationKey,
-    Guid? ActorUserId,
-    string? Note,
-    DateTime? OccurredAtUtc);
-```
-
-Load all distinct IDs with `OrderBy(x => x.Id)`, fail if any are missing,
-preflight every command, then mutate and add ledger rows. Use
-`OccurredAtUtc ?? _timeProvider.GetUtcNow().UtcDateTime` for the immutable
-transaction timestamp. For an existing `operation_key`, verify the stored
-type/reference/inventory match and skip that command; a mismatched replay throws
-conflict.
-
-- [ ] **Step 3: Run tests, register scoped service, and commit**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --no-restore --filter "FullyQualifiedName~InventoryMutationServiceTests"
-git add backend/src/OnlineSupermarket.Infrastructure/Inventory backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs backend/tests/OnlineSupermarket.Infrastructure.Tests/Inventory
-git commit -m "feat(inventory): centralize atomic inventory mutations"
-```
-
----
-
-### Task 4: Route every existing mutation through the ledger
-
-**Files:**
-- Modify: `backend/src/OnlineSupermarket.Api/Endpoints/CheckoutEndpoints.cs:105`
-- Modify: `backend/src/OnlineSupermarket.Api/Endpoints/CheckoutEndpoints.cs:306`
-- Modify: `backend/src/OnlineSupermarket.Api/Endpoints/OrderEndpoints.cs:159`
-- Modify: `backend/src/OnlineSupermarket.Api/Endpoints/BranchEndpoints.cs:119`
-- Modify: `backend/src/OnlineSupermarket.Api/Contracts/Branch/BranchContracts.cs`
-- Create: `backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryMutationEndpointTests.cs`
-- Add: `backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlInventoryTransactionTests.cs`
-
-**Interfaces:**
-- Consumes: `IInventoryMutationService.ApplyBatchAsync`.
-- Produces: reserve/release/sale/manual-adjustment rows in the same transaction as source state.
-- Changes: `BranchProductInventoryDto` adds `InventoryId` so Admin can request the exact ledger.
-
-- [ ] **Step 1: Write failing integration assertions for all four mutation types**
-
-```csharp
-[Fact]
-public async Task CompletingOrder_ConvertsReservationToSaleExactlyOnce()
-{
-    var fixture = await SeedDeliveredReservedOrderAsync(quantity: 3);
-    using var admin = await CreateAdminClientAsync();
-
-    var first = await admin.PutAsJsonAsync($"/api/admin/orders/{fixture.OrderId}/status",
-        new { status = "Completed" });
-    var second = await admin.PutAsJsonAsync($"/api/admin/orders/{fixture.OrderId}/status",
-        new { status = "Completed" });
-
-    Assert.Equal(HttpStatusCode.OK, first.StatusCode);
-    Assert.Equal(HttpStatusCode.BadRequest, second.StatusCode);
-    var sale = Assert.Single(await LoadTransactionsAsync(InventoryTransactionType.Sale));
-    Assert.Equal(-3, sale.QuantityOnHandDelta);
-    Assert.Equal(-3, sale.ReservedQuantityDelta);
-}
-```
-
-Add assertions for checkout `Reserve`, cancellation/payment failure `Release`, and admin quantity edit `ManualAdjustment` with actor/reason.
-
-- [ ] **Step 2: Refactor transaction scopes and lock order**
-
-For checkout, start a fresh serializable transaction inside each retry attempt. Build the order in memory to obtain `order.Id`, then call reserve commands with deterministic operation keys before the shared `SaveChangesAsync`. Query inventories by `Id` order, not `(BranchId, ProductId)`.
-
-For order status, payment callback, and admin inventory update, explicitly begin `Serializable`, call the mutation service, update order/payment/price/reorder state, save once, and commit. When transitioning `Delivered -> Completed`, use `Sale`; cancellation and payment failure use `Release`.
-
-Add `InventoryId` as the first field of `BranchProductInventoryDto`, project
-`bi.Id` in `BranchEndpoints`, and update backend/frontend fixtures that construct
-this DTO.
-
-- [ ] **Step 3: Run endpoint tests**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --no-restore --filter "FullyQualifiedName~Checkout|FullyQualifiedName~OrderEndpoints|FullyQualifiedName~AdminBranchEndpoints"
-```
-
-- [ ] **Step 4: Prove rollback and concurrency on MySQL**
-
-```csharp
-[Fact]
-public async Task LedgerInsertFailure_RollsBackInventoryMutation()
-{
-    await SeedExistingOperationKeyAsync("duplicate-key");
-    var before = await LoadInventoryAsync();
-
-    await Assert.ThrowsAsync<DbUpdateException>(() =>
-        ApplyAndCommitReserveAsync(before.Id, "duplicate-key"));
-
-    var after = await LoadInventoryAsync();
-    Assert.Equal(before.ReservedQuantity, after.ReservedQuantity);
-}
-```
-
-Run with two real connections against the same inventory and assert no negative availability and one row per operation key.
-
-- [ ] **Step 5: Commit endpoint integration**
-
-```powershell
-git add backend/src/OnlineSupermarket.Api/Endpoints/CheckoutEndpoints.cs backend/src/OnlineSupermarket.Api/Endpoints/OrderEndpoints.cs backend/src/OnlineSupermarket.Api/Endpoints/BranchEndpoints.cs backend/src/OnlineSupermarket.Api/Contracts/Branch/BranchContracts.cs backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryMutationEndpointTests.cs backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlInventoryTransactionTests.cs
-git commit -m "feat(inventory): log all stock mutations atomically"
-```
-
----
-
-### Task 5: Forecast domain calculations
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Domain/Intelligence/DemandForecast.cs`
-- Create: `backend/src/OnlineSupermarket.Domain/Intelligence/ForecastDataQuality.cs`
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Intelligence/DemandForecastCalculator.cs`
-- Create: `backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/DemandForecastCalculatorTests.cs`
-
-**Interfaces:**
-- Produces: `Calculate(IReadOnlyDictionary<DateOnly,int> dailySales, DateOnly observationEnd, int horizonDays): ForecastCalculation`.
-
-- [ ] **Step 1: Write failing forecast boundary tests**
-
-```csharp
-[Theory]
-[InlineData(7, 14.0)]
-[InlineData(14, 28.0)]
-public void Calculate_UsesDailyAverageAcrossCompleteCalendarDays(int horizon, double expected)
-{
-    var sales = Enumerable.Range(0, 7).ToDictionary(
-        offset => new DateOnly(2026, 9, 2).AddDays(-offset), _ => 2);
-
-    var result = DemandForecastCalculator.Calculate(
-        sales, new DateOnly(2026, 9, 2), horizon);
-
-    Assert.Equal((decimal)expected, result.PredictedQuantity);
-    Assert.Equal(ForecastDataQuality.Partial, result.DataQuality);
-}
-
-```
-
-Add no-history, missing zero-sale calendar days, 28-day cap, and invalid horizon cases.
-
-- [ ] **Step 2: Implement deterministic algorithm**
-
-Use `DateOnly` for calendar grouping and `decimal` for quantities. `actual_data_days` counts from first sale day through observation end, capped at 28, including zero-sale days. Return zero/Insufficient for no history.
-
-- [ ] **Step 3: Run tests and commit**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --no-restore --filter "FullyQualifiedName~DemandForecastCalculatorTests"
-git add backend/src/OnlineSupermarket.Domain/Intelligence backend/src/OnlineSupermarket.Infrastructure/Intelligence/DemandForecastCalculator.cs backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence
-git commit -m "feat(forecast): calculate demand forecasts"
-```
-
----
-
-### Task 6: Persist forecasts
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/DemandForecastConfiguration.cs`
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs`
-- Generate: EF migration named `AddDemandForecasts` and its designer.
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs`
-- Modify: `backend/tests/OnlineSupermarket.Api.Tests/Persistence/ModelConfigurationTests.cs`
-
-**Interfaces:**
-- Produces: `AppDbContext.DemandForecasts`.
-- Produces: unique `(job_run_id, branch_inventory_id, horizon_days)` index from spec.
-
-- [ ] **Step 1: Write failing metadata tests**
-
-```csharp
-[Fact]
-public void Forecast_HasRunScopedUniqueKey()
-{
-    using var context = CreateContext();
-    var forecast = context.Model.FindEntityType(typeof(DemandForecast))!;
-
-    Assert.Contains(forecast.GetIndexes(), x => x.IsUnique && x.Properties.Count == 3);
-}
-```
-
-- [ ] **Step 2: Map exact columns and generate migration**
-
-```powershell
-dotnet ef migrations add AddDemandForecasts --project backend/src/OnlineSupermarket.Infrastructure --startup-project backend/src/OnlineSupermarket.Api
-rg -n "demand_forecasts|horizon_days|predicted_quantity" backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations
-```
-
-Add check constraints `horizon_days IN (7, 14)` and non-negative predicted/reorder quantities.
-
-- [ ] **Step 3: Run tests and commit**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --no-restore --filter "FullyQualifiedName~ModelConfigurationTests"
-git add backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/DemandForecastConfiguration.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContext.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddDemandForecasts.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/*_AddDemandForecasts.Designer.cs backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs backend/tests/OnlineSupermarket.Api.Tests/Persistence/ModelConfigurationTests.cs
-git commit -m "feat(forecast): persist demand forecasts"
-```
-
----
-
-### Task 7: Forecast handler, schedule, and materialized batch
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Intelligence/ForecastJobHandler.cs`
-- Create: `backend/src/OnlineSupermarket.Infrastructure/Intelligence/ForecastRecurringSchedule.cs`
-- Create: `backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/ForecastJobHandlerTests.cs`
-- Modify: `backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs`
-
-**Interfaces:**
-- Implements: `IBackgroundJobHandler` with `JobName == Forecast`.
-- Implements: shared recurring schedule contract, one due job per active branch daily.
-- Produces: one atomic batch containing 7-day and 14-day rows per inventory.
-
-- [ ] **Step 1: Write failing materialization test**
-
-```csharp
-[Fact]
-public async Task ExecuteAsync_WritesTwoForecastsPerInventory()
-{
-    var inventory = await SeedInventoryWithDailySalesAsync(days: 14, unitsPerDay: 2, available: 20, reorder: 5);
-
-    await _handler.ExecuteAsync(_jobRunId, inventory.BranchId, CancellationToken.None);
-
-    var forecasts = await _db.DemandForecasts.Where(x => x.JobRunId == _jobRunId).ToListAsync();
-    Assert.Equal(new[] { 7, 14 }, forecasts.Select(x => x.HorizonDays).Order().ToArray());
-}
-```
-
-Add tests for no-history rows, branch isolation, ignoring non-Sale transactions, rollback on failure, and rerun with a new run ID.
-
-- [ ] **Step 2: Implement handler query and atomic write**
-
-Query the previous 28 complete UTC days once for the branch, group sales by inventory/date in memory, calculate both horizons, and commit all new rows in one transaction. Never delete prior successful runs. `ForecastRecurringSchedule` returns a branch only when UTC time is at or after `ForecastHourUtc` and that branch has no active run or successful run created on the current UTC date.
-
-- [ ] **Step 3: Register handler/schedule and test**
-
-```csharp
-services.AddScoped<IBackgroundJobHandler, ForecastJobHandler>();
-services.AddScoped<IRecurringJobSchedule, ForecastRecurringSchedule>();
-```
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj --no-restore --filter "FullyQualifiedName~ForecastJobHandlerTests"
-```
-
-- [ ] **Step 4: Commit**
-
-```powershell
-git add backend/src/OnlineSupermarket.Infrastructure/Intelligence backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence
-git commit -m "feat(forecast): materialize scheduled branch forecasts"
-```
-
----
-
-### Task 8: Admin forecast and ledger APIs
-
-**Files:**
-- Create: `backend/src/OnlineSupermarket.Api/Contracts/Inventory/InventoryIntelligenceContracts.cs`
-- Create: `backend/src/OnlineSupermarket.Api/Endpoints/InventoryIntelligenceEndpoints.cs`
-- Modify: `backend/src/OnlineSupermarket.Api/Program.cs`
-- Create: `backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryIntelligenceEndpointsTests.cs`
-
-**Interfaces:**
-- Produces three Admin routes from spec §6.2: transactions, forecast, and forecast trigger.
-- Consumes: `IJobRunCoordinator.TryQueueAsync` for trigger.
-
-- [ ] **Step 1: Write failing contract tests**
-
-```csharp
-[Theory]
-[InlineData(1)]
-[InlineData(13)]
-[InlineData(30)]
-public async Task GetForecast_WithUnsupportedHorizon_ReturnsBadRequest(int horizon)
-{
-    using var admin = await CreateAdminClientAsync();
-    var response = await admin.GetAsync($"/api/admin/forecast?branchId={_branchId}&horizonDays={horizon}");
-    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-}
-
-[Fact]
-public async Task TriggerForecast_WhenAccepted_ReturnsStatusLocation()
-{
-    using var admin = await CreateAdminClientAsync();
-    var response = await admin.PostAsJsonAsync("/api/admin/jobs/forecast/runs", new { branchId = _branchId });
-
-    Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
-    Assert.StartsWith("/api/admin/jobs/runs/", response.Headers.Location!.OriginalString);
-}
-```
-
-Add 401/403, missing branch 404, active lock 409, latest-success-only, transaction pagination, and actor/reference projection tests.
-
-- [ ] **Step 2: Implement DTOs and endpoints**
-
-```csharp
-public sealed record ForecastDto(
-    Guid Id, Guid BranchInventoryId, Guid ProductId, string ProductName,
-    int HorizonDays, decimal PredictedQuantity, int ActualDataDays,
-    string DataQuality, DateOnly ForecastStartDate, DateOnly ForecastEndDate,
-    DateTime GeneratedAtUtc, Guid JobRunId);
-
-```
-
-Resolve latest `Succeeded` run per branch and never return rows from a failed/running batch.
-
-- [ ] **Step 3: Test and commit**
-
-```powershell
-dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --no-restore --filter "FullyQualifiedName~InventoryIntelligenceEndpointsTests"
-git add backend/src/OnlineSupermarket.Api/Contracts/Inventory backend/src/OnlineSupermarket.Api/Endpoints/InventoryIntelligenceEndpoints.cs backend/src/OnlineSupermarket.Api/Program.cs backend/tests/OnlineSupermarket.Api.Tests/Endpoints/InventoryIntelligenceEndpointsTests.cs
-git commit -m "feat(forecast): expose admin inventory intelligence api"
-```
-
----
-
-### Task 9: Admin inventory ledger UI
-
-**Files:**
-- Create: `frontend/src/api/inventoryIntelligenceApi.ts`
-- Create: `frontend/src/api/inventoryIntelligenceApi.test.ts`
-- Modify: `frontend/src/api/branchApi.ts`
-- Modify: `frontend/src/api/branchApi.test.ts`
-- Create: `frontend/src/features/admin/AdminInventoryTransactions.tsx`
-- Create: `frontend/src/features/admin/AdminInventoryTransactions.test.tsx`
-- Modify: `frontend/src/features/admin/AdminInventoryPage.tsx`
-- Modify: `frontend/src/features/admin/AdminInventoryPage.test.tsx`
-- Modify: `frontend/src/features/admin/AdminInventoryPage.css`
-
-**Interfaces:**
-- Produces typed `getTransactions` client.
-- Produces transaction history drawer/dialog from inventory rows.
-
-- [ ] **Step 1: Write failing transaction-history UI test**
-
-```typescript
-it('opens immutable transaction history for one inventory row', async () => {
-  renderAdminInventory()
-  await user.click(await screen.findByRole('button', { name: 'Lịch sử kho Sản phẩm A' }))
-  expect(await screen.findByRole('dialog', { name: 'Lịch sử giao dịch kho' })).toBeInTheDocument()
-})
-```
-
-- [ ] **Step 2: Implement API and UI states**
-
-Keep the existing computed low-stock badge unchanged. Add ledger loading/empty/error/retry states and accessible dialog focus return.
-
-- [ ] **Step 3: Test/build and commit**
-
-```powershell
-npm --prefix frontend test -- --run src/api/inventoryIntelligenceApi.test.ts src/features/admin/AdminInventoryPage.test.tsx src/features/admin/AdminInventoryTransactions.test.tsx
-npm --prefix frontend run build
-git add frontend/src/api/inventoryIntelligenceApi.ts frontend/src/api/inventoryIntelligenceApi.test.ts frontend/src/api/branchApi.ts frontend/src/api/branchApi.test.ts frontend/src/features/admin/AdminInventoryTransactions.tsx frontend/src/features/admin/AdminInventoryTransactions.test.tsx frontend/src/features/admin/AdminInventoryPage.tsx frontend/src/features/admin/AdminInventoryPage.test.tsx frontend/src/features/admin/AdminInventoryPage.css
-git commit -m "feat(frontend): show inventory transaction ledger"
-```
-
----
-
-### Task 10: Admin forecast page, route, and manual refresh
-
-**Files:**
-- Create: `frontend/src/features/admin/AdminForecastPage.tsx`
-- Create: `frontend/src/features/admin/AdminForecastPage.test.tsx`
-- Create: `frontend/src/features/admin/AdminForecastPage.css`
-- Modify: `frontend/src/App.tsx`
-- Modify: `frontend/src/App.test.tsx`
-- Modify: `frontend/src/features/admin/AdminLayout.tsx`
-
-**Interfaces:**
-- Produces: route `/admin/forecast`.
-- Consumes: forecast, job history/status, and trigger API methods.
-
-- [ ] **Step 1: Write failing route/page tests**
-
-```typescript
-it('switches between strict 7 and 14 day forecasts', async () => {
-  renderForecastPage()
-  await screen.findByRole('table', { name: 'Dự báo nhu cầu' })
-  await user.click(screen.getByRole('button', { name: '14 ngày' }))
-  expect(inventoryIntelligenceApi.getForecast).toHaveBeenLastCalledWith(
-    expect.objectContaining({ branchId: 'b-1', horizonDays: 14 }))
-})
-
-it('shows 409 without losing the current result table', async () => {
-  inventoryIntelligenceApi.triggerForecast.mockRejectedValue(new ApiError(409, { message: 'JOB_ALREADY_RUNNING' }))
-  renderForecastPage()
-  await user.click(await screen.findByRole('button', { name: 'Chạy lại dự báo' }))
-  expect(screen.getByRole('status')).toHaveTextContent('Dự báo đang chạy')
-  expect(screen.getByRole('table', { name: 'Dự báo nhu cầu' })).toBeInTheDocument()
-})
-```
-
-- [ ] **Step 2: Implement route/nav/page**
-
-Show branch selector, 7/14 controls, latest status/timestamps, data-quality labels, results, run history, and manual trigger. After `202`, poll the returned status URL with bounded backoff and stop at terminal state/unmount.
-
-- [ ] **Step 3: Run tests/build and commit**
-
-```powershell
-npm --prefix frontend test -- --run src/features/admin/AdminForecastPage.test.tsx src/App.test.tsx
-npm --prefix frontend run build
-git add frontend/src/features/admin/AdminForecastPage.tsx frontend/src/features/admin/AdminForecastPage.test.tsx frontend/src/features/admin/AdminForecastPage.css frontend/src/features/admin/AdminLayout.tsx frontend/src/App.tsx frontend/src/App.test.tsx
-git commit -m "feat(frontend): add admin demand forecast workspace"
-```
+**Done:** Ledger atomic; SSA model train/predict được; refresh trả 200; không có schedule/job status/stock alert.
