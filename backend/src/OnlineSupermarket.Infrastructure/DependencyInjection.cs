@@ -114,6 +114,7 @@ public static class DependencyInjection
         services.AddSingleton<Jobs.IJobQueue>(sp => new Jobs.ChannelJobQueue());
         services.AddScoped<Jobs.JobRunCoordinator>();
         services.AddScoped<Jobs.JobLeaseService>();
+        services.AddScoped<Jobs.IJobRunStore, Jobs.JobRunStore>();
 
         return services;
     }

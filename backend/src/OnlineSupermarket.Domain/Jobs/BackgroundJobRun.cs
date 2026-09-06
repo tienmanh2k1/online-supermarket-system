@@ -108,4 +108,14 @@ public class BackgroundJobRun : Entity
             LockKey = $"released:{Id}";
         }
     }
+
+    /// <summary>
+    /// Clears lease ownership for a terminal row. Called by the store after a
+    /// predicate-atomic terminal transition so the row no longer claims a live lease.
+    /// </summary>
+    public void ClearLeaseOwnership()
+    {
+        LockToken = null;
+        LeaseExpiresAtUtc = null;
+    }
 }
