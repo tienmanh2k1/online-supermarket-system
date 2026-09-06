@@ -73,13 +73,13 @@ git diff --check -- docs/tasks/remaining-findings-contracts.md
 
 **Interfaces:** giữ `PaymentCallbackVerificationResult(bool IsValidSignature, string ExternalEventId, Guid OrderId, decimal Amount, bool IsSuccess, string SanitizedPayload, string? ErrorCode)`; ErrorCode phân biệt malformed/signature/configuration, không mang exception detail.
 
-- [ ] Xác minh canonical string/encoding/amount unit và callback field names theo tài liệu chính thức provider tại thời điểm thực thi. Lưu URL và version trong test fixture notes; dùng fixed known-answer vectors, không dùng helper production để tạo expected signature.
-- [ ] Thêm RED cases cho VNPay/MoMo: chữ ký hợp lệ, tamper 1 byte, malformed hex, sai length, thiếu signature/event/order/amount/status, GUID rỗng, amount âm/overflow/culture, unknown code, secret rỗng, extra field chứa secret.
-- [ ] VNPay: chỉ ký tập `vnp_*` đúng protocol, loại `vnp_SecureHash` và `vnp_SecureHashType` bằng key; sort ordinal, encode theo provider, normalize amount unit đúng tài liệu. Không dùng `signature.Contains(...)` để chọn key.
-- [ ] MoMo: sử dụng ordered fields và tên trường đúng callback protocol; không dùng canonical sort chung hoặc tự chấp nhận alias chưa xác minh. Nếu cần access key/partner code, bind cấu hình riêng và test cấu hình thiếu.
-- [ ] Validation cấu trúc tối thiểu trả malformed; xác minh signature trước khi sử dụng dữ liệu normalized cho nghiệp vụ; parse decimal với grammar rõ ràng và InvariantCulture, không cho phép separator văn hóa ngoài protocol.
-- [ ] Tạo SanitizedPayload bằng allow-list giá trị đã xác minh, không serialize request dictionary. Thêm test toàn bộ secret marker không xuất hiện trong payload. Empty secret fail closed.
-- [ ] Thêm domain tests riêng cho Pending→Completed/Failed, Completed→Completed/Failed, Failed→Failed/Completed; invalid transition giữ nguyên status, transaction ID, response, timestamp; test Processing/COD theo contract R1.
+- [x] Xác minh canonical string/encoding/amount unit và callback field names theo tài liệu chính thức provider tại thời điểm thực thi. Đã check 2026-09-06: VNPay v2.1.0 (HMAC-SHA512, ordinal-sort non-empty vnp_*, exclude vnp_SecureHash/HashType theo key, urlencode key=value, amount nhỏ nhất x100) và MoMo All-in-One IPN API 2024-08 (HMAC-SHA256, 13 fields sort a-z, accessKey từ config, empty field giữ key=). URL/version đã ghi trong fixture notes (PaymentCallbackVerifierTests.cs). Known-answer vectors tính độc lập Python stdlib, không qua production helper.
+- [x] Thêm RED cases cho VNPay/MoMo: valid, tamper 1 byte, malformed hex, sai length, thiếu signature/event/order/amount/status, GUID rỗng, amount âm/overflow/culture, unknown code, secret rỗng, extra field chứa secret — đều đã có và pass (39 verifier tests).
+- [x] VNPay: chỉ ký tập `vnp_*`, loại `vnp_SecureHash`/`vnp_SecureHashType` bằng key (`x.Key is not ...`), sort ordinal, RFC3986 encode, amount đã normalize x100. Không còn `signature.Contains(...)` chọn key.
+- [x] MoMo: có `MoMoCanonical` riêng với `MomoSigningFields` (13 field đúng protocol), không dùng sort chung; accessKey bind cấu hình riêng (`MoMoWebhookOptions.AccessKey`); test missing config (WEBHOOK_NOT_CONFIGURED).
+- [x] Validation cấu trúc tối thiểu trả MALFORMED_CALLBACK trước khi dùng dữ liệu; decimal parse với NumberStyles.None + InvariantCulture (không separator văn hóa); missing status code luôn invalid, không có default success.
+- [x] SanitizedPayload là allow-list giá trị đã xác minh (provider/eventId/orderId/amount/status), không serialize request dictionary; test secret/accessKey marker không xuất hiện; empty secret fail closed (WEBHOOK_NOT_CONFIGURED).
+- [x] Domain tests (7 pass): Pending→Completed/Failed, Completed→Completed/Failed, Failed→Failed/Completed; invalid transition giữ status, transaction ID, response, CompletedAtUtc; Processing và COD PendingCollection theo contract R1.
 
 ```powershell
 dotnet test backend/tests/OnlineSupermarket.Domain.Tests --filter FullyQualifiedName~PaymentTests
