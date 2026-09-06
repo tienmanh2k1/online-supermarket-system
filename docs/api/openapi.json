@@ -3615,6 +3615,14 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "orderItemId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {

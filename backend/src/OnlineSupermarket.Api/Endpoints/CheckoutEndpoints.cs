@@ -308,10 +308,39 @@ public static class CheckoutEndpoints
     {
         var verifier = verifiers.FirstOrDefault(x => x.Provider.Equals(request.Provider, StringComparison.OrdinalIgnoreCase));
         if (verifier is null) return Results.Unauthorized();
+
+        if (request.Data is null || request.Data.Count == 0)
+            return Results.BadRequest(new { code = "MALFORMED_CALLBACK" });
+
         var callback = verifier.Verify(request.Data);
-        if (!callback.IsValidSignature) return Results.Unauthorized();
-        if (callback.ErrorCode is not null) return Results.BadRequest(new { code = callback.ErrorCode });
-        var outcome = await processor.ProcessAsync(verifier.Provider, callback, cancellationToken);
+
+        if (callback.ErrorCode == "WEBHOOK_NOT_CONFIGURED")
+            return Results.Problem(statusCode: StatusCodes.Status500InternalServerError, title: "Payment webhook configuration is incomplete.");
+
+        if (callback.ErrorCode == "MALFORMED_CALLBACK"
+            || callback.OrderId == Guid.Empty
+            || string.IsNullOrWhiteSpace(callback.ExternalEventId)
+            || callback.Amount < 0)
+        {
+            return Results.BadRequest(new { code = "MALFORMED_CALLBACK" });
+        }
+
+        if (!callback.IsValidSignature)
+            return Results.Unauthorized();
+
+        if (callback.ErrorCode is not null)
+            return Results.BadRequest(new { code = callback.ErrorCode });
+
+        PaymentCallbackOutcome outcome;
+        try
+        {
+            outcome = await processor.ProcessAsync(verifier.Provider, callback, cancellationToken);
+        }
+        catch
+        {
+            return Results.Problem(statusCode: StatusCodes.Status500InternalServerError, title: "Payment callback could not be processed.");
+        }
+
         return outcome switch
         {
             PaymentCallbackOutcome.Processed => Results.Ok(new { message = "Callback processed." }),
