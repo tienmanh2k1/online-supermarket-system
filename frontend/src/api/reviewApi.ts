@@ -42,8 +42,8 @@ export const reviewApi = {
   getProductReviews: (productId: string, page = 1, pageSize = 10, signal?: AbortSignal) =>
     getJson<ProductReviewsDto>(`/products/${productId}/reviews?page=${page}&pageSize=${pageSize}`, { signal }),
 
-  getEligibility: (productId: string, token?: string | null, signal?: AbortSignal) =>
-    getJson<ReviewEligibilityDto>(`/products/${productId}/review-eligibility`, {
+  getEligibility: (productId: string, token?: string | null, signal?: AbortSignal, orderItemId?: string | null) =>
+    getJson<ReviewEligibilityDto>(`/products/${productId}/review-eligibility${orderItemId ? `?orderItemId=${orderItemId}` : ''}`, {
       token: token ?? undefined,
       signal,
     }),
