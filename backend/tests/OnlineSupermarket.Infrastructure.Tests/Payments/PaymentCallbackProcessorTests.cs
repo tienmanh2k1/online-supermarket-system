@@ -151,6 +151,7 @@ public sealed class PaymentCallbackProcessorTests
         var outcome = await fixture.Processor.ProcessAsync("MoMo", Callback(order.Id, order.TotalAmount, true), CancellationToken.None);
 
         Assert.Equal(PaymentCallbackOutcome.Conflict, outcome);
+        Assert.Equal(0, await fixture.Db.PaymentCallbacks.CountAsync());
     }
 
     [Fact]
@@ -165,6 +166,29 @@ public sealed class PaymentCallbackProcessorTests
         var outcome = await fixture.Processor.ProcessAsync(Provider, Callback(order.Id, order.TotalAmount + 1, true), CancellationToken.None);
 
         Assert.Equal(PaymentCallbackOutcome.Conflict, outcome);
+        Assert.Equal(0, await fixture.Db.PaymentCallbacks.CountAsync());
+    }
+
+    [Fact]
+    public async Task UnverifiedResult_IsRejected_WithNoEffects()
+    {
+        using var fixture = new DbFixture();
+        var order = SeedOrder(fixture.Db, OrderStatus.Pending);
+        var payment = Payment.Create(order.Id, PaymentMethod.VNPay, order.TotalAmount);
+        fixture.Db.Payments.Add(payment);
+        await fixture.Db.SaveChangesAsync();
+        var unverified = new PaymentCallbackVerificationResult(
+            false, EventId, order.Id, order.TotalAmount, true, "{}", "INVALID_SIGNATURE");
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            fixture.Processor.ProcessAsync(Provider, unverified, CancellationToken.None));
+
+        Assert.Contains("verified", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(0, await fixture.Db.PaymentCallbacks.CountAsync());
+        var reloadedOrder = await fixture.Db.Orders.AsNoTracking().SingleAsync(o => o.Id == order.Id);
+        Assert.Equal(OrderStatus.Pending, reloadedOrder.Status);
+        var reloadedPayment = await fixture.Db.Payments.AsNoTracking().SingleAsync(p => p.Id == payment.Id);
+        Assert.Equal(PaymentStatus.Pending, reloadedPayment.Status);
     }
 
     [Fact]
@@ -194,6 +218,25 @@ public sealed class PaymentCallbackProcessorTests
         var outcome = await fixture.Processor.ProcessAsync(Provider, Callback(order.Id, order.TotalAmount, true), CancellationToken.None);
 
         Assert.Equal(PaymentCallbackOutcome.Conflict, outcome);
+    }
+
+    [Theory]
+    [InlineData(OrderStatus.Completed)]
+    [InlineData(OrderStatus.Failed)]
+    public async Task TerminalOrder_ReturnsConflict_WithoutCallbackRow(OrderStatus status)
+    {
+        using var fixture = new DbFixture();
+        var order = SeedOrder(fixture.Db, status);
+        var payment = Payment.Create(order.Id, PaymentMethod.VNPay, order.TotalAmount);
+        fixture.Db.Payments.Add(payment);
+        await fixture.Db.SaveChangesAsync();
+
+        var outcome = await fixture.Processor.ProcessAsync(Provider, Callback(order.Id, order.TotalAmount, true), CancellationToken.None);
+
+        Assert.Equal(PaymentCallbackOutcome.Conflict, outcome);
+        Assert.Equal(0, await fixture.Db.PaymentCallbacks.CountAsync());
+        var reloaded = await fixture.Db.Orders.AsNoTracking().SingleAsync(o => o.Id == order.Id);
+        Assert.Equal(status, reloaded.Status);
     }
 
     [Fact]

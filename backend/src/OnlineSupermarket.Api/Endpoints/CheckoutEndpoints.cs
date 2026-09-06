@@ -330,7 +330,7 @@ public static class CheckoutEndpoints
             return Results.Unauthorized();
 
         if (callback.ErrorCode is not null)
-            return Results.BadRequest(new { code = callback.ErrorCode });
+            return Results.BadRequest(new { code = "MALFORMED_CALLBACK" });
 
         PaymentCallbackOutcome outcome;
         try

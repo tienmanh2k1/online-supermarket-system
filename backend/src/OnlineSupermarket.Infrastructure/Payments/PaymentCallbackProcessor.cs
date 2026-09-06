@@ -14,6 +14,9 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
         PaymentCallbackVerificationResult callback,
         CancellationToken cancellationToken)
     {
+        if (!callback.IsValidSignature)
+            throw new InvalidOperationException("Callback must be signature-verified before processing.");
+
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
         var duplicate = await dbContext.PaymentCallbacks.AnyAsync(

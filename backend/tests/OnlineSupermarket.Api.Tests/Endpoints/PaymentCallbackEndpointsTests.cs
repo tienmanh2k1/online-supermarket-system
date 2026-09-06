@@ -250,4 +250,18 @@ public sealed class PaymentCallbackEndpointsTests
         Assert.DoesNotContain("topsecret-signature", body);
         Assert.DoesNotContain(TestApiFactory.TestSecret, body);
     }
+
+    [Fact]
+    public async Task Verifier_ErrorCode_IsNotEchoed_IntoResponse()
+    {
+        using var factory = new CallbackTestFactory();
+        factory.Verifier.Result = new(true, "evt-1", OrderGuid, 100m, true, "{}", "INTERNAL_PROVIDER_DETAIL");
+
+        var response = await PostCallbackAsync(factory, new { provider = "VNPay", data = new Dictionary<string, string> { ["vnp_TxnRef"] = OrderGuid.ToString() } });
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.DoesNotContain("INTERNAL_PROVIDER_DETAIL", body);
+        Assert.Equal(0, factory.Processor.Calls);
+    }
 }
