@@ -245,4 +245,66 @@ describe('ProductReviews', () => {
     expect(screen.getByRole('button', { name: 'Thử lại' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Cập nhật đánh giá' })).not.toBeInTheDocument()
   })
+
+  it('forwards targetOrderItemId to the eligibility request', async () => {
+    vi.mocked(reviewApi.getProductReviews).mockResolvedValue(sampleReviewsResponse)
+    vi.mocked(reviewApi.getEligibility).mockResolvedValue({
+      canReview: true,
+      orderItemId: 'oi-verified',
+      reviewId: null,
+    })
+
+    render(<ProductReviews productId="p-1" targetOrderItemId="oi-deep-link" />)
+
+    await screen.findByRole('button', { name: 'Gửi đánh giá' })
+
+    expect(reviewApi.getEligibility).toHaveBeenCalledWith('p-1', 'test-token', expect.anything(), 'oi-deep-link')
+  })
+
+  it('renders invalid link message when deep-link target is rejected', async () => {
+    vi.mocked(reviewApi.getProductReviews).mockResolvedValue(sampleReviewsResponse)
+    vi.mocked(reviewApi.getEligibility).mockResolvedValue({
+      canReview: false,
+      orderItemId: null,
+      reviewId: null,
+    })
+
+    render(<ProductReviews productId="p-1" targetOrderItemId="oi-deep-link" />)
+
+    expect(await screen.findByText('Liên kết đánh giá không còn hợp lệ.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Gửi đánh giá' })).not.toBeInTheDocument()
+  })
+
+  it('uses backend-confirmed orderItemId, not the raw deep-link target', async () => {
+    const user = userEvent.setup()
+    vi.mocked(reviewApi.getProductReviews).mockResolvedValue(sampleReviewsResponse)
+    vi.mocked(reviewApi.getEligibility).mockResolvedValue({
+      canReview: true,
+      orderItemId: 'oi-verified',
+      reviewId: null,
+    })
+    vi.mocked(reviewApi.createReview).mockResolvedValue({
+      id: 'rev-new',
+      productId: 'p-1',
+      reviewerName: 'Me',
+      rating: 4,
+      comment: 'Hay',
+      createdAtUtc: '2026-09-04T00:00:00Z',
+      updatedAtUtc: '2026-09-04T00:00:00Z',
+    })
+
+    render(<ProductReviews productId="p-1" targetOrderItemId="oi-deep-link" />)
+
+    const submitBtn = await screen.findByRole('button', { name: 'Gửi đánh giá' })
+    const textarea = screen.getByPlaceholderText(/Hãy chia sẻ trải nghiệm/i)
+    await user.type(textarea, 'Hay')
+    await user.click(submitBtn)
+
+    expect(await screen.findByText('Gửi đánh giá thành công!')).toBeInTheDocument()
+    expect(reviewApi.createReview).toHaveBeenCalledWith('test-token', {
+      orderItemId: 'oi-verified',
+      rating: 5,
+      comment: 'Hay',
+    })
+  })
 })

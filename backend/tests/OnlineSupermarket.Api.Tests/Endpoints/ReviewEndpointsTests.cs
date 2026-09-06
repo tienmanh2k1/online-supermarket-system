@@ -273,6 +273,75 @@ public class ReviewEndpointsTests : IClassFixture<TestApiFactory>
     }
 
     [Fact]
+    public async Task GetReviewEligibility_WithTarget_ValidItem_ReturnsCanReviewTrueForThatItem()
+    {
+        var fixture = await SeedOrderItemAsync("Completed", ownedByCaller: true);
+        using var client = await CreateCustomerClientAsync(fixture.UserId);
+
+        var response = await client.GetAsync($"/api/products/{fixture.ProductId}/review-eligibility?orderItemId={fixture.OrderItemId}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<ReviewEligibilityDto>();
+        Assert.NotNull(result);
+        Assert.True(result.CanReview);
+        Assert.Equal(fixture.OrderItemId, result.OrderItemId);
+    }
+
+    [Fact]
+    public async Task GetReviewEligibility_WithTarget_ProductMismatch_Returns400()
+    {
+        var firstFixture = await SeedOrderItemAsync("Completed", ownedByCaller: true);
+        var secondFixture = await SeedOrderItemAsync("Completed", ownedByCaller: true, callerUserId: firstFixture.UserId);
+        using var client = await CreateCustomerClientAsync(firstFixture.UserId);
+
+        // orderItemId belongs to firstFixture.ProductId, but the query uses secondFixture.ProductId.
+        var response = await client.GetAsync($"/api/products/{secondFixture.ProductId}/review-eligibility?orderItemId={firstFixture.OrderItemId}");
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains("ORDER_ITEM_PRODUCT_MISMATCH", body);
+    }
+
+    [Fact]
+    public async Task GetReviewEligibility_WithTarget_NotOwnedByCaller_ReturnsCanReviewFalse()
+    {
+        var fixture = await SeedOrderItemAsync("Completed", ownedByCaller: false);
+        using var client = await CreateCustomerClientAsync(fixture.UserId);
+
+        var response = await client.GetAsync($"/api/products/{fixture.ProductId}/review-eligibility?orderItemId={fixture.OrderItemId}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<ReviewEligibilityDto>();
+        Assert.NotNull(result);
+        Assert.False(result.CanReview);
+        Assert.Null(result.OrderItemId);
+    }
+
+    [Fact]
+    public async Task GetReviewEligibility_WithTarget_AlreadyReviewed_ReturnsCanReviewFalseWithoutItem()
+    {
+        var fixture = await SeedOrderItemAsync("Completed", ownedByCaller: true);
+        using var client = await CreateCustomerClientAsync(fixture.UserId);
+
+        var createRes = await client.PostAsJsonAsync("/api/reviews", new
+        {
+            orderItemId = fixture.OrderItemId,
+            rating = 4,
+            comment = "Đã đánh giá"
+        });
+        Assert.Equal(HttpStatusCode.Created, createRes.StatusCode);
+
+        var response = await client.GetAsync($"/api/products/{fixture.ProductId}/review-eligibility?orderItemId={fixture.OrderItemId}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<ReviewEligibilityDto>();
+        Assert.NotNull(result);
+        Assert.False(result.CanReview);
+        Assert.Null(result.OrderItemId);
+        Assert.Null(result.ReviewId);
+    }
+
+    [Fact]
     public async Task GetReviewById_WhenExists_ReturnsReviewDto()
     {
         var fixture = await SeedOrderItemAsync("Completed", ownedByCaller: true);
