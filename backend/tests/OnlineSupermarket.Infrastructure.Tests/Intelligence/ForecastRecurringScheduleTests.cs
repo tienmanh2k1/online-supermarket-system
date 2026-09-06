@@ -190,6 +190,49 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
     }
 
     [Fact]
+    public async Task GetDueJobsAsync_CrossMidnight_CompletedYesterdayIsStillDueToday()
+    {
+        var yesterdayBranchId = await SeedBranchAsync("Yesterday Branch");
+        var inventoryId = await SeedInventoryAsync(yesterdayBranchId);
+        var startOfTodayUtc = DateOnly.FromDateTime(AtUtcHour(0)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        await SeedSucceededRunCompletedAtAsync(yesterdayBranchId, inventoryId, startOfTodayUtc.AddMinutes(-1));
+
+        var due = await _schedule.GetDueJobsAsync(AtUtcHour(2), CancellationToken.None);
+
+        // Completed at 23:59 yesterday does not count as "forecasted today", so the branch is still due.
+        Assert.Contains(due, r => r.BranchId == yesterdayBranchId);
+    }
+
+    [Fact]
+    public async Task GetDueJobsAsync_CrossMidnight_CompletedJustAfterMidnightIsSkippedToday()
+    {
+        var todayBranchId = await SeedBranchAsync("Midnight Branch");
+        var inventoryId = await SeedInventoryAsync(todayBranchId);
+        var startOfTodayUtc = DateOnly.FromDateTime(AtUtcHour(0)).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        await SeedSucceededRunCompletedAtAsync(todayBranchId, inventoryId, startOfTodayUtc.AddSeconds(30));
+
+        var due = await _schedule.GetDueJobsAsync(AtUtcHour(2), CancellationToken.None);
+
+        Assert.DoesNotContain(due, r => r.BranchId == todayBranchId);
+    }
+
+    private async Task SeedSucceededRunCompletedAtAsync(Guid branchId, Guid inventoryId, DateTime completedAtUtc)
+    {
+        var runId = await QueueRunAsync(branchId);
+        var run = await _db.BackgroundJobRuns.SingleAsync(candidate => candidate.Id == runId);
+        var token = Guid.NewGuid().ToString();
+        run.Start(token, completedAtUtc.AddMinutes(-5), completedAtUtc.AddMinutes(5));
+        run.MarkAsSucceeded(token, completedAtUtc);
+        await _db.SaveChangesAsync();
+
+        _db.DemandForecasts.Add(DemandForecast.Create(
+            inventoryId, 7, DateOnly.FromDateTime(completedAtUtc),
+            DateOnly.FromDateTime(completedAtUtc), 0m, 0,
+            ForecastDataQuality.Insufficient, "sma-v1", completedAtUtc, runId));
+        await _db.SaveChangesAsync();
+    }
+
+    [Fact]
     public async Task ScheduledForecastRun_CarriesBranchId_AndHandlerProcessesIt()
     {
         var branchId = await SeedBranchAsync("Scheduled Run Branch");
