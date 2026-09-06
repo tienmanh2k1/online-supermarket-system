@@ -45,6 +45,8 @@ public sealed class BranchInventory : Entity
     public void AdjustQuantity(int quantityOnHand)
     {
         if (quantityOnHand < 0) throw new ArgumentOutOfRangeException(nameof(quantityOnHand));
+        if (quantityOnHand < ReservedQuantity)
+            throw new InvalidOperationException("Quantity on hand cannot be below reserved quantity.");
         QuantityOnHand = quantityOnHand;
         UpdatedAtUtc = DateTime.UtcNow;
     }
@@ -109,7 +111,9 @@ public sealed class BranchInventory : Entity
             throw new ArgumentOutOfRangeException(nameof(quantity));
         }
 
-        ReservedQuantity = Math.Max(0, ReservedQuantity - quantity);
+        if (quantity > ReservedQuantity)
+            throw new InvalidOperationException("Release exceeds reserved inventory.");
+        ReservedQuantity -= quantity;
         UpdatedAtUtc = DateTime.UtcNow;
     }
 
