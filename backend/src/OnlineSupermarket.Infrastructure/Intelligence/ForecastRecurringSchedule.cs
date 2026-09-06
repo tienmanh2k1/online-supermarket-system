@@ -45,7 +45,7 @@ public class ForecastRecurringSchedule(
         var succeededBranchIds = await dbContext.BackgroundJobRuns.AsNoTracking()
             .Where(run => run.JobName == ForecastJobName
                 && run.Status == JobRunStatus.Succeeded
-                && run.CreatedAtUtc >= startOfTodayUtc
+                && run.CompletedAtUtc >= startOfTodayUtc
                 && run.BranchId != null)
             .Select(run => run.BranchId!.Value)
             .Distinct()
