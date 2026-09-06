@@ -7,6 +7,7 @@ using OnlineSupermarket.Domain.Payments;
 using OnlineSupermarket.Domain.Promotions;
 using OnlineSupermarket.Infrastructure.Inventory;
 using OnlineSupermarket.Infrastructure.Persistence;
+using OnlineSupermarket.Infrastructure.Payments;
 
 namespace OnlineSupermarket.Api.Endpoints;
 
@@ -301,93 +302,24 @@ public static class CheckoutEndpoints
 
     private static async Task<IResult> PaymentCallbackAsync(
         [FromBody] PaymentCallbackRequest request,
-        [FromServices] AppDbContext dbContext,
-        [FromServices] IInventoryMutationService mutationService,
+        [FromServices] IEnumerable<IPaymentCallbackVerifier> verifiers,
+        [FromServices] IPaymentCallbackProcessor processor,
         CancellationToken cancellationToken)
     {
-        var externalEventId = request.Data.GetValueOrDefault("transactionId") ?? Guid.NewGuid().ToString();
-        var amount = decimal.TryParse(request.Data.GetValueOrDefault("amount") ?? "", out var a) ? a : 0m;
-        var responseCode = request.Data.GetValueOrDefault("responseCode") ?? "00";
-        var isSuccess = responseCode == "00" || responseCode == "0";
-
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            System.Data.IsolationLevel.Serializable, cancellationToken);
-
-        var payment = await dbContext.Payments
-            .FirstOrDefaultAsync(p => p.ProviderTransactionId == externalEventId, cancellationToken);
-
-        if (payment == null)
+        var verifier = verifiers.FirstOrDefault(x => x.Provider.Equals(request.Provider, StringComparison.OrdinalIgnoreCase));
+        if (verifier is null) return Results.Unauthorized();
+        var callback = verifier.Verify(request.Data);
+        if (!callback.IsValidSignature) return Results.Unauthorized();
+        if (callback.ErrorCode is not null) return Results.BadRequest(new { code = callback.ErrorCode });
+        var outcome = await processor.ProcessAsync(verifier.Provider, callback, cancellationToken);
+        return outcome switch
         {
-            if (Guid.TryParse(request.Data.GetValueOrDefault("orderId") ?? "", out var orderId))
-            {
-                payment = await dbContext.Payments
-                    .FirstOrDefaultAsync(p => p.OrderId == orderId, cancellationToken);
-            }
-        }
-
-        if (payment == null)
-            return Results.NotFound(new { message = "Payment not found." });
-
-        var existingCallback = await dbContext.PaymentCallbacks
-            .AnyAsync(pc => pc.Provider == request.Provider && pc.ExternalEventId == externalEventId, cancellationToken);
-
-        if (existingCallback)
-        {
-            return Results.Ok(new { message = "Callback already processed." });
-        }
-
-        var resultStatus = isSuccess ? PaymentStatus.Completed : PaymentStatus.Failed;
-
-        var callback = PaymentCallback.Create(
-            payment.Id,
-            request.Provider,
-            externalEventId,
-            System.Text.Json.JsonSerializer.Serialize(request.Data),
-            true,
-            amount,
-            resultStatus);
-        dbContext.PaymentCallbacks.Add(callback);
-
-        if (isSuccess && amount == payment.Amount)
-        {
-            payment.MarkCompleted(externalEventId, System.Text.Json.JsonSerializer.Serialize(request.Data));
-            var order = await dbContext.Orders
-                .Include(o => o.StatusHistory)
-                .FirstOrDefaultAsync(o => o.Id == payment.OrderId, cancellationToken);
-            if (order != null)
-            {
-                order.SetStatus(OrderStatus.Confirmed, "Payment confirmed");
-            }
-        }
-        else
-        {
-            payment.MarkFailed(System.Text.Json.JsonSerializer.Serialize(request.Data));
-
-            var failedOrder = await dbContext.Orders
-                .Include(o => o.Items)
-                .Include(o => o.StatusHistory)
-                .FirstOrDefaultAsync(o => o.Id == payment.OrderId, cancellationToken);
-            if (failedOrder != null)
-            {
-                var releaseCommands = await OrderItemCommandsAsync(
-                    failedOrder, dbContext, (id, quantity, orderId) => InventoryMutationCommand.Release(id, quantity, orderId), cancellationToken);
-                await mutationService.ApplyBatchAsync(releaseCommands, cancellationToken);
-
-                if (failedOrder.PromotionId.HasValue)
-                {
-                    var promotion = await dbContext.Promotions
-                        .FirstOrDefaultAsync(p => p.Id == failedOrder.PromotionId.Value, cancellationToken);
-                    promotion?.ReleaseUsage();
-                }
-
-                failedOrder.SetStatus(OrderStatus.Cancelled, "Payment failed - inventory released");
-            }
-        }
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-
-        return Results.Ok(new { message = "Callback processed." });
+            PaymentCallbackOutcome.Processed => Results.Ok(new { message = "Callback processed." }),
+            PaymentCallbackOutcome.AlreadyProcessed => Results.Ok(new { message = "Callback already processed." }),
+            PaymentCallbackOutcome.PaymentNotFound => Results.NotFound(new { message = "Payment not found." }),
+            PaymentCallbackOutcome.Conflict => Results.Conflict(new { message = "Payment callback conflicts with current payment." }),
+            _ => Results.BadRequest()
+        };
     }
 
     private static async Task<IReadOnlyCollection<InventoryMutationCommand>> OrderItemCommandsAsync(

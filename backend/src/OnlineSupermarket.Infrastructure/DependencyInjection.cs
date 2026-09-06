@@ -43,6 +43,7 @@ public static class DependencyInjection
             configuration.GetSection(PaymentWebhookOptions.SectionName));
         services.AddScoped<IPaymentCallbackVerifier, VnPayCallbackVerifier>();
         services.AddScoped<IPaymentCallbackVerifier, MomoCallbackVerifier>();
+        services.AddScoped<IPaymentCallbackProcessor, PaymentCallbackProcessor>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
