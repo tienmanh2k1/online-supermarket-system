@@ -11,10 +11,15 @@ public sealed class PaymentCallbackVerifierTests
     private static readonly Guid OrderGuid = Guid.Parse("9b0e6ef8-6d4c-4f85-9a3d-1e2f3c4b5a6d");
 
     // Known-answer vectors computed independently with Python stdlib (RFC 3986 joining
-    // for VNPay, raw sorted joining for MoMo IPN). Sources: VNPay merchant integration guide
-    // (HMAC-SHA512 over sorted non-empty vnp_* fields excluding vnp_SecureHash/SecureHashType,
-    // amount unit is the smallest unit x100) and MoMo IPN callback docs, API 2024-08:
-    // minutes https://developers.momo.vn (HMAC-SHA256 over sorted IPN fields including accessKey).
+    // for VNPay with %20 for spaces, raw sorted joining for MoMo IPN) — never produced by
+    // calling the production verifier. Sources checked 2026-09-06:
+    // - VNPay merchant integration guide v2.1.0 (HMAC-SHA512 over ordinal-sorted non-empty
+    //   vnp_* fields excluding vnp_SecureHash/vnp_SecureHashType by key; canonical = urlencode(key)=urlencode(value)
+    //   joined with &; amount is the smallest unit x100) — developer documentation published at
+    //   https://sandbox.vnpayment.vn/psp/help/api or mirror reference implementations (viblo.asia VNPay guide).
+    // - MoMo All-in-One IPN callback docs (API 2024-08, https://developers.momo.vn "Confirm Payment IPN"):
+    //   HMAC-SHA256 over the 13 IPN fields sorted alphabetically a-z, accessKey injected from config
+    //   (not echoed in the POST body), empty optional fields retained as key=, resultCode 0 = success.
     private const string VnPayValidSignature =
         "ab09c3dc5bf0d8762ce2b9e8723a7132b147807850727d29df1c876bdb3e91fa" +
         "1e75709c28c648558869bc519f8da0e3424814a0a54dc003035e4e940036a0ae";
