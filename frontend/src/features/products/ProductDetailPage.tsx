@@ -2,9 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { catalogApi, type ProductDetailDto } from '../../api/catalogApi'
 import { branchApi, type BranchDto } from '../../api/branchApi'
-import { recommendationApi } from '../../api/recommendationApi'
 import { ApiError } from '../../api/httpClient'
-import { getOrCreateAnonymousSessionId } from '../recommendations/recommendationSession'
 import { useAuth } from '../auth/AuthContext'
 import { useCart } from '../cart/CartContext'
 import { useCompare } from '../compare/CompareContext'
@@ -44,14 +42,12 @@ function toCartActionMessage(error: unknown, fallback: string) {
   return fallback
 }
 
-const viewedProductKeys = new Set<string>()
-
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [searchParams, setSearchParams] = useSearchParams()
   const branchId = searchParams.get('branchId') || undefined
 
-  const { isAuthenticated, accessToken } = useAuth()
+  const { isAuthenticated } = useAuth()
   const {
     status: cartStatus,
     cart,
@@ -88,20 +84,6 @@ export function ProductDetailPage() {
     setAddError(null)
     setRetryAdd(null)
   }, [id, branchId])
-
-  // Scroll and focus reviews section when URL fragment is #reviews
-  useEffect(() => {
-    if (productState.kind === 'ready' && window.location.hash === '#reviews') {
-      const timer = setTimeout(() => {
-        const el = document.getElementById('reviews')
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          el.focus()
-        }
-      }, 50)
-      return () => clearTimeout(timer)
-    }
-  }, [productState.kind])
 
   // Product fetch
   const fetchProduct = useCallback(() => {
@@ -150,18 +132,6 @@ export function ProductDetailPage() {
   useEffect(() => {
     return fetchBranches()
   }, [fetchBranches])
-
-  // Fire-once view capture per mounted product route; never blocks rendering.
-  useEffect(() => {
-    if (!id || viewedProductKeys.has(id)) return
-    viewedProductKeys.add(id)
-    const anonymousSessionId = getOrCreateAnonymousSessionId()
-    recommendationApi
-      .recordView(id, { anonymousSessionId }, accessToken ?? undefined)
-      .catch(() => {
-        // capture is best-effort; content remains rendered
-      })
-  }, [id, accessToken])
 
   // Normalize invalid branchId
   useEffect(() => {
