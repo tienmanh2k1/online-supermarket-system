@@ -1,0 +1,21 @@
+.admin-forecast-meta {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.admin-forecast-quality {
+  font-weight: 600;
+}
+
+.admin-forecast-quality--sufficient {
+  color: #166534;
+}
+
+.admin-forecast-quality--partial {
+  color: #9a6b00;
+}
+
+.admin-forecast-quality--insufficient {
+  color: #b91c1c;
+}

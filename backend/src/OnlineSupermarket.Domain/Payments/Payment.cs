@@ -30,6 +30,11 @@ public sealed class Payment : Entity
 
     public void MarkCompleted(string providerTransactionId, string? response = null)
     {
+        if (Status is PaymentStatus.Completed or PaymentStatus.Failed or PaymentStatus.Refunded)
+            throw new InvalidOperationException($"Payment cannot transition from {Status} to Completed.");
+        if (string.IsNullOrWhiteSpace(providerTransactionId))
+            throw new ArgumentException("Provider transaction id is required.", nameof(providerTransactionId));
+
         Status = PaymentStatus.Completed;
         ProviderTransactionId = providerTransactionId;
         ProviderResponse = response;
@@ -38,6 +43,8 @@ public sealed class Payment : Entity
 
     public void MarkFailed(string? response = null)
     {
+        if (Status is PaymentStatus.Completed or PaymentStatus.Failed or PaymentStatus.Refunded)
+            throw new InvalidOperationException($"Payment cannot transition from {Status} to Failed.");
         Status = PaymentStatus.Failed;
         ProviderResponse = response;
     }

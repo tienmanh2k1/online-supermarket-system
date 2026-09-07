@@ -6,7 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OnlineSupermarket.Infrastructure.Identity;
 using OnlineSupermarket.Infrastructure.Inventory;
+using OnlineSupermarket.Infrastructure.Intelligence;
+using OnlineSupermarket.Infrastructure.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
+using OnlineSupermarket.Infrastructure.Payments;
 using OnlineSupermarket.Infrastructure.Recommendations;
 using OnlineSupermarket.Infrastructure.Services;
 
@@ -29,6 +32,20 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IInventoryMutationService, InventoryMutationService>();
         services.AddScoped<IProductViewEventStore, ProductViewEventStore>();
+        services.AddScoped<IBackgroundJobHandler, RecommendationJobHandler>();
+        services.AddScoped<IRecurringJobSchedule, RecommendationRecurringSchedule>();
+        services.AddScoped<IBackgroundJobHandler, ForecastJobHandler>();
+        services.AddScoped<IRecurringJobSchedule, ForecastRecurringSchedule>();
+
+        services.Configure<Jobs.IntelligenceJobsOptions>(
+            configuration.GetSection(Jobs.IntelligenceJobsOptions.SectionName));
+        services.Configure<VnPayWebhookOptions>(
+            configuration.GetSection(VnPayWebhookOptions.SectionName));
+        services.Configure<MoMoWebhookOptions>(
+            configuration.GetSection(MoMoWebhookOptions.SectionName));
+        services.AddScoped<IPaymentCallbackVerifier, VnPayCallbackVerifier>();
+        services.AddScoped<IPaymentCallbackVerifier, MomoCallbackVerifier>();
+        services.AddScoped<IPaymentCallbackProcessor, PaymentCallbackProcessor>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
@@ -91,10 +108,13 @@ public static class DependencyInjection
         {
             services.AddHostedService<BackgroundServices.RefreshTokenCleanupService>();
             services.AddHostedService<Jobs.IntelligenceWorker>();
+            services.AddHostedService<Jobs.RecurringJobScheduler>();
         }
 
         services.AddSingleton<Jobs.IJobQueue>(sp => new Jobs.ChannelJobQueue());
         services.AddScoped<Jobs.JobRunCoordinator>();
+        services.AddScoped<Jobs.JobLeaseService>();
+        services.AddScoped<Jobs.IJobRunStore, Jobs.JobRunStore>();
 
         return services;
     }

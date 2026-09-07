@@ -230,6 +230,42 @@ public sealed class InventoryMutationEndpointTests
         Assert.Equal(0, inventory.ReservedQuantity);
     }
 
+    private static readonly System.Security.Cryptography.HMACSHA512 SignatureAlgorithm = new(
+        System.Text.Encoding.UTF8.GetBytes(TestApiFactory.TestSecret));
+
+    private static Dictionary<string, string> SignedVnPayCallback(Guid orderId, decimal amount, string eventId)
+    {
+        var data = new Dictionary<string, string>
+        {
+            ["vnp_Amount"] = ((long)(amount * 100)).ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["vnp_OrderInfo"] = "Payment",
+            ["vnp_ResponseCode"] = "99",
+            ["vnp_TransactionNo"] = eventId,
+            ["vnp_TxnRef"] = orderId.ToString(),
+        };
+        var canonical = string.Join("&",
+            data.OrderBy(p => p.Key, StringComparer.Ordinal)
+                .Select(p => $"{Rfc3986(p.Key)}={Rfc3986(p.Value)}"));
+        var digest = SignatureAlgorithm.ComputeHash(System.Text.Encoding.UTF8.GetBytes(canonical));
+        data["vnp_SecureHash"] = Convert.ToHexString(digest).ToLowerInvariant();
+        data["vnp_SecureHashType"] = "SHA512";
+        return data;
+    }
+
+    private static string Rfc3986(string value)
+    {
+        var builder = new System.Text.StringBuilder(value.Length);
+        foreach (var b in System.Text.Encoding.UTF8.GetBytes(value))
+        {
+            if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '0' && b <= '9')
+                || b == '-' || b == '_' || b == '.' || b == '~')
+                builder.Append((char)b);
+            else
+                builder.Append('%').Append(b.ToString("X2"));
+        }
+        return builder.ToString();
+    }
+
     [Fact]
     public async Task PaymentFailure_ReleasesReservationOnce()
     {
@@ -249,13 +285,7 @@ public sealed class InventoryMutationEndpointTests
             var response = await client.PostAsJsonAsync("/api/checkout/payment/callback", new
             {
                 provider = "vnpay",
-                data = new Dictionary<string, string>
-                {
-                    ["transactionId"] = "txn-001",
-                    ["amount"] = order.TotalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                    ["orderId"] = order.Id.ToString(),
-                    ["responseCode"] = "99",
-                },
+                data = SignedVnPayCallback(order.Id, order.TotalAmount, "txn-001"),
             });
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
@@ -273,5 +303,48 @@ public sealed class InventoryMutationEndpointTests
         var inventory = await db.BranchInventories.AsNoTracking()
             .SingleAsync(bi => bi.Id == fixture.InventoryId);
         Assert.Equal(0, inventory.ReservedQuantity);
+    }
+
+    [Fact]
+    public async Task PaymentFailure_EndToEnd_ReleasesInventoryExactlyOnce()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedCheckoutAsync(factory, inventoryQty: 100, cartQty: 3);
+
+        var checkout = await seed.Client.PostAsJsonAsync("/api/checkout", new CheckoutRequest("Pickup"));
+        Assert.Equal(HttpStatusCode.Created, checkout.StatusCode);
+        var checkoutBody = await checkout.Content.ReadFromJsonAsync<CheckoutResponse>();
+
+        var payment = await seed.Client.PostAsJsonAsync("/api/checkout/payment",
+            new PaymentRequest(checkoutBody!.OrderId, "VNPay"));
+        Assert.Equal(HttpStatusCode.OK, payment.StatusCode);
+
+        var client = factory.CreateClient();
+        for (var i = 0; i < 2; i++)
+        {
+            var response = await client.PostAsJsonAsync("/api/checkout/payment/callback", new
+            {
+                provider = "vnpay",
+                data = SignedVnPayCallback(checkoutBody.OrderId, checkoutBody.TotalAmount, "e2e-fail"),
+            });
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var release = Assert.Single(await LoadTransactionsAsync(factory, InventoryTransactionType.Release));
+        Assert.Equal(-3, release.ReservedQuantityDelta);
+        Assert.Equal(0, release.QuantityOnHandDelta);
+        Assert.Equal(seed.InventoryId, release.BranchInventoryId);
+
+        var order = await db.Orders.AsNoTracking().SingleAsync(o => o.Id == checkoutBody.OrderId);
+        Assert.Equal(OrderStatus.Cancelled, order.Status);
+
+        var inventory = await db.BranchInventories.AsNoTracking()
+            .SingleAsync(bi => bi.Id == seed.InventoryId);
+        Assert.Equal(100, inventory.QuantityOnHand);
+        Assert.Equal(0, inventory.ReservedQuantity);
+        Assert.Equal(100, inventory.AvailableQuantity);
     }
 }

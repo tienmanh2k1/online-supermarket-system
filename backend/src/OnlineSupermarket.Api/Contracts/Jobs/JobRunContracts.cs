@@ -5,7 +5,7 @@ namespace OnlineSupermarket.Api.Contracts.Jobs;
 public record JobRunResponse(
     Guid Id,
     string JobName,
-    JobRunStatus Status,
+    string Status,
     DateTime CreatedAtUtc,
     DateTime? StartedAtUtc,
     DateTime? CompletedAtUtc,

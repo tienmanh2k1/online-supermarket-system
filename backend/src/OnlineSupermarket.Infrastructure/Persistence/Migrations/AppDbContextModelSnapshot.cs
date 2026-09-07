@@ -414,6 +414,75 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("OnlineSupermarket.Domain.Intelligence.DemandForecast", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ActualDataDays")
+                        .HasColumnType("int")
+                        .HasColumnName("actual_data_days");
+
+                    b.Property<string>("AlgorithmVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("algorithm_version");
+
+                    b.Property<Guid>("BranchInventoryId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("branch_inventory_id");
+
+                    b.Property<string>("DataQuality")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("data_quality");
+
+                    b.Property<DateOnly>("ForecastEndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("forecast_end_date");
+
+                    b.Property<DateOnly>("ForecastStartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("forecast_start_date");
+
+                    b.Property<DateTime>("GeneratedAtUtc")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<int>("HorizonDays")
+                        .HasColumnType("int")
+                        .HasColumnName("horizon_days");
+
+                    b.Property<Guid>("JobRunId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("job_run_id");
+
+                    b.Property<decimal>("PredictedQuantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("predicted_quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchInventoryId");
+
+                    b.HasIndex("JobRunId", "BranchInventoryId", "HorizonDays")
+                        .IsUnique()
+                        .HasDatabaseName("ix_demand_forecasts_run_inventory_horizon");
+
+                    b.ToTable("demand_forecasts", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_demand_forecasts_actual_data_days", "actual_data_days + 0 >= 0 AND actual_data_days <= 28");
+
+                            t.HasCheckConstraint("ck_demand_forecasts_horizon", "horizon_days IN (7, 14)");
+
+                            t.HasCheckConstraint("ck_demand_forecasts_predicted_quantity", "predicted_quantity + 0 >= 0");
+                        });
+                });
+
             modelBuilder.Entity("OnlineSupermarket.Domain.Inventory.BranchInventory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -539,6 +608,10 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("BranchId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("branch_id");
+
                     b.Property<DateTime?>("CompletedAtUtc")
                         .HasColumnType("datetime(6)");
 
@@ -575,6 +648,8 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("JobName", "LockKey")
                         .IsUnique();
@@ -975,6 +1050,89 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                     b.ToTable("product_view_events", (string)null);
                 });
 
+            modelBuilder.Entity("OnlineSupermarket.Domain.Recommendations.RecommendationResult", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AlgorithmVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("algorithm_version");
+
+                    b.Property<string>("AudienceKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("audience_key");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<DateTime>("GeneratedAtUtc")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("generated_at_utc");
+
+                    b.Property<Guid>("JobRunId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("job_run_id");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int")
+                        .HasColumnName("rank");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("reason");
+
+                    b.Property<Guid>("RecommendedProductId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("recommended_product_id");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasColumnName("scope");
+
+                    b.Property<decimal>("Score")
+                        .HasPrecision(12, 6)
+                        .HasColumnType("decimal(12,6)")
+                        .HasColumnName("score");
+
+                    b.Property<Guid?>("SourceProductId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("source_product_id");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecommendedProductId");
+
+                    b.HasIndex("SourceProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("JobRunId", "AudienceKey", "RecommendedProductId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_recommendation_results_run_audience_product");
+
+                    b.ToTable("recommendation_results", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_recommendation_results_rank", "rank > 0");
+
+                            t.HasCheckConstraint("ck_recommendation_results_score", "score + 0 >= 0 AND score + 0 <= 1");
+                        });
+                });
+
             modelBuilder.Entity("OnlineSupermarket.Domain.Reviews.Review", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1143,6 +1301,21 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OnlineSupermarket.Domain.Intelligence.DemandForecast", b =>
+                {
+                    b.HasOne("OnlineSupermarket.Domain.Inventory.BranchInventory", null)
+                        .WithMany()
+                        .HasForeignKey("BranchInventoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineSupermarket.Domain.Jobs.BackgroundJobRun", null)
+                        .WithMany()
+                        .HasForeignKey("JobRunId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OnlineSupermarket.Domain.Inventory.BranchInventory", b =>
                 {
                     b.HasOne("OnlineSupermarket.Domain.Branches.Branch", "Branch")
@@ -1174,6 +1347,14 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BranchInventoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OnlineSupermarket.Domain.Jobs.BackgroundJobRun", b =>
+                {
+                    b.HasOne("OnlineSupermarket.Domain.Branches.Branch", null)
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OnlineSupermarket.Domain.Orders.OrderItem", b =>
@@ -1224,6 +1405,31 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("OnlineSupermarket.Domain.Identity.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("OnlineSupermarket.Domain.Recommendations.RecommendationResult", b =>
+                {
+                    b.HasOne("OnlineSupermarket.Domain.Jobs.BackgroundJobRun", null)
+                        .WithMany()
+                        .HasForeignKey("JobRunId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineSupermarket.Domain.Catalog.Product", null)
+                        .WithMany()
+                        .HasForeignKey("RecommendedProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineSupermarket.Domain.Catalog.Product", null)
+                        .WithMany()
+                        .HasForeignKey("SourceProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("OnlineSupermarket.Domain.Identity.User", null)
                         .WithMany()

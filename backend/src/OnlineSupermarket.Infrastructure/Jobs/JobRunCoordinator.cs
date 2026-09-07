@@ -6,22 +6,31 @@ namespace OnlineSupermarket.Infrastructure.Jobs;
 
 public class JobRunCoordinator(AppDbContext dbContext, IJobQueue jobQueue)
 {
-    public async Task<bool> TryQueueAsync(string jobName, string lockKey, CancellationToken cancellationToken)
+    public async Task<Guid?> TryQueueAsync(
+        string jobName, string lockKey, CancellationToken cancellationToken, Guid? branchId = null)
     {
-        // For testing with InMemory provider which doesn't enforce unique constraints
-        var exists = await dbContext.BackgroundJobRuns.AnyAsync(x => x.JobName == jobName && x.LockKey == lockKey, cancellationToken);
-        if (exists) return false;
+        var exists = await dbContext.BackgroundJobRuns.AnyAsync(
+            run => run.JobName == jobName && run.LockKey == lockKey, cancellationToken);
+        if (exists)
+        {
+            return null;
+        }
 
-        var run = new BackgroundJobRun(jobName, lockKey, DateTime.UtcNow);
+        var run = new BackgroundJobRun(jobName, lockKey, DateTime.UtcNow, branchId);
         dbContext.BackgroundJobRuns.Add(run);
 
         try
         {
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException error)
         {
-            return false;
+            if (!IsDuplicateKeyError(error))
+            {
+                throw;
+            }
+
+            return null;
         }
 
         try
@@ -33,6 +42,27 @@ public class JobRunCoordinator(AppDbContext dbContext, IJobQueue jobQueue)
             // Ignore channel errors to ensure durable DB persistence (job will be picked up by recovery)
         }
 
-        return true;
+        return run.Id;
+    }
+
+    private static bool IsDuplicateKeyError(DbUpdateException error)
+    {
+        Exception? current = error;
+        var seen = new HashSet<int>();
+        while (current != null && seen.Add(current.GetHashCode()))
+        {
+            var message = current.Message ?? string.Empty;
+            if (message.Contains("1062")
+                || message.Contains("duplicate key")
+                || message.Contains("Duplicate entry")
+                || message.Contains("UNIQUE constraint failed"))
+            {
+                return true;
+            }
+
+            current = current.InnerException;
+        }
+
+        return false;
     }
 }

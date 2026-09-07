@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnlineSupermarket.Domain.Branches;
 using OnlineSupermarket.Domain.Jobs;
 
 namespace OnlineSupermarket.Infrastructure.Persistence.Configurations;
@@ -20,6 +21,10 @@ public class BackgroundJobRunConfiguration : IEntityTypeConfiguration<Background
             .IsRequired()
             .HasMaxLength(100);
 
+        builder.Property(x => x.BranchId)
+            .HasColumnName("branch_id")
+            .HasColumnType("char(36)");
+
         builder.Property(x => x.Status)
             .IsRequired()
             .HasConversion<string>()
@@ -33,5 +38,11 @@ public class BackgroundJobRunConfiguration : IEntityTypeConfiguration<Background
 
         builder.HasIndex(x => new { x.JobName, x.LockKey })
             .IsUnique();
+
+        builder.HasOne<Branch>()
+            .WithMany()
+            .HasForeignKey(x => x.BranchId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

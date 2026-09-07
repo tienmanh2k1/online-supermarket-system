@@ -11,6 +11,7 @@ using OnlineSupermarket.Domain.Recommendations;
 using OnlineSupermarket.Domain.Reviews;
 using OnlineSupermarket.Domain.Shopping;
 using OnlineSupermarket.Domain.Jobs;
+using OnlineSupermarket.Domain.Intelligence;
 
 namespace OnlineSupermarket.Infrastructure.Persistence;
 
@@ -54,9 +55,13 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
     // Recommendations
     public DbSet<ProductViewEvent> ProductViewEvents => Set<ProductViewEvent>();
+    public DbSet<RecommendationResult> RecommendationResults => Set<RecommendationResult>();
 
     // Jobs
     public DbSet<BackgroundJobRun> BackgroundJobRuns => Set<BackgroundJobRun>();
+
+    // Intelligence
+    public DbSet<DemandForecast> DemandForecasts => Set<DemandForecast>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

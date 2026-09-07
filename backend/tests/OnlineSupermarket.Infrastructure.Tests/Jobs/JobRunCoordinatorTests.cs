@@ -25,12 +25,13 @@ public class JobRunCoordinatorTests
     }
 
     [Fact]
-    public async Task TryQueueAsync_WhenNoConflict_ShouldQueueAndReturnTrue()
+    public async Task TryQueueAsync_WhenNoConflict_ShouldQueueAndReturnRunId()
     {
         var result = await _sut.TryQueueAsync("TestJob", "Key1", CancellationToken.None);
         
-        Assert.True(result);
+        Assert.NotNull(result);
         var dbRow = await _dbContext.BackgroundJobRuns.SingleAsync();
+        Assert.Equal(dbRow.Id, result);
         Assert.Equal("TestJob", dbRow.JobName);
         Assert.Equal(JobRunStatus.Queued, dbRow.Status);
         
@@ -38,7 +39,7 @@ public class JobRunCoordinatorTests
     }
 
     [Fact]
-    public async Task TryQueueAsync_WhenConflict_ShouldReturnFalse()
+    public async Task TryQueueAsync_WhenConflict_ShouldReturnNull()
     {
         var existing = new BackgroundJobRun("TestJob", "Key1", DateTime.UtcNow);
         _dbContext.BackgroundJobRuns.Add(existing);
@@ -46,7 +47,7 @@ public class JobRunCoordinatorTests
         
         var result = await _sut.TryQueueAsync("TestJob", "Key1", CancellationToken.None);
         
-        Assert.False(result);
+        Assert.Null(result);
         _jobQueueMock.Verify(q => q.EnqueueAsync(It.IsAny<JobRequest>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -58,7 +59,7 @@ public class JobRunCoordinatorTests
 
         var result = await _sut.TryQueueAsync("TestJob", "Key2", CancellationToken.None);
         
-        Assert.True(result);
+        Assert.NotNull(result);
         
         var dbRow = await _dbContext.BackgroundJobRuns.SingleAsync(r => r.LockKey == "Key2");
         Assert.Equal("TestJob", dbRow.JobName);

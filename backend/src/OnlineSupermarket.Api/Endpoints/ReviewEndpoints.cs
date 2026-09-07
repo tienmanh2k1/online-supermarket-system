@@ -213,11 +213,12 @@ public static class ReviewEndpoints
             return Results.NotFound(new { message = "PRODUCT_NOT_FOUND" });
         }
 
-        var safePage = Math.Max(1, page);
         var safePageSize = Math.Clamp(pageSize, 1, 50);
 
         var query = dbContext.Reviews.Where(r => r.ProductId == productId);
         var totalCount = await query.CountAsync(cancellationToken);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)safePageSize));
+        var safePage = Math.Clamp(page, 1, totalPages);
 
         decimal averageRating = 0;
         if (totalCount > 0)
@@ -259,6 +260,7 @@ public static class ReviewEndpoints
 
     private static async Task<IResult> GetReviewEligibilityAsync(
         [FromRoute] Guid productId,
+        [FromQuery] Guid? orderItemId,
         ClaimsPrincipal? user,
         AppDbContext dbContext,
         CancellationToken cancellationToken)
@@ -274,6 +276,22 @@ public static class ReviewEndpoints
         if (!userId.HasValue)
         {
             return Results.Ok(new ReviewEligibilityDto(CanReview: false, OrderItemId: null, ReviewId: null));
+        }
+
+        if (orderItemId.HasValue)
+        {
+            var target = await (from oi in dbContext.OrderItems
+                                join o in dbContext.Orders on oi.OrderId equals o.Id
+                                where oi.Id == orderItemId.Value
+                                select new { oi.ProductId, o.UserId, o.Status }).FirstOrDefaultAsync(cancellationToken);
+            if (target is not null && target.ProductId != productId)
+                return Results.BadRequest(new { code = "ORDER_ITEM_PRODUCT_MISMATCH" });
+            if (target is null || target.UserId != userId.Value || target.Status != OrderStatus.Completed)
+                return Results.Ok(new ReviewEligibilityDto(false, null, null));
+            var alreadyReviewed = await dbContext.Reviews.AnyAsync(x => x.OrderItemId == orderItemId.Value, cancellationToken);
+            return alreadyReviewed
+                ? Results.Ok(new ReviewEligibilityDto(false, null, null))
+                : Results.Ok(new ReviewEligibilityDto(true, orderItemId, null));
         }
 
         var completedItems = await (
@@ -323,9 +341,10 @@ public static class ReviewEndpoints
     {
         var reviewWithUser = await (
             from r in dbContext.Reviews
+            join p in dbContext.Products on r.ProductId equals p.Id
             join u in dbContext.Users on r.UserId equals u.Id into users
             from u in users.DefaultIfEmpty()
-            where r.Id == id
+            where r.Id == id && p.IsActive
             select new { Review = r, ReviewerName = u != null ? u.FullName : null }
         ).FirstOrDefaultAsync(cancellationToken);
 

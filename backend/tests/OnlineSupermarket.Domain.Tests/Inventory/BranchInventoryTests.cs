@@ -57,6 +57,26 @@ public sealed class BranchInventoryTests
     }
 
     [Fact]
+    public void Release_Cannot_exceed_reserved_quantity()
+    {
+        var inventory = BranchInventory.Create(Guid.NewGuid(), Guid.NewGuid(), 10m, 10, 1);
+        inventory.Reserve(2);
+
+        Assert.Throws<InvalidOperationException>(() => inventory.Release(3));
+        Assert.Equal(2, inventory.ReservedQuantity);
+    }
+
+    [Fact]
+    public void AdjustQuantity_Cannot_drop_below_reserved_quantity()
+    {
+        var inventory = BranchInventory.Create(Guid.NewGuid(), Guid.NewGuid(), 10m, 10, 1);
+        inventory.Reserve(4);
+
+        Assert.Throws<InvalidOperationException>(() => inventory.AdjustQuantity(3));
+        Assert.Equal(10, inventory.QuantityOnHand);
+    }
+
+    [Fact]
     public void CompleteSale_DecrementsOnHandAndReservedTogether()
     {
         var inventory = BranchInventory.Create(

@@ -57,6 +57,30 @@ public class BackgroundJobRunTests
     }
 
     [Fact]
+    public void MarkAsSucceeded_ShouldReleaseTheLockKeySlot()
+    {
+        var run = new BackgroundJobRun("TestJob", "Key1", _now);
+        run.Start(_token, _now, _now.AddMinutes(5));
+
+        run.MarkAsSucceeded(_token, _now.AddMinutes(1));
+
+        Assert.StartsWith("released:", run.LockKey);
+        Assert.NotEqual("Key1", run.LockKey);
+    }
+
+    [Fact]
+    public void MarkAsFailed_ShouldReleaseTheLockKeySlot()
+    {
+        var run = new BackgroundJobRun("TestJob", "Key1", _now);
+        run.Start(_token, _now, _now.AddMinutes(5));
+
+        run.MarkAsFailed(_token, _now.AddMinutes(1), "Error occurred");
+
+        Assert.StartsWith("released:", run.LockKey);
+        Assert.Equal("Error occurred", run.ErrorSummary);
+    }
+
+    [Fact]
     public void MarkAsSucceeded_WithInvalidToken_ShouldThrow()
     {
         var run = new BackgroundJobRun("TestJob", "Key1", _now);

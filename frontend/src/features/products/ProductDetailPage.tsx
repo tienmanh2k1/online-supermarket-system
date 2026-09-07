@@ -8,6 +8,8 @@ import { useCart } from '../cart/CartContext'
 import { useCompare } from '../compare/CompareContext'
 import { AuthModal } from '../auth/AuthModal'
 import { BranchChangeConfirmDialog } from '../cart/BranchChangeConfirmDialog'
+import { ProductReviews } from '../reviews/ProductReviews'
+import { RecommendationShelfLoader } from '../recommendations/RecommendationShelfLoader'
 import { formatPrice } from './ProductCard'
 import './ProductDetailPage.css'
 
@@ -484,6 +486,18 @@ export function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        <ProductReviews
+          productId={product.id}
+          targetOrderItemId={searchParams.get('reviewOrderItemId')}
+          targetReviewId={searchParams.get('reviewId')}
+        />
+
+        <RecommendationShelfLoader
+          productId={product.id}
+          branchId={branchId}
+          token={accessToken ?? undefined}
+        />
       </div>
     )
   }

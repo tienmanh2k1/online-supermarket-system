@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Jobs;
@@ -15,10 +16,20 @@ public static class AdminJobEndpoints
             .RequireAuthorization("AdminOnly")
             .WithTags("Admin Jobs");
 
-        group.MapGet("/", async (AppDbContext dbContext, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default) =>
+        group.MapGet("/", async (AppDbContext dbContext, [FromQuery] string? jobName = null, [FromQuery] Guid? branchId = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default) =>
         {
             var query = dbContext.BackgroundJobRuns.AsNoTracking();
-            
+
+            if (!string.IsNullOrWhiteSpace(jobName))
+            {
+                query = query.Where(x => x.JobName == jobName);
+            }
+
+            if (branchId.HasValue && branchId.Value != Guid.Empty)
+            {
+                query = query.Where(x => x.BranchId == branchId.Value);
+            }
+
             var totalCount = await query.CountAsync(cancellationToken);
             var items = await query
                 .OrderByDescending(x => x.CreatedAtUtc)
@@ -27,7 +38,7 @@ public static class AdminJobEndpoints
                 .Select(x => new JobRunResponse(
                     x.Id,
                     x.JobName,
-                    x.Status,
+                    x.Status.ToString(),
                     x.CreatedAtUtc,
                     x.StartedAtUtc,
                     x.CompletedAtUtc,
@@ -51,7 +62,7 @@ public static class AdminJobEndpoints
             return Results.Ok(new JobRunResponse(
                 run.Id,
                 run.JobName,
-                run.Status,
+                run.Status.ToString(),
                 run.CreatedAtUtc,
                 run.StartedAtUtc,
                 run.CompletedAtUtc,

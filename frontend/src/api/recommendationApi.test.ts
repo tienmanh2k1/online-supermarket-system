@@ -61,3 +61,67 @@ it('mergeSession posts the anonymous id to the session merge route with token', 
     }),
   )
 })
+
+it('getRecommendations fetches homepage recommendations with branch and limit', async () => {
+  const body = { sourceScope: 'Global', items: [{ productId: 'p1' }] }
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse(body))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const result = await recommendationApi.getRecommendations({ branchId: 'b1', limit: 8 })
+
+  expect(result).toEqual(body)
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/recommendations?branchId=b1&limit=8',
+    expect.objectContaining({ headers: expect.objectContaining({ Accept: 'application/json' }) }),
+  )
+})
+
+it('getRecommendations attaches the bearer token when signed in', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [] }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await recommendationApi.getRecommendations({ token: 'jwt-token' })
+
+  const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+  expect(init.headers).toMatchObject({ Authorization: 'Bearer jwt-token' })
+  expect(fetchMock).toHaveBeenCalledWith('/api/recommendations', expect.anything())
+})
+
+it('getProductRecommendations fetches the similar product shelf', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [] }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await recommendationApi.getProductRecommendations('prod-1', { limit: 8 })
+
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/products/prod-1/recommendations?limit=8',
+    expect.anything(),
+  )
+})
+
+it('getAdminSample fetches sample rows with scope filter', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [] }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await recommendationApi.getAdminSample({ scope: 'Global', token: 'jwt-token' })
+
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/admin/recommendations/results?scope=Global',
+    expect.objectContaining({
+      headers: expect.objectContaining({ Authorization: 'Bearer jwt-token' }),
+    }),
+  )
+})
+
+it('triggerRun posts the manual run request', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ jobRunId: 'r1', statusUrl: '/x' }, 202))
+  vi.stubGlobal('fetch', fetchMock)
+
+  const result = await recommendationApi.triggerRun('jwt-token')
+
+  expect(result.jobRunId).toBe('r1')
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/admin/jobs/recommendations/runs',
+    expect.objectContaining({ method: 'POST' }),
+  )
+})

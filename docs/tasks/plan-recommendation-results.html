@@ -45,6 +45,7 @@
   "tasks": [
     {
       "id": "REC-01",
+      "status": "done",
       "phase": "DOMAIN",
       "title": "Recommendation result model",
       "purpose": "Khóa scope, audience_key, rank, score, expiry và source product semantics.",
@@ -64,6 +65,7 @@
     },
     {
       "id": "REC-02",
+      "status": "done",
       "phase": "PERSISTENCE",
       "title": "Schema recommendation_results",
       "purpose": "Tạo unique batch/audience/product và indexes latest materialization.",
@@ -84,6 +86,7 @@
     },
     {
       "id": "REC-03",
+      "status": "done",
       "phase": "RANKING",
       "title": "Deterministic scoring engine",
       "purpose": "Tính Global/User/Similar theo views, completed sales, category, brand và recency.",
@@ -103,6 +106,7 @@
     },
     {
       "id": "REC-04",
+      "status": "done",
       "phase": "JOB",
       "title": "Materialization handler và schedule",
       "purpose": "Ghi toàn bộ scopes trong transaction theo jobRunId và chạy hourly global lock.",
@@ -123,6 +127,7 @@
     },
     {
       "id": "REC-05",
+      "status": "done",
       "phase": "CUSTOMER API",
       "title": "Read API và fallback",
       "purpose": "Homepage User→Global; product Similar→Global; luôn 200 + sourceScope hoặc empty.",
@@ -142,6 +147,7 @@
     },
     {
       "id": "REC-06",
+      "status": "done",
       "phase": "ADMIN API",
       "title": "Manual run và sample output",
       "purpose": "Admin trigger 202/409, xem status/history và latest successful sample.",
@@ -161,6 +167,7 @@
     },
     {
       "id": "REC-07",
+      "status": "done",
       "phase": "HOMEPAGE",
       "title": "Sản phẩm gợi ý cho bạn",
       "purpose": "Shelf trên homepage không che catalog khi empty/error.",
@@ -181,6 +188,7 @@
     },
     {
       "id": "REC-08",
+      "status": "done",
       "phase": "PRODUCT UI",
       "title": "Có thể bạn cũng thích",
       "purpose": "Render SimilarProduct fallback shelf theo product + branch hiện tại.",
@@ -200,6 +208,7 @@
     },
     {
       "id": "REC-09",
+      "status": "done",
       "phase": "ADMIN + E2E",
       "title": "Admin recommendations workspace",
       "purpose": "Xem last run/sample, trigger manual và xác minh anonymous→login→personalized.",
@@ -228,8 +237,8 @@
     const statuses={todo:'Chưa làm',doing:'Đang làm',done:'Hoàn tất',blocked:'Bị chặn'};
     document.querySelector('[data-rail]').innerHTML=BOARD.tasks.map(t=>'<a href="#task-'+esc(t.id)+'">'+esc(t.id)+'</a>').join('');
     document.querySelector('[data-tasks]').innerHTML=BOARD.tasks.map(t=>{
-      const current=state.status?.[t.id]||'todo';
-      return '<article class="task" id="task-'+esc(t.id)+'" data-task data-id="'+esc(t.id)+'" data-status="'+current+'"><div class="index"><b>'+esc(t.id)+'</b><span>'+esc(t.phase)+'</span></div><div class="body"><div class="head"><div><h2>'+esc(t.title)+'</h2><p class="purpose">'+esc(t.purpose)+'</p></div><label><span class="label">Trạng thái</span><select class="status" data-status>'+Object.entries(statuses).map(([v,l])=>'<option value="'+v+'"'+(v===current?' selected':'')+'>'+l+'</option>').join('')+'</select></label></div><div class="grid"><div><h3 class="sub">Checklist thực thi</h3><ul class="checklist">'+t.steps.map((s,i)=>'<li><label><input type="checkbox" data-check="'+esc(t.id)+'-'+(i+1)+'"'+(state.checks?.[t.id+'-'+(i+1)]?' checked':'')+'><span>'+esc(s)+'</span></label></li>').join('')+'</ul><pre class="command">'+esc(t.command)+'</pre><p class="commit">Commit: <code>'+esc(t.commit)+'</code></p></div><div><h3 class="sub">Files và gate</h3><ul class="files">'+t.files.map(f=>'<li><code>'+esc(f)+'</code></li>').join('')+'</ul></div></div></div></article>';
+      const current=state.status?.[t.id]||t.status||'todo';
+      return '<article class="task" id="task-'+esc(t.id)+'" data-task data-id="'+esc(t.id)+'" data-status="'+current+'"><div class="index"><b>'+esc(t.id)+'</b><span>'+esc(t.phase)+'</span></div><div class="body"><div class="head"><div><h2>'+esc(t.title)+'</h2><p class="purpose">'+esc(t.purpose)+'</p></div><label><span class="label">Trạng thái</span><select class="status" data-status>'+Object.entries(statuses).map(([v,l])=>'<option value="'+v+'"'+(v===current?' selected':'')+'>'+l+'</option>').join('')+'</select></label></div><div class="grid"><div><h3 class="sub">Checklist thực thi</h3><ul class="checklist">'+t.steps.map((s,i)=>'<li><label><input type="checkbox" data-check="'+esc(t.id)+'-'+(i+1)+'"'+(state.checks?.[t.id+'-'+(i+1)]||t.status==='done'?' checked':'')+'><span>'+esc(s)+'</span></label></li>').join('')+'</ul><pre class="command">'+esc(t.command)+'</pre><p class="commit">Commit: <code>'+esc(t.commit)+'</code></p></div><div><h3 class="sub">Files và gate</h3><ul class="files">'+t.files.map(f=>'<li><code>'+esc(f)+'</code></li>').join('')+'</ul></div></div></div></article>';
     }).join('');
     const cards=[...document.querySelectorAll('[data-task]')],filter=document.querySelector('[data-filter]');
     const snapshot=()=>({status:Object.fromEntries(cards.map(c=>[c.dataset.id,c.querySelector('[data-status]').value])),checks:Object.fromEntries([...document.querySelectorAll('[data-check]')].map(c=>[c.dataset.check,c.checked]))});

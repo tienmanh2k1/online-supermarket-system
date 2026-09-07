@@ -12,6 +12,8 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/admin/orders', label: 'Đơn hàng', icon: '🧾' },
   { to: '/admin/branches', label: 'Chi nhánh', icon: '🏬' },
   { to: '/admin/inventory', label: 'Kho & Giá', icon: '📦' },
+  { to: '/admin/forecast', label: 'Dự báo nhu cầu', icon: '📈' },
+  { to: '/admin/recommendations', label: 'Gợi ý sản phẩm', icon: '✨' },
   { to: '/admin/promotions', label: 'Khuyến mãi', icon: '🎟️' },
   { to: '/admin/users', label: 'Người dùng', icon: '👥' },
   { to: '/admin/catalog/categories', label: 'Danh mục', icon: '🗂️' },

@@ -83,6 +83,45 @@ public sealed class ProductViewEventEndpointsTests
     }
 
     [Fact]
+    public async Task RecordView_WithUnknownBranch_Returns404BranchNotFound_AndDoesNotInsert()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedCatalogAsync(factory);
+        var sessionId = Guid.NewGuid();
+
+        var response = await seed.Client.PostAsJsonAsync(
+            $"/api/products/{seed.ProductId}/view-events",
+            new { anonymousSessionId = sessionId, branchId = Guid.NewGuid() });
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Contains("BRANCH_NOT_FOUND", body);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        Assert.Equal(0, await db.ProductViewEvents.CountAsync());
+    }
+
+    [Fact]
+    public async Task RecordView_WithOmittedBranch_IsAccepted_WithNullBranch()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedCatalogAsync(factory);
+        var sessionId = Guid.NewGuid();
+
+        var response = await seed.Client.PostAsJsonAsync(
+            $"/api/products/{seed.ProductId}/view-events",
+            new { anonymousSessionId = sessionId });
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var stored = await db.ProductViewEvents.SingleAsync();
+        Assert.Null(stored.BranchId);
+    }
+
+    [Fact]
     public async Task RecordView_AsAuthenticatedUser_PrefersJwtOwnerAndIgnoresBody()
     {
         using var factory = new TestApiFactory();

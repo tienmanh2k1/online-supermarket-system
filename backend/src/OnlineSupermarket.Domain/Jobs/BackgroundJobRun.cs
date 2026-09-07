@@ -6,6 +6,7 @@ public class BackgroundJobRun : Entity
 {
     public string JobName { get; private set; }
     public string LockKey { get; private set; }
+    public Guid? BranchId { get; private set; }
     public JobRunStatus Status { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? StartedAtUtc { get; private set; }
@@ -20,7 +21,7 @@ public class BackgroundJobRun : Entity
         LockKey = string.Empty;
     }
 
-    public BackgroundJobRun(string jobName, string lockKey, DateTime createdAtUtc) 
+    public BackgroundJobRun(string jobName, string lockKey, DateTime createdAtUtc, Guid? branchId = null) 
         : base(Guid.NewGuid())
     {
         if (string.IsNullOrWhiteSpace(jobName)) throw new ArgumentException("Job name cannot be empty", nameof(jobName));
@@ -28,6 +29,7 @@ public class BackgroundJobRun : Entity
         
         JobName = jobName;
         LockKey = lockKey;
+        BranchId = branchId;
         Status = JobRunStatus.Queued;
         CreatedAtUtc = createdAtUtc;
     }
@@ -76,6 +78,7 @@ public class BackgroundJobRun : Entity
 
         Status = JobRunStatus.Succeeded;
         CompletedAtUtc = completedAtUtc;
+        ReleaseLockSlot();
     }
 
     public void MarkAsFailed(string token, DateTime completedAtUtc, string error)
@@ -93,5 +96,26 @@ public class BackgroundJobRun : Entity
         Status = JobRunStatus.Failed;
         CompletedAtUtc = completedAtUtc;
         ErrorSummary = error;
+        ReleaseLockSlot();
+    }
+
+    // Terminal rows must not hold the (JobName, LockKey) unique slot, otherwise a
+    // recurring job can never be queued twice. The released key stays non-null and unique.
+    private void ReleaseLockSlot()
+    {
+        if (!LockKey.StartsWith("released:"))
+        {
+            LockKey = $"released:{Id}";
+        }
+    }
+
+    /// <summary>
+    /// Clears lease ownership for a terminal row. Called by the store after a
+    /// predicate-atomic terminal transition so the row no longer claims a live lease.
+    /// </summary>
+    public void ClearLeaseOwnership()
+    {
+        LockToken = null;
+        LeaseExpiresAtUtc = null;
     }
 }

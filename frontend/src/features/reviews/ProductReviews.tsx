@@ -62,7 +62,7 @@ export function ProductReviews({
       }
 
       reviewApi
-        .getEligibility(productId, accessToken, signal)
+        .getEligibility(productId, accessToken, signal, targetOrderItemId)
         .then((data) => {
           setEligibility(data)
           if (targetReviewId && data.reviewId === targetReviewId) {
@@ -74,7 +74,7 @@ export function ProductReviews({
           setEligibility(null)
         })
     },
-    [productId, isAuthenticated, accessToken, targetReviewId]
+    [productId, isAuthenticated, accessToken, targetReviewId, targetOrderItemId]
   )
 
   useEffect(() => {
@@ -190,12 +190,16 @@ export function ProductReviews({
           <div className="product-reviews__notice">
             <p>Đăng nhập để đánh giá sản phẩm sau khi mua hàng.</p>
           </div>
-        ) : eligibility?.canReview ? (
+        ) : eligibility?.canReview && eligibility?.orderItemId ? (
           <ReviewForm
             productId={productId}
-            orderItemId={targetOrderItemId || eligibility.orderItemId}
+            orderItemId={eligibility.orderItemId}
             onSuccess={handleReviewSuccess}
           />
+        ) : targetOrderItemId && !eligibility?.canReview && !eligibility?.reviewId ? (
+          <div className="product-reviews__invalid-link" role="alert">
+            <p>Liên kết đánh giá không còn hợp lệ.</p>
+          </div>
         ) : activeReviewId ? (
           isEditing ? (
             targetReviewError ? (

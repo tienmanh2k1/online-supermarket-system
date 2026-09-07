@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineSupermarket.Api.Contracts.Jobs;
 using OnlineSupermarket.Api.Tests.Auth;
+using OnlineSupermarket.Domain.Branches;
 using OnlineSupermarket.Domain.Identity;
 using OnlineSupermarket.Domain.Jobs;
 using OnlineSupermarket.Infrastructure.Persistence;
@@ -69,5 +70,42 @@ public class AdminJobEndpointsTests : IClassFixture<AuthTestApiFactory>
         var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
         var response = await client.GetAsync($"/api/admin/jobs/{Guid.NewGuid()}");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetJobs_FilteredByBranch_ReturnsTerminalRunsByBranchId()
+    {
+        var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+
+        var branch = new Branch("Job Branch", "1 Test Street", "0100000000", 10m, 106m);
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Branches.Add(branch);
+            await db.SaveChangesAsync();
+
+            var succeeded = new BackgroundJobRun("Forecast", $"branch:{branch.Id}", DateTime.UtcNow.AddHours(-2), branch.Id);
+            var succeededToken = Guid.NewGuid().ToString();
+            succeeded.Start(succeededToken, DateTime.UtcNow.AddHours(-2).AddSeconds(1), DateTime.UtcNow.AddHours(-1));
+            succeeded.MarkAsSucceeded(succeededToken, DateTime.UtcNow.AddHours(-2).AddSeconds(5));
+            db.BackgroundJobRuns.Add(succeeded);
+
+            var failed = new BackgroundJobRun("Forecast", $"branch:{branch.Id}", DateTime.UtcNow.AddHours(-3), branch.Id);
+            var failedToken = Guid.NewGuid().ToString();
+            failed.Start(failedToken, DateTime.UtcNow.AddHours(-3).AddSeconds(1), DateTime.UtcNow.AddHours(-2));
+            failed.MarkAsFailed(failedToken, DateTime.UtcNow.AddHours(-3).AddSeconds(2), "boom");
+            db.BackgroundJobRuns.Add(failed);
+
+            var other = new BackgroundJobRun("Forecast", "released:other", DateTime.UtcNow.AddHours(-1));
+            db.BackgroundJobRuns.Add(other);
+            await db.SaveChangesAsync();
+        }
+
+        var response = await client.GetAsync(
+            $"/api/admin/jobs?jobName=Forecast&branchId={branch.Id}");
+        var body = await response.Content.ReadFromJsonAsync<PaginatedList<JobRunResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(2, body!.TotalCount);
     }
 }
