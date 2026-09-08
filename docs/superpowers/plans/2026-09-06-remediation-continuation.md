@@ -134,12 +134,12 @@ dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests --filter FullyQ
 
 **Interfaces:** IJobRunStore có `Task<bool>` TryStartAsync/TryRenewAsync/TrySucceedAsync/TryFailAsync với runId, token, nowUtc, leaseUntil khi cần, CancellationToken. Executor `Task ExecuteAsync(JobRequest request, CancellationToken cancellationToken)`. Handler vẫn `HandleAsync(Guid runId, CancellationToken)`.
 
-- [ ] RED cases: success, throw, unknown handler, duplicate request, host cancellation, heartbeat loss, MaxConcurrentJobs và DI host startup bật background services.
-- [ ] TryStart dùng predicate Queued; renew dùng Running+token+unexpired lease; terminal dùng Running+token và ownership rule R1. affected-row count là kết quả duy nhất. Terminal atomically set completed_at_utc, null lease/token, lock_key=`released:{id}`.
-- [ ] Executor tạo token `Guid.NewGuid().ToString("N")`, start trước dispatch; handler ở scope mới; heartbeat max(1 second, lease/3), context riêng mỗi DB operation. Mất lease thì cancel handler và cấm terminal/result overwrite. Await heartbeat cleanup trong finally.
-- [ ] Kiểm tra handler forecast/recommendation có tự mutate terminal hoặc publish results không: chuyển lifecycle về executor; ràng buộc publish batch vào ownership hiện tại để handler mất lease không ghi kết quả terminal. Bổ sung regression nếu cần sửa handler.
-- [ ] Worker chỉ đọc queue và quản lý semaphore từ validated options; shutdown dừng nhận việc, await active tasks; host cancellation để Running cho recovery, lỗi handler thường chuyển Failed sanitized.
-- [ ] Đăng ký official AddDbContextFactory với options lifetime phù hợp, giữ scoped AppDbContext cho endpoints; test real service provider để bắt singleton/scoped mismatch.
+- [x] RED cases (JobRunExecutorTests, 7 testów): success → Succeeded+released, throw → Failed+sanitized, unknown handler → Failed bez invokacji, duplicate → skip, host cancellation → Running zostaje dla recovery + handler token cancelled, heartbeat loss → handler cancelled i nie nadpisuje terminal, terminal never reused. Worker (IntelligenceWorkerTests, 4 testy): claim→dispatch→complete, already-claimed skip, handler exception → Failed, unknown job → Failed.
+- [x] `TryStart` predicate Queued (started_at+token+lease w jednym update); renew Running+token+lease unexpired; terminal Running+token → completed_at_utc + null lease/token + lock_key=`released:{id}`. Affected-row count jedyny wynik. `EfJobRunStore` używa `IDbContextFactory` — każda operacja DB ma świeży kontekst (F2 closed).
+- [x] Executor: token `Guid.NewGuid().ToString("N")`, TryStart przed dispatch, handler w nowym scope (`handlerScope`), heartbeat max(1s, lease/3) z override testowym, mất lease → linkedCts.cancel + brak terminal overwrite (jeśli recovery już ustawił terminal, trysuc/tryfail zwracają false), await heartbeat w finally.
+- [x] Handlery forecast/recommendation nie mutują terminal — lifecycle w executor. Publish batch ogrodzony przez `JobRunPublishGuard`: w transakcji insert run musi być Running+lease>now (+ FOR UPDATE na MySQL) — regression w executor/handler tests; mất lease nie zapisze wyników terminal.
+- [x] Worker tylko queue + semaphore (z try/finally), shutdown nie przyjmuje nowych itemów, await active tasks; host cancellation zostawia Running.
+- [x] DI: `AddDbContextFactory` (oficjalnie) + scoped `AppDbContext` dla endpoints; `IJobRunStore→EfJobRunStore`, `JobRunExecutor` scoped. TestApiFactory/AuthTestApiFactory rejestrują manual `IDbContextFactory` po usunięciu deskryptorów EF; real provider bắt singleton/scoped mismatch (api job tests pass).
 
 ```powershell
 dotnet test backend/tests/OnlineSupermarket.Infrastructure.Tests --filter "FullyQualifiedName~JobRunExecutorTests|FullyQualifiedName~IntelligenceWorkerTests"

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -35,7 +35,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 "SET branch_id = SUBSTRING_INDEX(lock_key, ':', -1) " +
                 "WHERE job_name = 'Forecast' " +
                 "AND lock_key LIKE 'branch:%' " +
-                "AND branch_id IS NULL");
+                "AND branch_id IS NULL;");
         }
 
         /// <inheritdoc />

@@ -606,46 +606,56 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
 
                     b.Property<Guid?>("BranchId")
                         .HasColumnType("char(36)")
                         .HasColumnName("branch_id");
 
                     b.Property<DateTime?>("CompletedAtUtc")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("completed_at_utc");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("ErrorSummary")
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("error_summary");
 
                     b.Property<string>("JobName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("job_name");
 
                     b.Property<DateTime?>("LeaseExpiresAtUtc")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("lease_expires_at_utc");
 
                     b.Property<string>("LockKey")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("lock_key");
 
                     b.Property<string>("LockToken")
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("lock_token");
 
                     b.Property<DateTime?>("StartedAtUtc")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("started_at_utc");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
 
                     b.HasKey("Id");
 
@@ -1127,7 +1137,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
 
                     b.ToTable("recommendation_results", null, t =>
                         {
-                            t.HasCheckConstraint("ck_recommendation_results_rank", "rank > 0");
+                            t.HasCheckConstraint("ck_recommendation_results_rank", "`rank` > 0");
 
                             t.HasCheckConstraint("ck_recommendation_results_score", "score + 0 >= 0 AND score + 0 <= 1");
                         });

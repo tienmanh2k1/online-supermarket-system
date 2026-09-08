@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -45,7 +45,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "IX_inventory_transactions_actor_user_id",

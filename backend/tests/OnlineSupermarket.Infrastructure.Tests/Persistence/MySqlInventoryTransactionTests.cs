@@ -11,26 +11,24 @@ using OnlineSupermarket.Infrastructure.Persistence;
 namespace OnlineSupermarket.Infrastructure.Tests.Persistence;
 
 [CollectionDefinition(Name, DisableParallelization = true)]
-public sealed class MySqlInfrastructureCollection
+public sealed class MySqlInfrastructureCollection : ICollectionFixture<MySqlFixture>
 {
     public const string Name = "MySql infrastructure";
 }
 
 [Collection(MySqlInfrastructureCollection.Name)]
-public sealed class MySqlInventoryTransactionTests : IAsyncLifetime
+public sealed class MySqlInventoryTransactionTests(MySqlFixture fixture) : IAsyncLifetime
 {
-    private const string MasterConnectionString = "Server=127.0.0.1;Port=3306;Database=mysql;User=root;Password=password;";
+    private readonly MySqlFixture _fixture = fixture;
     private const string TestDatabase = "online_supermarket_tests";
-    private const string ConnectionString =
-        "Server=127.0.0.1;Port=3306;Database=online_supermarket_tests;User=root;Password=password;";
     private static Guid InventoryId;
 
-    private static DbContextOptions<AppDbContext> Options { get; } =
-        new DbContextOptionsBuilder<AppDbContext>().UseMySQL(ConnectionString).Options;
+    private DbContextOptions<AppDbContext> Options =>
+        new DbContextOptionsBuilder<AppDbContext>().UseMySQL(_fixture.CreateDatabaseConnectionString(TestDatabase)).Options;
 
     public async Task InitializeAsync()
     {
-        await using var master = new MySqlConnection(MasterConnectionString);
+        await using var master = new MySqlConnection(_fixture.MasterConnectionString);
         await master.OpenAsync();
 
         await using (var drop = new MySqlCommand(
@@ -50,7 +48,7 @@ public sealed class MySqlInventoryTransactionTests : IAsyncLifetime
 
     public Task DisposeAsync() => Task.CompletedTask;
 
-    private static AppDbContext CreateContext() => new(Options);
+    private AppDbContext CreateContext() => new(Options);
 
     private static async Task SeedInventoryRowAsync(AppDbContext db)
     {
@@ -186,6 +184,9 @@ public sealed class MySqlInventoryTransactionTests : IAsyncLifetime
             catch (MySqlException)
             {
             }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("replayed with mismatched command"))
+            {
+            }
         }
 
         Assert.Equal(1, succeeded);
@@ -213,9 +214,9 @@ public sealed class MySqlInventoryTransactionTests : IAsyncLifetime
         Assert.Equal(1L, indexCount);
     }
 
-    private static async Task<long> ExecuteScalarAsync(AppDbContext db, string sql)
+    private async Task<long> ExecuteScalarAsync(AppDbContext db, string sql)
     {
-        await using var connection = new MySqlConnection(ConnectionString);
+        await using var connection = new MySqlConnection(_fixture.CreateDatabaseConnectionString(TestDatabase));
         await connection.OpenAsync();
         await using var command = new MySqlCommand(sql, connection);
         var result = await command.ExecuteScalarAsync();

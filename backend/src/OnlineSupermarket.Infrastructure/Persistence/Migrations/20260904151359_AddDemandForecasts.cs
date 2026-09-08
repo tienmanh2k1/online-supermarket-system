@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -30,9 +30,6 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_demand_forecasts", x => x.id);
-                    table.CheckConstraint("ck_demand_forecasts_actual_data_days", "actual_data_days + 0 >= 0 AND actual_data_days <= 28");
-                    table.CheckConstraint("ck_demand_forecasts_horizon", "horizon_days IN (7, 14)");
-                    table.CheckConstraint("ck_demand_forecasts_predicted_quantity", "predicted_quantity + 0 >= 0");
                     table.ForeignKey(
                         name: "FK_demand_forecasts_background_job_runs_job_run_id",
                         column: x => x.job_run_id,
@@ -45,8 +42,11 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalTable: "branch_inventories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
+                    table.CheckConstraint("ck_demand_forecasts_horizon", "horizon_days IN (7, 14)");
+                    table.CheckConstraint("ck_demand_forecasts_predicted_quantity", "predicted_quantity + 0 >= 0");
+                    table.CheckConstraint("ck_demand_forecasts_actual_data_days", "actual_data_days + 0 >= 0 AND actual_data_days <= 28");
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "IX_demand_forecasts_branch_inventory_id",

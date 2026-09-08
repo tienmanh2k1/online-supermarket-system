@@ -25,7 +25,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_carts", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "cart_items",
@@ -49,7 +49,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "orders",
@@ -77,7 +77,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_orders", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "order_items",
@@ -102,7 +102,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "order_status_histories",
@@ -125,7 +125,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "payments",
@@ -151,7 +151,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "payment_callbacks",
@@ -177,7 +177,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "ix_carts_user_id",

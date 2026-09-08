@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Order;
+using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Orders;
 using OnlineSupermarket.Infrastructure.Inventory;
 using OnlineSupermarket.Infrastructure.Persistence;
@@ -221,9 +222,13 @@ public static class OrderEndpoints
             return [];
         }
 
-        var inventories = await dbContext.BranchInventories
-            .Where(bi => bi.BranchId == order.BranchId && productIds.Contains(bi.ProductId))
-            .ToDictionaryAsync(bi => bi.ProductId, cancellationToken);
+        var inventories = new Dictionary<Guid, BranchInventory>();
+        foreach (var productId in productIds)
+        {
+            var inventory = await dbContext.BranchInventories
+                .FirstOrDefaultAsync(bi => bi.BranchId == order.BranchId && bi.ProductId == productId, cancellationToken);
+            if (inventory is not null) inventories[inventory.ProductId] = inventory;
+        }
 
         return order.Items
             .Where(i => inventories.ContainsKey(i.ProductId))

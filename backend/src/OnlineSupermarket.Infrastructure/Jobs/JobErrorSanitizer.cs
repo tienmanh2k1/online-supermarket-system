@@ -10,8 +10,9 @@ public static class JobErrorSanitizer
     [
         // Bearer tokens first so an "Authorization: Bearer xyz" value cannot swallow the token.
         new(@"(?i)Bearer\s+[^\s]+", RegexOptions.Compiled),
-        // Quoted or unquoted credential assignments: Password=abc, "secret" : "abc", token='xyz'
-        new($"(?i)(\\b(?:{KeyPattern})\\s*[:=])\\s*(?:\"[^\"]*\"|'[^']*'|[^\\s,;]+)", RegexOptions.Compiled),
+        // Quoted or unquoted credential assignments: Password=abc, "secret" : "abc", "token":"xyz", 'api_key':'v'
+        // Supports escaped characters within quotes (e.g. "prefix\"AUDIT_MARKER") and optional closing quotes before ':'
+        new($"""(?i)(\b(?:{KeyPattern})["']?\s*[:=])\s*(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s,;]+)""", RegexOptions.Compiled),
         // Sensitive query-string parameter values in URIs
         new($"(?i)([?&](?:{KeyPattern})=)[^&\\s]*", RegexOptions.Compiled),
     ];

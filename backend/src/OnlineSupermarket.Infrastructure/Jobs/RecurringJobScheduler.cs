@@ -18,6 +18,11 @@ public class RecurringJobScheduler(
             try
             {
                 using var scope = serviceScopeFactory.CreateScope();
+                // Startup recovery: requeue queued runs lost with the in-process queue on
+                // restart and fail stale Running leases. Keeps the DB the source of truth.
+                await scope.ServiceProvider.GetRequiredService<JobLeaseService>()
+                    .RecoverStaleJobsAsync(stoppingToken);
+
                 var schedules = scope.ServiceProvider.GetServices<IRecurringJobSchedule>();
                 var coordinator = scope.ServiceProvider.GetRequiredService<JobRunCoordinator>();
 
@@ -40,7 +45,7 @@ public class RecurringJobScheduler(
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Recurring job scheduler iteration failed");
+                logger.LogWarning("Recurring job scheduler iteration failed: {Reason}", JobErrorSanitizer.Sanitize(ex));
             }
 
             try

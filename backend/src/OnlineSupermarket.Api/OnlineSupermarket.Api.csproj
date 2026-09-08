@@ -17,6 +17,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Local provider source and diagnostic programs are not application inputs. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Pomelo.EntityFrameworkCore.MySql/**;test-console/**;ml-poc/**;mysql_generator.cs;error.txt;verbose.log</DefaultItemExcludes>
   </PropertyGroup>
 
 </Project>

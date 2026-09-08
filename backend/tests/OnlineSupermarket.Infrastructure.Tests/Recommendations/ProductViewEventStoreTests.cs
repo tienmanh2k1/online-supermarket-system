@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using OnlineSupermarket.Domain.Branches;
 using OnlineSupermarket.Domain.Catalog;
 using OnlineSupermarket.Domain.Identity;
@@ -7,45 +6,35 @@ using OnlineSupermarket.Domain.Recommendations;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Recommendations;
 using OnlineSupermarket.Infrastructure.Tests.Persistence;
+using Xunit;
 
 namespace OnlineSupermarket.Infrastructure.Tests.Recommendations;
 
 [Collection(MySqlInfrastructureCollection.Name)]
-public sealed class ProductViewEventStoreTests : IAsyncLifetime
+public sealed class ProductViewEventStoreTests : IClassFixture<MySqlFixture>, IAsyncLifetime
 {
-    private const string MasterConnectionString = "Server=127.0.0.1;Port=3306;Database=mysql;User=root;Password=password;";
-    private const string TestDatabase = "online_supermarket_tests";
-    private const string ConnectionString =
-        "Server=127.0.0.1;Port=3306;Database=online_supermarket_tests;User=root;Password=password;";
+    private readonly MySqlFixture _fixture;
+    private static Guid _productId;
+    private static Guid _someOtherUserId;
 
-    private static readonly DbContextOptions<AppDbContext> Options =
-        new DbContextOptionsBuilder<AppDbContext>().UseMySQL(ConnectionString).Options;
-
-    private static Guid ProductId;
-    private static Guid SomeOtherUserId;
+    public ProductViewEventStoreTests(MySqlFixture fixture)
+    {
+        _fixture = fixture;
+    }
 
     public async Task InitializeAsync()
     {
-        await using var master = new MySqlConnection(MasterConnectionString);
-        await master.OpenAsync();
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseMySQL(_fixture.ConnectionString)
+            .Options;
 
-        await using (var drop = new MySqlCommand("DROP DATABASE IF EXISTS " + TestDatabase + ";", master))
-        {
-            await drop.ExecuteNonQueryAsync();
-        }
-        await using (var create = new MySqlCommand(
-            "CREATE DATABASE " + TestDatabase + " CHARACTER SET utf8mb4;", master))
-        {
-            await create.ExecuteNonQueryAsync();
-        }
+        await using var db = new AppDbContext(options);
 
-        await using var db = new AppDbContext(Options);
-        await db.Database.MigrateAsync();
-
-        var category = new Category("View", "view");
-        var brand = new Brand("View", "view");
+        var slug = Guid.NewGuid().ToString("N");
+        var category = new Category("View", slug);
+        var brand = new Brand("View", slug);
         var branch = new Branch("View Branch", "1 Test Street", "0900000000", 10m, 106m);
-        var product = new Product(category.Id, brand.Id, "SKU-V-1", "View Product", "view-product", "d", 10_000m, "cái", null);
+        var product = new Product(category.Id, brand.Id, $"SKU-{slug[..8]}", "View Product", slug, "d", 10_000m, "cái", null);
         var otherUser = User.Create($"other_{Guid.NewGuid():N}@test.com", "hash", "Other", null);
         db.Categories.Add(category);
         db.Brands.Add(brand);
@@ -54,19 +43,22 @@ public sealed class ProductViewEventStoreTests : IAsyncLifetime
         db.Users.Add(otherUser);
         await db.SaveChangesAsync();
 
-        ProductId = product.Id;
-        SomeOtherUserId = otherUser.Id;
+        _productId = product.Id;
+        _someOtherUserId = otherUser.Id;
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
 
-    private static async Task<Guid> SeedEventsAsync(Guid sessionId)
-    {
-        await using var db = new AppDbContext(Options);
+    private static DbContextOptions<AppDbContext> Options(string connectionString) =>
+        new DbContextOptionsBuilder<AppDbContext>().UseMySQL(connectionString).Options;
 
-        db.ProductViewEvents.Add(ProductViewEvent.Create(ProductId, null, sessionId, null, DateTime.UtcNow));
-        db.ProductViewEvents.Add(ProductViewEvent.Create(ProductId, null, sessionId, null, DateTime.UtcNow.AddSeconds(1)));
-        db.ProductViewEvents.Add(ProductViewEvent.Create(ProductId, SomeOtherUserId, sessionId, null, DateTime.UtcNow.AddSeconds(2)));
+    private static async Task<Guid> SeedEventsAsync(string connectionString, Guid sessionId)
+    {
+        await using var db = new AppDbContext(Options(connectionString));
+
+        db.ProductViewEvents.Add(ProductViewEvent.Create(_productId, null, sessionId, null, DateTime.UtcNow));
+        db.ProductViewEvents.Add(ProductViewEvent.Create(_productId, null, sessionId, null, DateTime.UtcNow.AddSeconds(1)));
+        db.ProductViewEvents.Add(ProductViewEvent.Create(_productId, _someOtherUserId, sessionId, null, DateTime.UtcNow.AddSeconds(2)));
 
         var userId = Guid.NewGuid();
         var user = User.Create($"merger_{Guid.NewGuid():N}@test.com", "hash", "Merger", null);
@@ -76,13 +68,23 @@ public sealed class ProductViewEventStoreTests : IAsyncLifetime
         return user.Id;
     }
 
+    private static async Task<Guid> CreateUserAsync(string connectionString)
+    {
+        await using var db = new AppDbContext(Options(connectionString));
+        var user = User.Create($"claimer_{Guid.NewGuid():N}@test.com", "hash", "Claimer", null);
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+        return user.Id;
+    }
+
     [Fact]
     public async Task Merge_ClaimsOnlyUnownedRowsAndReturnsDeterministicCount()
     {
+        var connectionString = _fixture.ConnectionString;
         var sessionId = Guid.NewGuid();
-        var mergerUserId = await SeedEventsAsync(sessionId);
+        var mergerUserId = await SeedEventsAsync(connectionString, sessionId);
 
-        await using var db = new AppDbContext(Options);
+        await using var db = new AppDbContext(Options(connectionString));
         var store = new ProductViewEventStore(db);
 
         var merged = await store.MergeAnonymousSessionAsync(sessionId, mergerUserId, CancellationToken.None);
@@ -92,16 +94,17 @@ public sealed class ProductViewEventStoreTests : IAsyncLifetime
         var rows = await db.ProductViewEvents.AsNoTracking().ToListAsync();
         var sessionRows = rows.Where(r => r.AnonymousSessionId == sessionId).ToList();
         Assert.Equal(2, sessionRows.Count(r => r.UserId == mergerUserId));
-        Assert.Equal(1, sessionRows.Count(r => r.UserId == SomeOtherUserId));
+        Assert.Equal(1, sessionRows.Count(r => r.UserId == _someOtherUserId));
     }
 
     [Fact]
     public async Task Merge_RepeatedCall_ReturnsZero()
     {
+        var connectionString = _fixture.ConnectionString;
         var sessionId = Guid.NewGuid();
-        var mergerUserId = await SeedEventsAsync(sessionId);
+        var mergerUserId = await SeedEventsAsync(connectionString, sessionId);
 
-        await using var db = new AppDbContext(Options);
+        await using var db = new AppDbContext(Options(connectionString));
         var store = new ProductViewEventStore(db);
 
         Assert.Equal(2, await store.MergeAnonymousSessionAsync(sessionId, mergerUserId, CancellationToken.None));
@@ -111,41 +114,36 @@ public sealed class ProductViewEventStoreTests : IAsyncLifetime
     [Fact]
     public async Task Merge_OwnedRows_AreNeverReassignedToAnotherUser()
     {
+        var connectionString = _fixture.ConnectionString;
         var sessionId = Guid.NewGuid();
-        await using (var seedDb = new AppDbContext(Options))
+
+        await using (var seedDb = new AppDbContext(Options(connectionString)))
         {
             seedDb.ProductViewEvents.Add(
-                ProductViewEvent.Create(ProductId, SomeOtherUserId, sessionId, null, DateTime.UtcNow));
+                ProductViewEvent.Create(_productId, _someOtherUserId, sessionId, null, DateTime.UtcNow));
             await seedDb.SaveChangesAsync();
         }
 
-        await using var db = new AppDbContext(Options);
+        await using var db = new AppDbContext(Options(connectionString));
         var store = new ProductViewEventStore(db);
-        var claimingUser = await CreateUserAsync(db);
+        var claimingUser = await CreateUserAsync(connectionString);
 
         Assert.Equal(0, await store.MergeAnonymousSessionAsync(sessionId, claimingUser, CancellationToken.None));
 
         var owned = await db.ProductViewEvents.AsNoTracking()
             .SingleAsync(r => r.AnonymousSessionId == sessionId);
-        Assert.Equal(SomeOtherUserId, owned.UserId);
+        Assert.Equal(_someOtherUserId, owned.UserId);
     }
 
     [Fact]
     public async Task Merge_WithNoMatchingRows_ReturnsZero()
     {
-        await using var db = new AppDbContext(Options);
+        var connectionString = _fixture.ConnectionString;
+        await using var db = new AppDbContext(Options(connectionString));
         var store = new ProductViewEventStore(db);
-        var claimingUser = await CreateUserAsync(db);
+        var claimingUser = await CreateUserAsync(connectionString);
 
         Assert.Equal(0, await store.MergeAnonymousSessionAsync(
             Guid.NewGuid(), claimingUser, CancellationToken.None));
-    }
-
-    private static async Task<Guid> CreateUserAsync(AppDbContext db)
-    {
-        var user = User.Create($"claimer_{Guid.NewGuid():N}@test.com", "hash", "Claimer", null);
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-        return user.Id;
     }
 }

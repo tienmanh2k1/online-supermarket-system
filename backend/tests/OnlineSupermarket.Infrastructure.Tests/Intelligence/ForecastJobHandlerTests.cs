@@ -127,6 +127,7 @@ public sealed class ForecastJobHandlerTests : IDisposable
     private async Task<Guid> CreateRunAsync(Guid branchId)
     {
         var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow, branchId);
+        run.Start("handler-token", DateTime.UtcNow, DateTime.UtcNow.AddMinutes(10));
         _db.BackgroundJobRuns.Add(run);
         await _db.SaveChangesAsync();
         return run.Id;
@@ -135,9 +136,7 @@ public sealed class ForecastJobHandlerTests : IDisposable
     private async Task CompleteRunAsync(Guid runId)
     {
         var run = await _db.BackgroundJobRuns.SingleAsync(run => run.Id == runId);
-        var token = Guid.NewGuid().ToString();
-        run.Start(token, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(9));
-        run.MarkAsSucceeded(token, DateTime.UtcNow);
+        run.MarkAsSucceeded("handler-token", DateTime.UtcNow);
         await _db.SaveChangesAsync();
     }
 

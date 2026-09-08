@@ -15,6 +15,10 @@ import { formatPrice } from './ProductCard'
 import { RecommendationShelfLoader } from '../recommendations/RecommendationShelfLoader'
 import './ProductBrowsePage.css'
 
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === 'AbortError'
+}
+
 export function ProductBrowsePage() {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -32,6 +36,8 @@ export function ProductBrowsePage() {
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [metaError, setMetaError] = useState<string | null>(null)
+  const [metaRetryKey, setMetaRetryKey] = useState(0)
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
 
   // Parse filters from URL search params
@@ -64,26 +70,33 @@ export function ProductBrowsePage() {
 
   // Load initial dropdown options (Categories, Brands, Branches)
   useEffect(() => {
+    let active = true
     const abortController = new AbortController()
 
     async function loadMeta() {
       try {
+        setMetaError(null)
         const [cats, brs, branchList] = await Promise.all([
-          catalogApi.getCategories(abortController.signal).catch(() => []),
-          catalogApi.getBrands(abortController.signal).catch(() => []),
-          branchApi.getBranches(abortController.signal).catch(() => []),
+          catalogApi.getCategories(abortController.signal),
+          catalogApi.getBrands(abortController.signal),
+          branchApi.getBranches(abortController.signal),
         ])
+        if (!active) return
         setCategories(cats)
         setBrands(brs)
         setBranches(branchList)
-      } catch {
-        // Handled via fallback default values
+      } catch (err: unknown) {
+        if (!active || isAbortError(err)) return
+        setMetaError('Không thể tải thông tin hệ thống (chi nhánh/danh mục). Vui lòng thử lại!')
       }
     }
 
     loadMeta()
-    return () => abortController.abort()
-  }, [])
+    return () => {
+      active = false
+      abortController.abort()
+    }
+  }, [metaRetryKey])
 
   // Load Products whenever searchParams change
   const fetchProducts = useCallback(async () => {
@@ -206,6 +219,19 @@ export function ProductBrowsePage() {
       <RecommendationShelfLoader
         branchId={currentFilters.branchId}
       />
+
+      {metaError && (
+        <div className="product-browse-meta-error" role="alert">
+          <p>{metaError}</p>
+          <button
+            type="button"
+            className="product-browse-retry-btn"
+            onClick={() => setMetaRetryKey((k) => k + 1)}
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
 
       {/* Main Container */}
       <div className="product-browse-layout">

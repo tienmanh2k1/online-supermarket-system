@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -12,7 +12,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "branches",
@@ -30,7 +30,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_branches", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "brands",
@@ -45,7 +45,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_brands", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "categories",
@@ -67,7 +67,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "products",
@@ -101,7 +101,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "branch_inventories",
@@ -132,7 +132,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "IX_branch_inventories_branch_id_product_id",

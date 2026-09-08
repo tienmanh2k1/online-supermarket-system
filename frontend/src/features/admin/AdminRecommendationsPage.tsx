@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { recommendationApi, type RecommendationSampleResponse } from '../../api/recommendationApi'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../../api/httpClient'
@@ -23,6 +23,13 @@ export function AdminRecommendationsPage() {
     kind: 'ok',
   })
   const [retryKey, setRetryKey] = useState(0)
+  const pollAbortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (pollAbortRef.current) pollAbortRef.current.abort()
+    }
+  }, [])
 
   const load = useCallback(() => {
     if (!accessToken) return
@@ -50,6 +57,53 @@ export function AdminRecommendationsPage() {
     setRetryKey((key) => key + 1)
   }
 
+  function pollUntilTerminal(runId: string) {
+    if (!accessToken) return
+    const token = accessToken
+    if (pollAbortRef.current) pollAbortRef.current.abort()
+    const pollAbort = new AbortController()
+    pollAbortRef.current = pollAbort
+    const signal = pollAbort.signal
+    let attempts = 0
+
+    async function tick() {
+      if (attempts >= 120) {
+        setRunState({ running: false, message: 'Hết thời gian chờ lượt chạy hoàn thành.', kind: 'err' })
+        return
+      }
+      attempts++
+      await new Promise((resolve) => setTimeout(resolve, 600))
+      if (signal.aborted) return
+      try {
+        const next = await recommendationApi.getJobRun(runId, { token, signal })
+        if (next.status === 'Succeeded') {
+          setRunState({
+            running: false,
+            message: `Lượt chạy ${runId.slice(0, 8)} đã hoàn thành thành công.`,
+            kind: 'ok',
+          })
+          setScope('')
+          setLimit(20)
+          setRetryKey((key) => key + 1)
+          return
+        }
+        if (next.status === 'Failed') {
+          setRunState({
+            running: false,
+            message: `Lượt chạy thất bại: ${next.errorSummary || 'Lỗi không xác định'}.`,
+            kind: 'err',
+          })
+          return
+        }
+        void tick()
+      } catch {
+        setRunState({ running: false, message: 'Không thể kiểm tra trạng thái lượt chạy.', kind: 'err' })
+      }
+    }
+
+    void tick()
+  }
+
   async function triggerRun() {
     if (!accessToken || runState.running) return
     setRunState({ running: true, message: '', kind: 'ok' })
@@ -57,13 +111,11 @@ export function AdminRecommendationsPage() {
     try {
       const response = await recommendationApi.triggerRun(accessToken, controller.signal)
       setRunState({
-        running: false,
-        message: `Đã đưa vào hàng đợi (job ${response.jobRunId.slice(0, 8)}...).`,
+        running: true,
+        message: `Đã đưa vào hàng đợi (job ${response.jobRunId.slice(0, 8)}...). Đang xử lý...`,
         kind: 'ok',
       })
-      setScope('')
-      setLimit(20)
-      setRetryKey((key) => key + 1)
+      pollUntilTerminal(response.jobRunId)
     } catch (error) {
       if (isAbortError(error)) return
       const message =

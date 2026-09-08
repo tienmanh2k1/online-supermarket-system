@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -29,7 +29,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_users", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "refresh_tokens",
@@ -59,7 +59,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "IX_refresh_tokens_replaced_by_token_id",

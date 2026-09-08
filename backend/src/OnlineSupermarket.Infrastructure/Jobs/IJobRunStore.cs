@@ -2,7 +2,7 @@ namespace OnlineSupermarket.Infrastructure.Jobs;
 
 public interface IJobRunStore
 {
-    Task<bool> TryClaimAsync(
+    Task<bool> TryStartAsync(
         Guid runId,
         string token,
         DateTime leaseExpiresAtUtc,
@@ -14,11 +14,16 @@ public interface IJobRunStore
         DateTime newLeaseExpiresAtUtc,
         CancellationToken cancellationToken);
 
-    Task<bool> TryCompleteAsync(
+    Task<bool> TrySucceedAsync(
         Guid runId,
         string token,
-        bool success,
-        string? error,
+        DateTime completedAtUtc,
+        CancellationToken cancellationToken);
+
+    Task<bool> TryFailAsync(
+        Guid runId,
+        string token,
+        string? sanitizedError,
         DateTime completedAtUtc,
         CancellationToken cancellationToken);
 

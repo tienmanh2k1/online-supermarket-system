@@ -28,6 +28,7 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString));
+        services.AddSingleton<IDbContextFactory<AppDbContext>>(new RuntimeDbContextFactory(connectionString));
 
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IInventoryMutationService, InventoryMutationService>();
@@ -113,8 +114,9 @@ public static class DependencyInjection
 
         services.AddSingleton<Jobs.IJobQueue>(sp => new Jobs.ChannelJobQueue());
         services.AddScoped<Jobs.JobRunCoordinator>();
+        services.AddScoped<Jobs.JobRunExecutor>();
         services.AddScoped<Jobs.JobLeaseService>();
-        services.AddScoped<Jobs.IJobRunStore, Jobs.JobRunStore>();
+        services.AddScoped<Jobs.IJobRunStore, Jobs.EfJobRunStore>();
 
         return services;
     }

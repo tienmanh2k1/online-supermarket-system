@@ -215,4 +215,144 @@ public sealed class RecommendationReadEndpointsTests
         Assert.Equal(HttpStatusCode.BadRequest, tooSmall.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, tooLarge.StatusCode);
     }
+
+    [Fact]
+    public async Task ProductRecommendations_WhenSimilarMissingOrExpired_FallsBackToGlobalWith200()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedMaterializationAsync(factory);
+
+        // ProductB has no similar rows seeded, so it must fall back to Global scope
+        var response = await seed.Client.GetAsync(
+            "/api/products/" + seed.ProductBId + "/recommendations");
+        var body = await response.Content.ReadFromJsonAsync<RecommendationResponse>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Global", body!.SourceScope);
+        Assert.True(body.Items.Count > 0);
+    }
+
+    [Fact]
+    public async Task ProductRecommendations_WhenSimilarExpired_AndGlobalValid_FallsBackToGlobalWith200()
+    {
+        using var factory = new TestApiFactory();
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var branch = new Branch("ExpSim Branch", "1 Test Street", "0100000000", 10m, 106m);
+        var category = new Category("ExpSimCats", "expsim-cats");
+        var brand = new Brand("ExpSimBrand", "expsim-brand");
+        db.Branches.Add(branch);
+        db.Categories.Add(category);
+        db.Brands.Add(brand);
+        await db.SaveChangesAsync();
+
+        var prodX = new Product(category.Id, brand.Id, "SKU-ES-X", "ExpSim Prod X", "expsim-prod-x", "desc", 10_000m, "cái", null);
+        var prodY = new Product(category.Id, brand.Id, "SKU-ES-Y", "ExpSim Prod Y", "expsim-prod-y", "desc", 20_000m, "cái", null);
+        db.Products.AddRange(prodX, prodY);
+        await db.SaveChangesAsync();
+
+        var run = new BackgroundJobRun("Recommendations", "global", DateTime.UtcNow.AddHours(-5));
+        var token = Guid.NewGuid().ToString();
+        run.Start(token, DateTime.UtcNow.AddHours(-5).AddSeconds(1), DateTime.UtcNow.AddHours(-4));
+        run.MarkAsSucceeded(token, DateTime.UtcNow.AddHours(-5).AddSeconds(5));
+        db.BackgroundJobRuns.Add(run);
+        await db.SaveChangesAsync();
+
+        // Expired SimilarProduct row for prodX pointing to prodY (expired 1 hour ago)
+        var pastGenerated = DateTime.UtcNow.AddHours(-4);
+        var pastExpired = DateTime.UtcNow.AddHours(-1);
+        db.RecommendationResults.Add(RecommendationResult.CreateSimilarProduct(
+            prodX.Id, prodY.Id, 0.95m, 1, "Tương tự", "content-v1",
+            pastGenerated, pastExpired, run.Id));
+
+        // Valid Global row for prodY (valid for 2 more hours)
+        var validExpires = DateTime.UtcNow.AddHours(2);
+        db.RecommendationResults.Add(RecommendationResult.CreateGlobal(
+            prodY.Id, 0.85m, 1, "Được nhiều người quan tâm", "content-v1",
+            pastGenerated, validExpires, run.Id));
+        await db.SaveChangesAsync();
+
+        var client = factory.CreateClient();
+        var response = await client.GetAsync($"/api/products/{prodX.Id}/recommendations");
+        var body = await response.Content.ReadFromJsonAsync<RecommendationResponse>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Global", body!.SourceScope);
+        Assert.Single(body.Items);
+        Assert.Equal(prodY.Id, body.Items[0].ProductId);
+    }
+
+    [Fact]
+    public async Task ProductRecommendations_WhenAllRowsExpired_ReturnsEmpty200()
+    {
+        using var factory = new TestApiFactory();
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var branch = new Branch("Expired Branch", "1 Test Street", "0100000000", 10m, 106m);
+        var category = new Category("ExpCats", "exp-cats");
+        var brand = new Brand("ExpBrand", "exp-brand");
+        db.Branches.Add(branch);
+        db.Categories.Add(category);
+        db.Brands.Add(brand);
+        await db.SaveChangesAsync();
+
+        var prod = new Product(category.Id, brand.Id, "SKU-EXP-1", "Exp Prod", "exp-prod", "desc", 10_000m, "cái", null);
+        db.Products.Add(prod);
+        await db.SaveChangesAsync();
+
+        var run = new BackgroundJobRun("Recommendations", "global", DateTime.UtcNow.AddHours(-10));
+        var token = Guid.NewGuid().ToString();
+        run.Start(token, DateTime.UtcNow.AddHours(-10).AddSeconds(1), DateTime.UtcNow.AddHours(-9));
+        run.MarkAsSucceeded(token, DateTime.UtcNow.AddHours(-10).AddSeconds(5));
+        db.BackgroundJobRuns.Add(run);
+        await db.SaveChangesAsync();
+
+        // Expired global and similar rows
+        var pastGenerated = DateTime.UtcNow.AddHours(-9);
+        var pastExpired = DateTime.UtcNow.AddHours(-5);
+        db.RecommendationResults.Add(RecommendationResult.CreateGlobal(
+            prod.Id, 0.9m, 1, "Được nhiều người quan tâm", "content-v1",
+            pastGenerated, pastExpired, run.Id));
+        db.RecommendationResults.Add(RecommendationResult.CreateSimilarProduct(
+            prod.Id, prod.Id, 0.8m, 1, "Tương tự", "content-v1",
+            pastGenerated, pastExpired, run.Id));
+        await db.SaveChangesAsync();
+
+        var client = factory.CreateClient();
+        var response = await client.GetAsync($"/api/products/{prod.Id}/recommendations");
+        var body = await response.Content.ReadFromJsonAsync<RecommendationResponse>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Empty(body!.Items);
+        Assert.Null(body.SourceScope);
+    }
+
+    [Fact]
+    public async Task Homepage_WhenNewRunFailed_ServesPriorSucceededBatchWith200()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedMaterializationAsync(factory, withUser: false);
+
+        // Insert a newer run that FAILED
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var failedRun = new BackgroundJobRun("Recommendations", "global", DateTime.UtcNow);
+            var token = Guid.NewGuid().ToString();
+            failedRun.Start(token, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
+            failedRun.MarkAsFailed(token, DateTime.UtcNow.AddSeconds(2), "synthetic failure");
+            db.BackgroundJobRuns.Add(failedRun);
+            await db.SaveChangesAsync();
+        }
+
+        // Homepage should still serve the prior Succeeded batch rows
+        var response = await seed.Client.GetAsync("/api/recommendations");
+        var body = await response.Content.ReadFromJsonAsync<RecommendationResponse>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Global", body!.SourceScope);
+        Assert.NotEmpty(body.Items);
+    }
 }

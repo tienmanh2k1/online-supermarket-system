@@ -310,9 +310,13 @@ public static class ReviewEndpoints
         }
 
         var itemIds = completedItems.Select(x => x.Id).ToList();
-        var existingReviews = await dbContext.Reviews
-            .Where(r => itemIds.Contains(r.OrderItemId))
-            .ToListAsync(cancellationToken);
+        var existingReviews = new List<Review>();
+        foreach (var itemId in itemIds)
+        {
+            var review = await dbContext.Reviews
+                .FirstOrDefaultAsync(r => r.OrderItemId == itemId, cancellationToken);
+            if (review is not null) existingReviews.Add(review);
+        }
 
         var reviewedItemIds = existingReviews.Select(r => r.OrderItemId).ToHashSet();
         var eligibleItem = completedItems.FirstOrDefault(x => !reviewedItemIds.Contains(x.Id));

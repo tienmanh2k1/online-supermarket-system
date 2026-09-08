@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { recommendationApi, type RecommendationItemDto } from '../../api/recommendationApi'
+import { useOptionalAuth } from '../auth/AuthContext'
 import { RecommendationShelf } from './RecommendationShelf'
 
 export interface RecommendationShelfLoaderProps {
@@ -19,10 +20,12 @@ interface LoadState {
 export function RecommendationShelfLoader({
   branchId,
   productId,
-  token,
+  token: explicitToken,
   limit = 8,
   title,
 }: RecommendationShelfLoaderProps) {
+  const auth = useOptionalAuth()
+  const token = explicitToken ?? auth?.accessToken ?? undefined
   const [state, setState] = useState<LoadState>({ loading: true, isError: false, items: [] })
   const [retryKey, setRetryKey] = useState(0)
 

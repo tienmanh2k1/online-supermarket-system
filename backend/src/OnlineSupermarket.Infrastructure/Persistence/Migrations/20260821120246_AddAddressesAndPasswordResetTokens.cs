@@ -32,7 +32,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_addresses", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateTable(
                 name: "password_reset_tokens",
@@ -49,7 +49,7 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_password_reset_tokens", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
                 name: "IX_addresses_user_id",

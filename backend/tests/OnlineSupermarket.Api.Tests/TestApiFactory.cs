@@ -64,6 +64,11 @@ public class TestApiFactory : WebApplicationFactory<Program>
                 options.UseInMemoryDatabase(_dbName, _databaseRoot);
                 options.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
+            services.AddSingleton<IDbContextFactory<AppDbContext>>(_ => new ManualDbContextFactory(
+                new DbContextOptionsBuilder<AppDbContext>()
+                    .UseInMemoryDatabase(_dbName, _databaseRoot)
+                    .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                    .Options));
 
             // Suppress EventLog provider that causes Access Denied on Windows without admin rights
             services.Configure<LoggerFilterOptions>(options =>

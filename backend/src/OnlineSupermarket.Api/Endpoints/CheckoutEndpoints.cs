@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Checkout;
+using OnlineSupermarket.Domain.Catalog;
+using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Orders;
 using OnlineSupermarket.Domain.Payments;
 using OnlineSupermarket.Domain.Promotions;
@@ -140,10 +142,15 @@ public static class CheckoutEndpoints
                     return Results.BadRequest(new { message = "CART_EMPTY" });
 
                 var inventoryIds = cart.Items.Select(i => i.BranchInventoryId).ToList();
-                var inventories = await dbContext.BranchInventories
-                    .Where(bi => inventoryIds.Contains(bi.Id))
-                    .OrderBy(bi => bi.Id)
-                    .ToListAsync(cancellationToken);
+                // Scalar lookups: provider fails to bind Contains(Guid[]) with 2+ elements.
+                var inventories = new List<BranchInventory>();
+                foreach (var id in inventoryIds)
+                {
+                    var inventory = await dbContext.BranchInventories
+                        .OrderBy(bi => bi.Id)
+                        .FirstOrDefaultAsync(bi => bi.Id == id, cancellationToken);
+                    if (inventory is not null) inventories.Add(inventory);
+                }
 
                 var inventoryMap = inventories.ToDictionary(bi => bi.Id);
 
@@ -170,9 +177,13 @@ public static class CheckoutEndpoints
                 }
 
                 var productIds = cart.Items.Select(i => i.ProductId).ToList();
-                var products = await dbContext.Products
-                    .Where(p => productIds.Contains(p.Id))
-                    .ToDictionaryAsync(p => p.Id, cancellationToken);
+                var products = new Dictionary<Guid, Product>();
+                foreach (var id in productIds)
+                {
+                    var product = await dbContext.Products
+                        .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+                    if (product is not null) products[id] = product;
+                }
 
                 var subtotal = cart.Items.Sum(i => i.LineTotal);
 
@@ -364,9 +375,13 @@ public static class CheckoutEndpoints
             return [];
         }
 
-        var inventories = await dbContext.BranchInventories
-            .Where(bi => bi.BranchId == order.BranchId && productIds.Contains(bi.ProductId))
-            .ToDictionaryAsync(bi => bi.ProductId, cancellationToken);
+        var inventories = new Dictionary<Guid, BranchInventory>();
+        foreach (var productId in productIds)
+        {
+            var inventory = await dbContext.BranchInventories
+                .FirstOrDefaultAsync(bi => bi.BranchId == order.BranchId && bi.ProductId == productId, cancellationToken);
+            if (inventory is not null) inventories[inventory.ProductId] = inventory;
+        }
 
         return order.Items
             .Where(i => inventories.ContainsKey(i.ProductId))

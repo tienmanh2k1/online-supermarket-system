@@ -238,6 +238,9 @@ public sealed class ForecastRecurringScheduleTests : IDisposable
         var branchId = await SeedBranchAsync("Scheduled Run Branch");
         var inventoryId = await SeedInventoryAsync(branchId);
         var runId = await QueueRunAsync(branchId);
+        var queued = await _db.BackgroundJobRuns.SingleAsync(candidate => candidate.Id == runId);
+        queued.Start("handler-token", DateTime.UtcNow, DateTime.UtcNow.AddMinutes(10));
+        await _db.SaveChangesAsync();
 
         await _handler.HandleAsync(runId, CancellationToken.None);
 

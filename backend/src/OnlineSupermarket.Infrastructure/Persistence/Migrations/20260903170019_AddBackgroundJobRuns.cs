@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -15,27 +15,27 @@ namespace OnlineSupermarket.Infrastructure.Persistence.Migrations
                 name: "background_job_runs",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    JobName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
-                    LockKey = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
-                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    StartedAtUtc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    CompletedAtUtc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    ErrorSummary = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true),
-                    LockToken = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
-                    LeaseExpiresAtUtc = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    job_name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    lock_key = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false),
+                    created_at_utc = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    started_at_utc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    completed_at_utc = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    error_summary = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true),
+                    lock_token = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
+                    lease_expires_at_utc = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_background_job_runs", x => x.Id);
+                    table.PrimaryKey("PK_background_job_runs", x => x.id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+;
 
             migrationBuilder.CreateIndex(
-                name: "IX_background_job_runs_JobName_LockKey",
+                name: "IX_background_job_runs_job_name_lock_key",
                 table: "background_job_runs",
-                columns: new[] { "JobName", "LockKey" },
+                columns: new[] { "job_name", "lock_key" },
                 unique: true);
         }
 

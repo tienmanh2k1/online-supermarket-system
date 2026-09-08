@@ -93,5 +93,66 @@ public sealed class JobErrorSanitizerTests
         Assert.EndsWith("y...", two);
     }
 
+    [Fact]
+    public void Redacts_quoted_json_key_before_colon()
+    {
+        // Regression: key closing quote before ':' ("password":"x") was not matched.
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{\"password\":\"AUDIT_SYNTHETIC_MARKER\",\"amount\":100}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER", result);
+        Assert.Contains("password\":[REDACTED]", result);
+    }
+
+    [Fact]
+    public void Redacts_quoted_json_key_with_space_before_colon()
+    {
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{\"token\" : \"AUDIT_SYNTHETIC_MARKER2\"}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER2", result);
+        Assert.Contains("[REDACTED]", result);
+    }
+
+    [Fact]
+    public void Redacts_single_quoted_key_before_colon()
+    {
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{'secret':'AUDIT_SYNTHETIC_MARKER3'}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER3", result);
+        Assert.Contains("[REDACTED]", result);
+    }
+
+    [Fact]
+    public void Redacts_escaped_quote_within_json_value()
+    {
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{\"password\":\"prefix\\\"AUDIT_SYNTHETIC_MARKER\"}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER", result);
+        Assert.Contains("[REDACTED]", result);
+    }
+
+    [Fact]
+    public void Redacts_escaped_single_quote_within_value()
+    {
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{'secret':'prefix\\'AUDIT_SYNTHETIC_MARKER_SQ'}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER_SQ", result);
+        Assert.Contains("[REDACTED]", result);
+    }
+
+    [Fact]
+    public void Redacts_escaped_backslash_and_quote_within_value()
+    {
+        var result = JobErrorSanitizer.Sanitize(new InvalidOperationException(
+            "{\"password\":\"a\\\\b\\\"AUDIT_SYNTHETIC_MARKER_BS\"}"));
+
+        Assert.DoesNotContain("AUDIT_SYNTHETIC_MARKER_BS", result);
+        Assert.Contains("[REDACTED]", result);
+    }
+
     private static string RedactionMarker() => "[REDACTED]";
 }

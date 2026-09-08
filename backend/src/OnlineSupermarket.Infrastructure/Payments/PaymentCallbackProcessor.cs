@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Orders;
 using OnlineSupermarket.Domain.Payments;
 using OnlineSupermarket.Infrastructure.Inventory;
@@ -188,9 +189,13 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
     private async Task ReleaseInventoryAsync(Order order, CancellationToken cancellationToken)
     {
         var productIds = order.Items.Select(x => x.ProductId).Distinct().ToArray();
-        var inventories = await dbContext.BranchInventories
-            .Where(x => x.BranchId == order.BranchId && productIds.Contains(x.ProductId))
-            .ToDictionaryAsync(x => x.ProductId, cancellationToken);
+        var inventories = new Dictionary<Guid, BranchInventory>();
+        foreach (var productId in productIds)
+        {
+            var inventory = await dbContext.BranchInventories
+                .FirstOrDefaultAsync(x => x.BranchId == order.BranchId && x.ProductId == productId, cancellationToken);
+            if (inventory is not null) inventories[inventory.ProductId] = inventory;
+        }
 
         var commands = order.Items
             .GroupBy(x => x.ProductId)

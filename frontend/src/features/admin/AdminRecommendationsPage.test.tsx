@@ -112,11 +112,20 @@ describe('AdminRecommendationsPage', () => {
     })
   })
 
-  it('accepts a manual run and refreshes the sample', async () => {
+  it('accepts a manual run, polls until Succeeded, and refreshes the sample', async () => {
     const getSample = vi.spyOn(recommendationApi, 'getAdminSample').mockResolvedValue(sampleResponse)
     vi.spyOn(recommendationApi, 'triggerRun').mockResolvedValue({
-      jobRunId: 'job-new',
-      statusUrl: '/api/admin/jobs/job-new',
+      jobRunId: 'job-new-123',
+      statusUrl: '/api/admin/jobs/job-new-123',
+    })
+    vi.spyOn(recommendationApi, 'getJobRun').mockResolvedValue({
+      id: 'job-new-123',
+      jobName: 'Recommendations',
+      status: 'Succeeded',
+      createdAtUtc: '2026-09-08T05:00:00Z',
+      startedAtUtc: '2026-09-08T05:00:01Z',
+      completedAtUtc: '2026-09-08T05:00:03Z',
+      errorSummary: null,
     })
 
     renderPage()
@@ -129,7 +138,57 @@ describe('AdminRecommendationsPage', () => {
       expect(screen.getByText(/Đã đưa vào hàng đợi/)).toBeInTheDocument()
     })
     await waitFor(() => {
-      expect(getSample.mock.calls.length).toBeGreaterThan(callsBefore)
+      expect(screen.getByText(/hoàn thành thành công/)).toBeInTheDocument()
+    }, { timeout: 3000 })
+    expect(getSample.mock.calls.length).toBeGreaterThan(callsBefore)
+  })
+
+  it('polls the run until Failed and unblocks UI with error message', async () => {
+    vi.spyOn(recommendationApi, 'getAdminSample').mockResolvedValue(sampleResponse)
+    vi.spyOn(recommendationApi, 'triggerRun').mockResolvedValue({
+      jobRunId: 'job-failed-456',
+      statusUrl: '/api/admin/jobs/job-failed-456',
     })
+    vi.spyOn(recommendationApi, 'getJobRun').mockResolvedValue({
+      id: 'job-failed-456',
+      jobName: 'Recommendations',
+      status: 'Failed',
+      createdAtUtc: '2026-09-08T05:00:00Z',
+      startedAtUtc: '2026-09-08T05:00:01Z',
+      completedAtUtc: '2026-09-08T05:00:03Z',
+      errorSummary: 'Trainer matrix factorization error',
+    })
+
+    renderPage()
+    await screen.findByText('Toàn hệ thống')
+
+    const button = screen.getByRole('button', { name: 'Chạy lại lần tính' })
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Đã đưa vào hàng đợi/)).toBeInTheDocument()
+    })
+    await waitFor(() => {
+      expect(screen.getByText(/Lượt chạy thất bại: Trainer matrix factorization error/)).toBeInTheDocument()
+    }, { timeout: 3000 })
+    expect(button).not.toBeDisabled()
+  })
+
+  it('exits waiting state and displays error when triggerRun fails', async () => {
+    vi.spyOn(recommendationApi, 'getAdminSample').mockResolvedValue(sampleResponse)
+    vi.spyOn(recommendationApi, 'triggerRun').mockRejectedValue(
+      new Error('Internal server error'),
+    )
+
+    renderPage()
+    await screen.findByText('Toàn hệ thống')
+
+    const button = screen.getByRole('button', { name: 'Chạy lại lần tính' })
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Không thể kích hoạt lượt chạy/)).toBeInTheDocument()
+    })
+    expect(button).not.toBeDisabled()
   })
 })

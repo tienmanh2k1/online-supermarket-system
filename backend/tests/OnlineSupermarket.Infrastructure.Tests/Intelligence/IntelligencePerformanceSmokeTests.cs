@@ -34,6 +34,7 @@ public sealed class IntelligencePerformanceSmokeTests
             foreach (var branchId in branchIds)
             {
                 var run = new BackgroundJobRun("Forecast", $"branch:{branchId}", DateTime.UtcNow, branchId);
+                run.Start("handler-token", DateTime.UtcNow, DateTime.UtcNow.AddMinutes(10));
                 db.BackgroundJobRuns.Add(run);
                 await db.SaveChangesAsync();
                 await handler.HandleAsync(run.Id, CancellationToken.None);

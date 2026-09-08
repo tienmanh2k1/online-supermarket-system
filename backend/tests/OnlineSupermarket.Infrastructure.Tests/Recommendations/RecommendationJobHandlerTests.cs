@@ -1,6 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Moq;
 using OnlineSupermarket.Domain.Branches;
 using OnlineSupermarket.Domain.Catalog;
 using OnlineSupermarket.Domain.Identity;
@@ -13,6 +16,7 @@ using OnlineSupermarket.Infrastructure.Recommendations;
 
 namespace OnlineSupermarket.Infrastructure.Tests.Recommendations;
 
+[Collection("MfScorerTests")]
 public sealed class RecommendationJobHandlerTests : IDisposable
 {
     private readonly SqliteConnection _connection;
@@ -26,6 +30,7 @@ public sealed class RecommendationJobHandlerTests : IDisposable
 
     public RecommendationJobHandlerTests()
     {
+        MfScorer.ClearModel();
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
 
@@ -43,6 +48,7 @@ public sealed class RecommendationJobHandlerTests : IDisposable
 
     public void Dispose()
     {
+        MfScorer.ClearModel();
         _db.Dispose();
         _connection.Dispose();
     }
@@ -54,6 +60,7 @@ public sealed class RecommendationJobHandlerTests : IDisposable
             .ExecuteUpdateAsync(run => run.SetProperty(r => r.LockKey, "released:" + Guid.NewGuid()));
 
         var row = new BackgroundJobRun("Recommendations", "global", DateTime.UtcNow);
+        row.Start("handler-token", DateTime.UtcNow, DateTime.UtcNow.AddMinutes(10));
         _db.BackgroundJobRuns.Add(row);
         await _db.SaveChangesAsync();
         return row.Id;
@@ -222,5 +229,139 @@ public sealed class RecommendationJobHandlerTests : IDisposable
 
         var count = await _db.RecommendationResults.CountAsync(x => x.JobRunId == runId);
         Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenTrainingFails_CleansUpModelAndThrows_PreservingPriorBatch()
+    {
+        await SeedCatalogAndSignalsAsync();
+        var firstRunId = await SeedRunAsync();
+        await _handler.HandleAsync(firstRunId, CancellationToken.None);
+
+        var firstCount = await _db.RecommendationResults.CountAsync(x => x.JobRunId == firstRunId);
+        Assert.True(firstCount > 0);
+
+        var failingRunId = await SeedRunAsync();
+        _handler.EnsureModelSeam = _ => throw new InvalidOperationException("Simulated MF trainer failure");
+
+        var exception = await Record.ExceptionAsync(() =>
+            _handler.HandleAsync(failingRunId, CancellationToken.None));
+
+        Assert.NotNull(exception);
+        Assert.Equal("Simulated MF trainer failure", exception.Message);
+
+        // Model state must be cleaned up
+        Assert.False(MfScorer.IsModelTrained);
+
+        // Prior batch rows are completely preserved
+        var postFirstCount = await _db.RecommendationResults.CountAsync(x => x.JobRunId == firstRunId);
+        Assert.Equal(firstCount, postFirstCount);
+
+        // No rows recorded for the failing run
+        var failingCount = await _db.RecommendationResults.CountAsync(x => x.JobRunId == failingRunId);
+        Assert.Equal(0, failingCount);
+    }
+
+    private async Task SeedSufficientSignalsForMfAsync()
+    {
+        var branch = await _db.Branches.FirstAsync();
+        var category = await _db.Categories.FirstAsync();
+        var brand = await _db.Brands.FirstAsync();
+
+        var users = Enumerable.Range(1, 4)
+            .Select(i => User.Create($"mfuser{i}_{Guid.NewGuid():N}@test.com", "hash", $"MF User {i}", null))
+            .ToList();
+        _db.Users.AddRange(users);
+
+        var products = Enumerable.Range(1, 6)
+            .Select(i => new Product(category.Id, brand.Id, $"SKU-MF-{i}", $"MF Product {i}", $"mf-product-{i}", "desc", 50_000m + i * 10_000m, "cái", null))
+            .ToList();
+        _db.Products.AddRange(products);
+        await _db.SaveChangesAsync();
+
+        var allUsers = new[] { _userId }.Concat(users.Select(u => u.Id)).ToList();
+        var allProducts = new[] { _productAId, _productBId }.Concat(products.Select(p => p.Id)).ToList();
+
+        for (var uIdx = 0; uIdx < allUsers.Count; uIdx++)
+        {
+            for (var pIdx = 0; pIdx < 3; pIdx++)
+            {
+                var prodId = allProducts[(uIdx + pIdx) % allProducts.Count];
+                _db.ProductViewEvents.Add(ProductViewEvent.Create(
+                    prodId, allUsers[uIdx], null, branch.Id, DateTime.UtcNow.AddMinutes(-10)));
+            }
+        }
+
+        await _db.SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenPredictionFailsOnTrainedModel_FallsBackToContentWithoutFakingMf()
+    {
+        await SeedCatalogAndSignalsAsync();
+        await SeedSufficientSignalsForMfAsync();
+        var runId = await SeedRunAsync();
+
+        MfScorer.ClearModel();
+
+        try
+        {
+            // Inject an exception at prediction boundary on a genuinely trained MF model
+            MfScorer.ScoreSeam = (_, _, _) => throw new InvalidOperationException("Simulated ML transform/prediction failure");
+
+            await _handler.HandleAsync(runId, CancellationToken.None);
+
+            // Verify model was genuinely trained by EnsureModel during run
+            Assert.True(MfScorer.IsModelTrained);
+
+            var userRows = await _db.RecommendationResults
+                .Where(x => x.JobRunId == runId && x.Scope == RecommendationScope.User)
+                .ToListAsync();
+
+            Assert.NotEmpty(userRows);
+            Assert.All(userRows, row =>
+            {
+                Assert.Equal("content-v1", row.AlgorithmVersion);
+                Assert.Equal("Phù hợp danh mục đã xem", row.Reason);
+                Assert.NotEqual("Gợi ý từ mô hình AI", row.Reason);
+            });
+        }
+        finally
+        {
+            MfScorer.ClearModel();
+        }
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ViaJobRunExecutor_WhenTrainingFails_MarksRunFailedInStore()
+    {
+        await SeedCatalogAndSignalsAsync();
+        var runId = await SeedRunAsync();
+
+        _handler.EnsureModelSeam = _ => throw new InvalidOperationException("Simulated MF trainer failure");
+
+        var storeMock = new Mock<IJobRunStore>();
+        string? recordedError = null;
+        storeMock.Setup(s => s.TryStartAsync(runId, It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+        storeMock.Setup(s => s.TryFailAsync(runId, It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+            .Callback<Guid, string, string?, DateTime, CancellationToken>((_, _, err, _, _) => recordedError = err)
+            .ReturnsAsync(true);
+
+        var services = new ServiceCollection();
+        services.AddScoped<IJobRunStore>(_ => storeMock.Object);
+        services.AddScoped<IBackgroundJobHandler>(_ => _handler);
+        var sp = services.BuildServiceProvider();
+
+        var executor = new JobRunExecutor(
+            sp.GetRequiredService<IServiceScopeFactory>(),
+            Options.Create(new IntelligenceJobsOptions { LeaseMinutes = 5 }),
+            NullLogger<JobRunExecutor>.Instance);
+
+        await executor.ExecuteAsync(new JobRequest(runId, "Recommendations"), CancellationToken.None);
+
+        storeMock.Verify(s => s.TryFailAsync(runId, It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+        Assert.NotNull(recordedError);
+        Assert.Contains("Simulated MF trainer failure", recordedError);
     }
 }

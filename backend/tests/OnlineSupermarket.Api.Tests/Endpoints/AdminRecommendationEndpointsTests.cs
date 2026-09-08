@@ -208,4 +208,16 @@ public sealed class AdminRecommendationEndpointsTests
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
+
+    [Fact]
+    public async Task TriggerRun_AsCustomer_Returns403()
+    {
+        using var factory = new TestApiFactory();
+        var seed = await SeedAsync(factory);
+
+        var response = await seed.CustomerClient.PostAsync(
+            "/api/admin/jobs/recommendations/runs", null);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
 }

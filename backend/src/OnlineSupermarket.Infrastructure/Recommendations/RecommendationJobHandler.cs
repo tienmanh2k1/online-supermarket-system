@@ -15,9 +15,12 @@ public class RecommendationJobHandler(
 {
     private const int SignalWindowDays = 28;
     private const int ExpiryGraceMinutes = 15;
-    private const string AlgorithmVersion = "content-v1";
+    private const string AlgorithmVersionMf = "mf-v1";
+    private const string AlgorithmVersionContent = "content-v1";
 
     public string JobName => "Recommendations";
+
+    internal Action<ScoringInput>? EnsureModelSeam { get; set; }
 
     public async Task HandleAsync(Guid runId, CancellationToken cancellationToken)
     {
@@ -48,18 +51,37 @@ public class RecommendationJobHandler(
         var expiresAtUtc = nowUtc.AddMinutes(intervalMinutes + ExpiryGraceMinutes);
 
         var input = new ScoringInput(products, viewsProjection, purchases, nowUtc);
-        var rows = BuildRows(input, runId, nowUtc, expiresAtUtc);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            dbContext.RecommendationResults.AddRange(rows);
-            await dbContext.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
+            if (EnsureModelSeam != null)
+            {
+                EnsureModelSeam(input);
+            }
+            else
+            {
+                MfScorer.EnsureModel(input);
+            }
+
+            var rows = BuildRows(input, runId, nowUtc, expiresAtUtc);
+
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                await JobRunPublishGuard.EnsureOwnedAsync(dbContext, runId, timeProvider, cancellationToken);
+                dbContext.RecommendationResults.AddRange(rows);
+                await dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
         catch
         {
-            await transaction.RollbackAsync(cancellationToken);
+            MfScorer.ClearModel();
             throw;
         }
     }
@@ -79,7 +101,7 @@ public class RecommendationJobHandler(
             var scored = global[index];
             rows.Add(RecommendationResult.CreateGlobal(
                 scored.ProductId, scored.Score, index + 1, scored.Reason,
-                AlgorithmVersion, generatedAtUtc, expiresAtUtc, runId));
+                AlgorithmVersionContent, generatedAtUtc, expiresAtUtc, runId));
         }
 
         var userIds = new HashSet<Guid>();
@@ -100,13 +122,13 @@ public class RecommendationJobHandler(
 
         foreach (var userId in userIds)
         {
-            var ranked = RecommendationScorer.ScoreUser(input, userId);
+            var (ranked, version, reason) = ScoreUserWithMf(input, userId);
             for (var index = 0; index < ranked.Count; index++)
             {
                 var scored = ranked[index];
                 rows.Add(RecommendationResult.CreateForUser(
-                    userId, scored.ProductId, scored.Score, index + 1, scored.Reason,
-                    AlgorithmVersion, generatedAtUtc, expiresAtUtc, runId));
+                    userId, scored.ProductId, scored.Score, index + 1, reason,
+                    version, generatedAtUtc, expiresAtUtc, runId));
             }
         }
 
@@ -123,10 +145,69 @@ public class RecommendationJobHandler(
                 var scored = ranked[index];
                 rows.Add(RecommendationResult.CreateSimilarProduct(
                     sourceProductId, scored.ProductId, scored.Score, index + 1, scored.Reason,
-                    AlgorithmVersion, generatedAtUtc, expiresAtUtc, runId));
+                    AlgorithmVersionContent, generatedAtUtc, expiresAtUtc, runId));
             }
         }
 
         return rows;
+    }
+
+    private static (IReadOnlyList<ScoredProduct> Results, string Version, string Reason) ScoreUserWithMf(ScoringInput input, Guid userId)
+    {
+        const int maxResults = 20;
+        const string mfReason = "Gợi ý từ mô hình AI";
+        const string contentReason = "Phù hợp danh mục đã xem";
+
+        if (!MfScorer.IsModelTrained)
+        {
+            var fallback = RecommendationScorer.ScoreUser(input, userId);
+            return (fallback, AlgorithmVersionContent, contentReason);
+        }
+
+        var seenProducts = GetSeenProducts(input, userId);
+
+        var candidates = input.Products
+            .Where(p => p.IsActive && !seenProducts.Contains(p.ProductId))
+            .Select(p => new
+            {
+                Product = p,
+                MfScore = MfScorer.Score(input, userId, p.ProductId)
+            })
+            .Where(x => x.MfScore > 0)
+            .OrderByDescending(x => x.MfScore)
+            .Take(maxResults)
+            .Select(x => new ScoredProduct(x.Product.ProductId, x.MfScore, mfReason))
+            .ToList();
+
+        if (candidates.Count == 0)
+        {
+            var fallback = RecommendationScorer.ScoreUser(input, userId);
+            return (fallback, AlgorithmVersionContent, contentReason);
+        }
+
+        return (candidates, AlgorithmVersionMf, mfReason);
+    }
+
+    private static HashSet<Guid> GetSeenProducts(ScoringInput input, Guid userId)
+    {
+        var seen = new HashSet<Guid>();
+
+        foreach (var view in input.Views)
+        {
+            if (view.UserId == userId)
+            {
+                seen.Add(view.ProductId);
+            }
+        }
+
+        foreach (var purchase in input.Purchases)
+        {
+            if (purchase.UserId == userId)
+            {
+                seen.Add(purchase.ProductId);
+            }
+        }
+
+        return seen;
     }
 }

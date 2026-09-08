@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -38,9 +39,12 @@ public class IntelligenceWorkerTests
     private (IntelligenceWorker Worker, IServiceProvider Services) BuildWorker(IBackgroundJobHandler handler)
     {
         var services = new ServiceCollection();
-        services.AddScoped<AppDbContext>(_ => new AppDbContext(DbOptions));
+        services.AddDbContext<AppDbContext>(opts => opts.UseInMemoryDatabase(_dbName));
+        services.AddDbContextFactory<AppDbContext>(opts => opts.UseInMemoryDatabase(_dbName));
+        services.AddLogging();
         services.AddSingleton(TimeProvider.System);
-        services.AddScoped<IJobRunStore, JobRunStore>();
+        services.AddScoped<IJobRunStore, EfJobRunStore>();
+        services.AddScoped<JobRunExecutor>();
         services.AddSingleton(handler);
         var provider = services.BuildServiceProvider();
 
@@ -75,7 +79,7 @@ public class IntelligenceWorkerTests
 
         using var cts = new CancellationTokenSource();
         var execute = worker.StartAsync(cts.Token);
-        await Task.Delay(300);
+        await Task.Delay(500);
         await cts.CancelAsync();
         await execute;
 
@@ -97,7 +101,7 @@ public class IntelligenceWorkerTests
 
         using var cts = new CancellationTokenSource();
         var execute = worker.StartAsync(cts.Token);
-        await Task.Delay(300);
+        await Task.Delay(500);
         await cts.CancelAsync();
         await execute;
 
@@ -120,7 +124,7 @@ public class IntelligenceWorkerTests
 
         using var cts = new CancellationTokenSource();
         var execute = worker.StartAsync(cts.Token);
-        await Task.Delay(300);
+        await Task.Delay(500);
         await cts.CancelAsync();
         await execute;
 
@@ -141,7 +145,7 @@ public class IntelligenceWorkerTests
 
         using var cts = new CancellationTokenSource();
         var execute = worker.StartAsync(cts.Token);
-        await Task.Delay(300);
+        await Task.Delay(500);
         await cts.CancelAsync();
         await execute;
 
@@ -150,5 +154,83 @@ public class IntelligenceWorkerTests
         var row = await db.BackgroundJobRuns.SingleAsync(x => x.Id == run.Id);
         Assert.Equal(JobRunStatus.Failed, row.Status);
         Assert.Contains("No handler registered", row.ErrorSummary);
+    }
+
+    [Fact]
+    public async Task MaxConcurrentJobs_LimitsConcurrentHandlers()
+    {
+        var runA = await SeedRunAsync();
+        var runB = await SeedRunAsync();
+        _handlerMock.SetupGet(h => h.JobName).Returns("KnownJob");
+
+        var tracked = new RunTracker();
+        _handlerMock.Setup(h => h.HandleAsync(runA.Id, It.IsAny<CancellationToken>()))
+            .Returns(async () =>
+            {
+                await tracked.EnterAsync();
+            });
+        _handlerMock.Setup(h => h.HandleAsync(runB.Id, It.IsAny<CancellationToken>()))
+            .Returns(async () =>
+            {
+                await tracked.EnterAsync();
+            });
+
+        var services = new ServiceCollection();
+        services.AddDbContext<AppDbContext>(opts => opts.UseInMemoryDatabase(_dbName));
+        services.AddDbContextFactory<AppDbContext>(opts => opts.UseInMemoryDatabase(_dbName));
+        services.AddLogging();
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IJobRunStore, EfJobRunStore>();
+        services.AddSingleton<IBackgroundJobHandler>(_handlerMock.Object);
+        services.AddScoped<JobRunExecutor>();
+        var provider = services.BuildServiceProvider();
+
+        var queue = new ChannelJobQueue(100);
+        await queue.EnqueueAsync(new JobRequest(runA.Id, "KnownJob"), CancellationToken.None);
+        await queue.EnqueueAsync(new JobRequest(runB.Id, "KnownJob"), CancellationToken.None);
+
+        var worker = new IntelligenceWorker(
+            queue,
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            Options.Create(new IntelligenceJobsOptions { MaxConcurrentJobs = 1 }),
+            NullLogger<IntelligenceWorker>.Instance);
+
+        using var cts = new CancellationTokenSource();
+        var execute = worker.StartAsync(cts.Token);
+        await WaitUntilBothSucceededAsync();
+        await cts.CancelAsync();
+        await execute;
+
+        Assert.Equal(1, tracked.Peak);
+        await using var db = new AppDbContext(DbOptions);
+        Assert.Equal(2, await db.BackgroundJobRuns.CountAsync(x => x.Status == JobRunStatus.Succeeded));
+    }
+
+    private async Task WaitUntilBothSucceededAsync()
+    {
+        for (var i = 0; i < 200; i++)
+        {
+            await Task.Delay(25);
+            await using var db = new AppDbContext(DbOptions);
+            var succeeded = await db.BackgroundJobRuns.CountAsync(x => x.Status == JobRunStatus.Succeeded);
+            if (succeeded == 2) return;
+        }
+        throw new TimeoutException("worker did not complete both runs in time");
+    }
+
+    private sealed class RunTracker
+    {
+        private int _current;
+        private int _peak;
+
+        public int Peak => _peak;
+
+        public async Task EnterAsync()
+        {
+            _current++;
+            _peak = Math.Max(_peak, _current);
+            await Task.Yield();
+            _current--;
+        }
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Recommendation;
+using OnlineSupermarket.Domain.Catalog;
+using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Jobs;
 using OnlineSupermarket.Domain.Recommendations;
 using OnlineSupermarket.Infrastructure.Jobs;
@@ -129,9 +131,9 @@ public static class RecommendationEndpoints
         [FromServices] AppDbContext dbContext = null!,
         CancellationToken cancellationToken = default)
     {
-        if (limit < 1 || limit > 20)
+        if (limit < 1 || limit > 50)
         {
-            return Results.BadRequest(new { message = "Limit must be between 1 and 20." });
+            return Results.BadRequest(new { message = "Limit must be between 1 and 50." });
         }
 
         var userId = TryGetUserId(httpContext.User);
@@ -175,9 +177,9 @@ public static class RecommendationEndpoints
         [FromServices] AppDbContext dbContext = null!,
         CancellationToken cancellationToken = default)
     {
-        if (limit < 1 || limit > 20)
+        if (limit < 1 || limit > 50)
         {
-            return Results.BadRequest(new { message = "Limit must be between 1 and 20." });
+            return Results.BadRequest(new { message = "Limit must be between 1 and 50." });
         }
 
         var jobRunId = await LatestSucceededRunIdAsync(dbContext, cancellationToken);
@@ -325,21 +327,28 @@ public static class RecommendationEndpoints
         var generatedAtUtc = rows[0].GeneratedAtUtc;
         var productIds = rows.Select(row => row.RecommendedProductId).Distinct().ToArray();
 
-        var products = await dbContext.Products.AsNoTracking()
-            .Include(product => product.Brand)
-            .Where(product => product.IsActive
-                && product.Brand!.IsActive
-                && productIds.Contains(product.Id))
-            .ToDictionaryAsync(product => product.Id, cancellationToken);
+        var products = new Dictionary<Guid, Product>();
+        foreach (var productId in productIds)
+        {
+            var product = await dbContext.Products.AsNoTracking()
+                .Include(product => product.Brand)
+                .FirstOrDefaultAsync(product => product.IsActive
+                    && product.Brand!.IsActive
+                    && product.Id == productId, cancellationToken);
+            if (product is not null) products[product.Id] = product;
+        }
 
         Dictionary<Guid, int> availability = [];
         if (branchId.HasValue)
         {
-            availability = await dbContext.BranchInventories.AsNoTracking()
-                .Where(inventory => inventory.BranchId == branchId.Value
-                    && productIds.Contains(inventory.ProductId))
-                .ToDictionaryAsync(inventory => inventory.ProductId,
-                    inventory => inventory.AvailableQuantity, cancellationToken);
+            availability = new Dictionary<Guid, int>();
+            foreach (var productId in productIds)
+            {
+                var inventory = await dbContext.BranchInventories.AsNoTracking()
+                    .FirstOrDefaultAsync(inventory => inventory.BranchId == branchId.Value
+                        && inventory.ProductId == productId, cancellationToken);
+                if (inventory is not null) availability[inventory.ProductId] = inventory.AvailableQuantity;
+            }
         }
 
         var items = new List<RecommendationItemDto>();

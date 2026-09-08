@@ -31,18 +31,23 @@ public sealed class InventoryMutationService(
             .OrderBy(id => id)
             .ToArray();
 
-        var inventories = await dbContext.BranchInventories
-            .Where(bi => distinctIds.Contains(bi.Id))
-            .OrderBy(bi => bi.Id)
-            .ToListAsync(cancellationToken);
+        // MySql.EntityFrameworkCore throws an NRE binding a multi-element parameterized
+        // Contains(Guid[]) to an IN clause (single-element collapses to scalar equality and works).
+        // Load each inventory by id so no bound collection reaches the provider.
+        var inventories = new List<BranchInventory>(distinctIds.Length);
+        foreach (var id in distinctIds)
+        {
+            var inventory = await dbContext.BranchInventories
+                .OrderBy(bi => bi.Id)
+                .FirstOrDefaultAsync(bi => bi.Id == id, cancellationToken);
+            if (inventory is null)
+            {
+                throw new InvalidOperationException($"Inventory {id} not found.");
+            }
+            inventories.Add(inventory);
+        }
 
         var inventoryMap = inventories.ToDictionary(bi => bi.Id);
-        var missing = distinctIds.FirstOrDefault(id => !inventoryMap.ContainsKey(id));
-        if (missing != Guid.Empty)
-        {
-            throw new InvalidOperationException(
-                $"Inventory {missing} not found.");
-        }
 
         var commandsByInventory = commands
             .Select((command, index) => (Command: command, Index: index))
@@ -57,11 +62,20 @@ public sealed class InventoryMutationService(
             .Distinct()
             .ToArray();
 
-        var replayable = operationKeys.Length == 0
-            ? new Dictionary<string, InventoryTransaction>()
-            : await dbContext.InventoryTransactions
-                .Where(t => operationKeys.Contains(t.OperationKey!))
-                .ToDictionaryAsync(t => t.OperationKey!, cancellationToken);
+        var replayable = new Dictionary<string, InventoryTransaction>();
+        if (operationKeys.Length > 0)
+        {
+            // Avoid parameterized string-Contains which the provider fails to bind for 2+ keys.
+            foreach (var key in operationKeys)
+            {
+                var existing = await dbContext.InventoryTransactions
+                    .FirstOrDefaultAsync(t => t.OperationKey == key, cancellationToken);
+                if (existing is not null)
+                {
+                    replayable[key] = existing;
+                }
+            }
+        }
 
         var occurredAtUtc = timeProvider.GetUtcNow().UtcDateTime;
         var toApply = new List<InventoryMutationCommand>();

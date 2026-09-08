@@ -1,5 +1,6 @@
 using OnlineSupermarket.Api.Contracts;
 using OnlineSupermarket.Api.Endpoints;
+using OnlineSupermarket.Api.Middleware;
 using OnlineSupermarket.Infrastructure;
 using OnlineSupermarket.Infrastructure.Persistence;
 using OnlineSupermarket.Infrastructure.Identity;
@@ -58,6 +59,8 @@ if (app.Environment.IsDevelopment())
 
     app.MapOpenApi();
 }
+
+app.UseMiddleware<RequestCancellationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

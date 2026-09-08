@@ -46,11 +46,16 @@ public class ForecastJobHandler(AppDbContext dbContext, TimeProvider timeProvide
             return;
         }
 
-        var sales = await dbContext.InventoryTransactions.AsNoTracking()
-            .Where(transaction => transaction.TransactionType == InventoryTransactionType.Sale
-                && transaction.CreatedAtUtc >= windowStartUtc
-                && inventoryIds.Contains(transaction.BranchInventoryId))
-            .Select(transaction => new { transaction.BranchInventoryId, transaction.CreatedAtUtc, transaction.QuantityOnHandDelta })
+        // Join to branch_inventories instead of filtering by Contains(inventoryIds):
+        // MySql.EntityFrameworkCore has a parameter-binding NRE on Contains over a bound list,
+        // so scope sales by the run's branch through the inventory join.
+        var sales = await (from sale in dbContext.InventoryTransactions.AsNoTracking()
+                join inventory in dbContext.BranchInventories.AsNoTracking()
+                    on sale.BranchInventoryId equals inventory.Id
+                where inventory.BranchId == branchId
+                    && sale.TransactionType == InventoryTransactionType.Sale
+                    && sale.CreatedAtUtc >= windowStartUtc
+                select new { sale.BranchInventoryId, sale.CreatedAtUtc, sale.QuantityOnHandDelta })
             .ToListAsync(cancellationToken);
 
         var dailySalesByInventory = new Dictionary<Guid, Dictionary<DateOnly, int>>();
@@ -96,6 +101,7 @@ public class ForecastJobHandler(AppDbContext dbContext, TimeProvider timeProvide
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            await JobRunPublishGuard.EnsureOwnedAsync(dbContext, runId, timeProvider, cancellationToken);
             dbContext.DemandForecasts.AddRange(rows);
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);

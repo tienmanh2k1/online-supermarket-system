@@ -112,4 +112,18 @@ export const recommendationApi = {
       {},
       { token, signal },
     ),
+
+  getJobRun: (runId: string, options: { token: string; signal?: AbortSignal }) =>
+    getJson<{
+      id: string
+      jobName: string
+      status: 'Queued' | 'Running' | 'Succeeded' | 'Failed'
+      createdAtUtc: string
+      startedAtUtc: string | null
+      completedAtUtc: string | null
+      errorSummary: string | null
+    }>(`/admin/jobs/${encodeURIComponent(runId)}`, {
+      token: options.token,
+      signal: options.signal,
+    }),
 }
