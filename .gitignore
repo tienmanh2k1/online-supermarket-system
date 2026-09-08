@@ -19,4 +19,9 @@ opencode.json
 AGENTS.md
 scripts/workflow-config.test.mjs
 docs/superpowers/
+docs/progress/
+docs/reviews/
 .vs/
+scratch/
+scripts/
+submission/
