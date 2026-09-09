@@ -99,7 +99,7 @@ test.describe('AptechMart Homepage Comprehensive Verification & Audit', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const toggleBtn = page.locator('.appliance-hero__view-toggle');
+    const toggleBtn = page.locator('.hero-mode-toggle-btn');
     await expect(toggleBtn).toBeVisible();
 
     // 3A. Initial state: 3D active, Canvas exists
@@ -137,7 +137,7 @@ test.describe('AptechMart Homepage Comprehensive Verification & Audit', () => {
     await page.waitForLoadState('networkidle');
 
     // 4A. Focus toggle button via Tab or direct focus
-    const toggleBtn = page.locator('.appliance-hero__view-toggle');
+    const toggleBtn = page.locator('.hero-mode-toggle-btn');
     await toggleBtn.focus();
 
     // Verify focus outline matches brand orange (#ff7a1a) or contains orange outline
