@@ -744,6 +744,13 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.kg-quick-categories__item {
+  list-style: none;
 }
 
 .kg-quick-category {
@@ -830,6 +837,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .appliance-trust-badge {
@@ -1038,24 +1048,15 @@
   position: relative;
   overflow: hidden;
   box-shadow: var(--appliance-shadow-sm);
-  will-change: transform;
-  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.appliance-card:hover {
-  box-shadow: var(--appliance-shadow-hover);
-  border-color: #cbd5e1;
-}
-
-/* Specular Glare Reflection */
-.appliance-card__glare {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  z-index: 6;
-  mix-blend-mode: overlay;
-  transition: opacity 0.2s ease;
+@media (hover: hover) {
+  .appliance-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--appliance-shadow-hover);
+    border-color: #cbd5e1;
+  }
 }
 
 /* Badges Bar */
@@ -1898,8 +1899,18 @@
   }
 
   .kg-quick-categories__track {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(150px, 42vw);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
     gap: 8px;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .kg-quick-categories__item {
+    scroll-snap-align: start;
   }
 
   .kg-quick-category {

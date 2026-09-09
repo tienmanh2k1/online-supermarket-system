@@ -71,6 +71,19 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     expect(screen.queryByTestId('slider-btn-next')).not.toBeInTheDocument()
   })
 
+  it('renders six quick categories and four service commitments', () => {
+    renderHomePage()
+    expect(within(screen.getByTestId('home-quick-categories')).getAllByRole('link')).toHaveLength(6)
+    expect(within(screen.getByTestId('home-trust-strip')).getAllByRole('listitem')).toHaveLength(4)
+  })
+
+  it('keeps the product purchase hierarchy concise', () => {
+    renderHomePage()
+    const card = screen.getAllByTestId('appliance-product-card')[0]
+    expect(within(card).getByRole('img')).toHaveAttribute('width')
+    expect(within(card).getByRole('link', { name: /xem chi tiết/i })).toBeInTheDocument()
+  })
+
   it('renders hero banner container with correct aspect-ratio structure and sub-banners', () => {
     renderHomePage()
 
@@ -323,22 +336,6 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     fireEvent.click(toggleBtn)
     expect(toggleBtn).toHaveClass('active')
     expect(await screen.findByTestId('hero-3d-showcase', {}, { timeout: 5000 })).toBeInTheDocument()
-  })
-
-  // 6. Product Card 3D Tilt Glare & Micro-interactions
-  it('renders product card with 3D tilt glare reflection layer and motion wrappers', () => {
-    renderHomePage()
-
-    const cards = screen.getAllByTestId(`appliance-card-${MOCK_APPLIANCE_PRODUCTS[0].id}`)
-    expect(cards.length).toBeGreaterThanOrEqual(1)
-
-    // Glare layer for 3D physics exists
-    const glare = cards[0].querySelector('.appliance-card__glare')
-    expect(glare).toBeInTheDocument()
-
-    // Progress bar fill exists
-    const progressFill = cards[0].querySelector('.appliance-card__progress-fill')
-    expect(progressFill).toBeInTheDocument()
   })
 })
 

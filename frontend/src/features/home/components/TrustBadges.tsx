@@ -11,9 +11,9 @@ export function TrustBadges({ badges }: TrustBadgesProps) {
       data-testid="home-trust-strip"
       aria-label="Cam kết dịch vụ điện máy"
     >
-      <div className="home-perks__container appliance-trust-badges__grid">
+      <ul className="home-perks__container appliance-trust-badges__grid">
         {badges.map((item) => (
-          <div key={item.id} className="home-perk-item appliance-trust-badge">
+          <li key={item.id} className="home-perk-item appliance-trust-badge">
             <div className="home-perk-item__icon appliance-trust-badge__icon" aria-hidden="true">
               {item.icon}
             </div>
@@ -21,9 +21,9 @@ export function TrustBadges({ badges }: TrustBadgesProps) {
               <strong className="appliance-trust-badge__title">{item.title}</strong>
               <small className="appliance-trust-badge__sub">{item.subtitle}</small>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }

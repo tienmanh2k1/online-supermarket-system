@@ -8,7 +8,7 @@ export interface QuickCategoryItem {
   highlight?: string
 }
 
-export const KANGAROO_QUICK_CATEGORIES: QuickCategoryItem[] = [
+export const APTECHMART_QUICK_CATEGORIES: QuickCategoryItem[] = [
   {
     id: 'smart-tivi',
     name: 'Smart Tivi OLED & 4K',
@@ -32,10 +32,10 @@ export const KANGAROO_QUICK_CATEGORIES: QuickCategoryItem[] = [
   },
   {
     id: 'water-purifier',
-    name: 'Máy Lọc Nước Kangaroo',
+    name: 'Máy Lọc Nước RO',
     icon: '🚰',
-    href: '/browse?search=Kangaroo',
-    highlight: 'Hydrogen chính hãng',
+    href: '/browse?search=May-loc-nuoc',
+    highlight: 'Hydrogen ion kiềm',
   },
   {
     id: 'kitchen-appliance',
@@ -53,30 +53,34 @@ export const KANGAROO_QUICK_CATEGORIES: QuickCategoryItem[] = [
   },
 ]
 
+export const KANGAROO_QUICK_CATEGORIES = APTECHMART_QUICK_CATEGORIES
+
 export function QuickCategoryStrip() {
   return (
     <section
-      className="kg-quick-categories"
+      className="kg-quick-categories home-quick-categories"
       data-testid="home-quick-categories"
-      aria-label="Danh mục sản phẩm nổi bật Kangaroo"
+      aria-label="Danh mục sản phẩm nổi bật"
     >
       <div className="kg-quick-categories__container">
         <div className="kg-quick-categories__box">
-          <div className="kg-quick-categories__track">
-            {KANGAROO_QUICK_CATEGORIES.map((cat) => (
-              <Link key={cat.id} to={cat.href} className="kg-quick-category">
-                <span className="kg-quick-category__icon" aria-hidden="true">
-                  {cat.icon}
-                </span>
-                <div className="kg-quick-category__content">
-                  <strong className="kg-quick-category__title">{cat.name}</strong>
-                  {cat.highlight && (
-                    <small className="kg-quick-category__sub">{cat.highlight}</small>
-                  )}
-                </div>
-              </Link>
+          <ul className="kg-quick-categories__track">
+            {APTECHMART_QUICK_CATEGORIES.map((cat) => (
+              <li key={cat.id} className="kg-quick-categories__item">
+                <Link to={cat.href} className="kg-quick-category">
+                  <span className="kg-quick-category__icon" aria-hidden="true">
+                    {cat.icon}
+                  </span>
+                  <div className="kg-quick-category__content">
+                    <strong className="kg-quick-category__title">{cat.name}</strong>
+                    {cat.highlight && (
+                      <small className="kg-quick-category__sub">{cat.highlight}</small>
+                    )}
+                  </div>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </section>
