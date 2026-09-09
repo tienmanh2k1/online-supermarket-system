@@ -112,6 +112,9 @@ app.MapRecommendationEndpoints();
 // Admin Jobs
 app.MapAdminJobEndpoints();
 
+// Admin Reporting
+app.MapAdminReportingEndpoints();
+
 app.Run();
 
 public partial class Program;
