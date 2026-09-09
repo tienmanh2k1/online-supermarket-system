@@ -30,9 +30,13 @@ Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-2
 ```
 ┌─ STOREFRONT PATH (Guest & Customer)
 │   │
-│   ├─ / (hoặc /browse, /products) ────────── Trang chủ & Duyệt sản phẩm
-│   │                                         (Chọn chi nhánh, lọc đa tiêu chí, tìm kiếm,
-│   │                                          kệ AI gợi ý trang chủ Home Recommendation)
+│   ├─ / ──────────────────────────────────── Trang chủ siêu thị trực tuyến (HomePage) [IMPLEMENTED]
+│   │                                         (Campaign hero board 2 cột kèm 3D showcase, 6 danh mục nhanh,
+│   │                                          4 cam kết dịch vụ, sản phẩm bán chạy có countdown, danh mục sản phẩm,
+│   │                                          gợi ý AI thông minh, teaser mạng lưới chi nhánh, lộ trình #roadmap)
+│   │
+│   ├─ /browse (hoặc /products) ───────────── Danh mục & Tìm kiếm sản phẩm (ProductBrowsePage)
+│   │                                         (Chọn chi nhánh, lọc đa tiêu chí, tìm kiếm, phân trang)
 │   │
 │   ├─ /product/:id ───────────────────────── Trang chi tiết sản phẩm
 │   │                                         (Thông tin, giá & tồn kho chi nhánh,
@@ -124,7 +128,8 @@ Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-2
 ### 3.1. Nhóm Khám Phá & Sản Phẩm (Catalog Browsing)
 | Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
 |---|---|:---:|---|---|
-| `/`, `/browse`, `/products` | `ProductBrowsePage` | Public | Xem danh sách sản phẩm phân trang; lọc theo danh mục, thương hiệu, khoảng giá; tìm kiếm theo tên; chọn chi nhánh mua sắm; hiển thị kệ gợi ý sản phẩm trang chủ (`RecommendationShelf`). | `GET /api/products`<br>`GET /api/categories`<br>`GET /api/brands`<br>`GET /api/branches`<br>`GET /api/recommendations/home` |
+| `/` | `HomePage` | Public | Trang chủ siêu thị trực tuyến: Hero banner giới thiệu thương hiệu, thanh tìm kiếm nhanh sang danh mục, dải cam kết dịch vụ chất lượng cao (Giao 2h, Chuẩn VietGAP, Freeship 300K, Đổi trả linh hoạt), danh mục nổi bật, top sản phẩm bán chạy, kệ gợi ý AI thông minh, teaser mạng lưới chi nhánh và lộ trình công nghệ (`#roadmap`). | `GET /api/categories`<br>`GET /api/products`<br>`GET /api/recommendations` |
+| `/browse`, `/products` | `ProductBrowsePage` | Public | Xem danh sách sản phẩm phân trang; lọc theo danh mục, thương hiệu, khoảng giá; tìm kiếm theo tên; chọn chi nhánh mua sắm; hiển thị kệ gợi ý sản phẩm trang chủ (`RecommendationShelf`). | `GET /api/products`<br>`GET /api/categories`<br>`GET /api/brands`<br>`GET /api/branches`<br>`GET /api/recommendations` |
 | `/product/:id` | `ProductDetailPage` | Public | Xem chi tiết sản phẩm, giá bán và tồn kho tại chi nhánh hiện tại; kệ gợi ý sản phẩm tương tự (`Similar Products`); danh sách đánh giá đã xác minh (Verified Reviews); gửi form đánh giá nếu đủ điều kiện mua hàng; nút thêm vào giỏ và so sánh. | `GET /api/products/{id}`<br>`GET /api/recommendations/products/{id}/similar`<br>`GET /api/reviews/products/{id}`<br>`POST /api/reviews`<br>`POST /api/views` |
 | `/branches` | `BranchesPage` | Public | Danh sách mạng lưới siêu thị AptechMart; hiển thị địa chỉ, hotline, giờ mở cửa; hỗ trợ khách hàng bấm chọn chi nhánh mua sắm mặc định. | `GET /api/branches` |
 
@@ -183,7 +188,8 @@ Tất cả các tuyến đường quản trị đều nằm dưới tiền tố 
 
 | Yêu Cầu Chức Năng | Tên Tính Năng Nghiệp Vụ | Tuyến Đường (Route) Giao Diện | React Component Hiện Thực |
 |---|---|---|---|
-| **FR-101** | Tìm kiếm, lọc và phân trang sản phẩm | `/`, `/browse`, `/products` | `ProductBrowsePage` |
+| **FR-100** | Trang chủ siêu thị và điều hướng nhanh | `/` | `HomePage` |
+| **FR-101** | Tìm kiếm, lọc và phân trang sản phẩm | `/browse`, `/products` | `ProductBrowsePage` |
 | **FR-102** | Xem thông tin chi tiết sản phẩm | `/product/:id` | `ProductDetailPage` |
 | **FR-103** | Lựa chọn chi nhánh và hiển thị tồn kho/giá | `/branches`, `/` | `BranchesPage`, `BranchSelectorModal` |
 | **FR-104** | So sánh thông số sản phẩm trực quan | Toàn hệ thống (Floating) | `CompareModal` |
