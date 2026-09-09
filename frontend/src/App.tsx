@@ -8,6 +8,7 @@ import { ProductBrowsePage } from './features/products/ProductBrowsePage'
 import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { BranchesPage } from './features/products/BranchesPage'
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage'
+import { NotFoundPage } from './features/system/NotFoundPage'
 import { ProfilePage } from './features/account/ProfilePage'
 import { AddressListPage } from './features/account/AddressListPage'
 import { CartPage } from './features/cart/CartPage'
@@ -66,6 +67,8 @@ function CompareAppShell() {
               <Route path="catalog/products" element={<AdminProductsPage />} />
             </Route>
           </Route>
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AppShell>
       <CompareModal />

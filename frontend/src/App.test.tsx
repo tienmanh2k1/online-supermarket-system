@@ -19,6 +19,9 @@ vi.mock('./features/account/AddressListPage', () => ({ AddressListPage: () => <d
 vi.mock('./features/auth/ResetPasswordPage', () => ({
   ResetPasswordPage: () => <h1>Reset Password Route</h1>,
 }))
+vi.mock('./features/system/NotFoundPage', () => ({
+  NotFoundPage: () => <h1>Not Found Route</h1>,
+}))
 vi.mock('./features/cart/CartPage', () => ({ CartPage: () => <div /> }))
 vi.mock('./features/checkout/CheckoutPage', () => ({ CheckoutPage: () => <div>Checkout Page Route</div> }))
 vi.mock('./features/checkout/CheckoutSuccessPage', () => ({
@@ -134,4 +137,11 @@ it('wires the reset password route', () => {
   render(<App />)
   expect(screen.getByRole('heading', { name: 'Reset Password Route' })).toBeInTheDocument()
 })
+
+it('wires the wildcard not found route', () => {
+  window.history.pushState({}, '', '/duong-dan-khong-ton-tai')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Not Found Route' })).toBeInTheDocument()
+})
+
 
