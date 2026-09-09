@@ -102,5 +102,23 @@ public sealed class DevEmailEndpointsTests : IClassFixture<AuthTestApiFactory>
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Fact]
+    public async Task GetLatestEmail_WithPlusCharacter_FindsEmail()
+    {
+        DevEmailStore.Instance.Clear();
+        var testEmail = "user+tag@example.com";
+
+        DevEmailStore.Instance.Add(testEmail, "/reset-password?token=abc123");
+
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var encodedEmail = Uri.EscapeDataString(testEmail);
+        var response = await client.GetAsync($"/api/dev/password-reset-emails?email={encodedEmail}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<DevEmailResponse>();
+        Assert.NotNull(result);
+        Assert.Equal(testEmail, result.Email);
+    }
+
     private sealed record DevEmailResponse(string Email, string ResetUrl, DateTime CapturedAtUtc);
 }

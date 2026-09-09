@@ -98,6 +98,10 @@ public sealed class OpenApiContractTests(TestApiFactory factory)
         var docContent = await File.ReadAllTextAsync(docPath);
         var docNode = System.Text.Json.Nodes.JsonNode.Parse(docContent);
 
+        // Remove servers to ignore port differences
+        endpointNode?.AsObject().Remove("servers");
+        docNode?.AsObject().Remove("servers");
+
         Assert.True(
             System.Text.Json.Nodes.JsonNode.DeepEquals(docNode, endpointNode),
             "Generated OpenAPI document does not match tracked docs/api/openapi.json. Please update the file if API changed intentionally.");

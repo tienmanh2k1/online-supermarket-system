@@ -52,28 +52,52 @@ export function AdminSalesReportPage() {
   const [validationError, setValidationError] = useState<string | null>(null)
 
   const [state, setState] = useState<ReportState>({ kind: 'loading' })
-  const abortControllerRef = useRef<AbortSignal | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const fetchReport = useCallback(
     async (from: string, to: string) => {
       if (!accessToken) return
+
+      // Client-side validation
+      if (!from || !to) {
+        setValidationError('Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc.')
+        return
+      }
 
       if (from > to) {
         setValidationError('Ngày bắt đầu không được lớn hơn ngày kết thúc.')
         return
       }
 
+      // Check 366 day limit
+      const fromDate = new Date(from + 'T00:00:00Z')
+      const toDate = new Date(to + 'T00:00:00Z')
+      const dayDiff = Math.floor((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+      if (dayDiff > 366) {
+        setValidationError('Khoảng ngày tối đa là 366 ngày.')
+        return
+      }
+
+      // Abort any in-flight request before starting new one
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+
       setValidationError(null)
       setState({ kind: 'loading' })
       const controller = new AbortController()
-      abortControllerRef.current = controller.signal
+      abortControllerRef.current = controller
 
       try {
         const report = await adminApi.getSalesReport(from, to, accessToken, controller.signal)
+        // Ignore stale responses
+        if (controller.signal.aborted) return
         setState({ kind: 'ready', data: report })
       } catch (err: any) {
         if (err instanceof Error && err.name === 'AbortError') return
-        setState({ kind: 'error', message: err.message || 'Không thể tải báo cáo doanh số.' })
+        // Read detail from ProblemDetails if available
+        const detail = err?.response?.data?.detail || err?.response?.data?.title || err.message
+        setState({ kind: 'error', message: detail || 'Không thể tải báo cáo doanh số.' })
       }
     },
     [accessToken]

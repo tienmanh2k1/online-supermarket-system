@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost/"
+      "url": "http://localhost:5123/"
     }
   ],
   "paths": {
@@ -44,6 +44,54 @@
             "description": "OK"
           }
         }
+      }
+    },
+    "/api/dev/password-reset-emails": {
+      "get": {
+        "tags": [
+          "Dev-Email"
+        ],
+        "operationId": "GetLatestDevEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          { }
+        ]
       }
     },
     "/api/auth/register": {
@@ -339,7 +387,6 @@
         "tags": [
           "Catalog"
         ],
-        "operationId": "GetProducts",
         "parameters": [
           {
             "name": "categoryId",
@@ -425,24 +472,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedResponseOfProductSummaryDto"
-                }
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Catalog"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductRequest"
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -452,7 +502,6 @@
         "tags": [
           "Catalog"
         ],
-        "operationId": "GetProductById",
         "parameters": [
           {
             "name": "id",
@@ -474,24 +523,59 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductDetailDto"
-                }
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Catalog"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductRequest"
               }
             }
           },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Catalog"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -501,20 +585,9 @@
         "tags": [
           "Catalog"
         ],
-        "operationId": "GetCategories",
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CategoryDto"
-                  }
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -524,20 +597,42 @@
         "tags": [
           "Catalog"
         ],
-        "operationId": "GetBrands",
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BrandDto"
-                  }
-                }
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/products/{id}/view": {
+      "post": {
+        "tags": [
+          "Catalog"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordProductViewRequest"
               }
             }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -4025,6 +4120,78 @@
           { }
         ]
       }
+    },
+    "/api/admin/dashboard/summary": {
+      "get": {
+        "tags": [
+          "Admin-Reporting"
+        ],
+        "operationId": "GetDashboardSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
+    },
+    "/api/admin/reports/sales": {
+      "get": {
+        "tags": [
+          "Admin-Reporting"
+        ],
+        "operationId": "GetSalesReport",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalesReportDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          { }
+        ]
+      }
     }
   },
   "components": {
@@ -4315,45 +4482,6 @@
           }
         }
       },
-      "BranchInventoryDto": {
-        "required": [
-          "branchId",
-          "sellingPrice",
-          "availableQuantity",
-          "onHand"
-        ],
-        "type": "object",
-        "properties": {
-          "branchId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sellingPrice": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
-            "format": "double"
-          },
-          "availableQuantity": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "onHand": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          }
-        }
-      },
       "BranchInventoryListDto": {
         "required": [
           "branchId",
@@ -4440,30 +4568,6 @@
               "string"
             ],
             "format": "int32"
-          }
-        }
-      },
-      "BrandDto": {
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "isActive"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "isActive": {
-            "type": "boolean"
           }
         }
       },
@@ -4572,38 +4676,6 @@
               "string"
             ],
             "format": "int32"
-          }
-        }
-      },
-      "CategoryDto": {
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "parentCategoryId",
-          "isActive"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "parentCategoryId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "isActive": {
-            "type": "boolean"
           }
         }
       },
@@ -4840,6 +4912,58 @@
           }
         }
       },
+      "CreateProductRequest": {
+        "required": [
+          "name",
+          "sku",
+          "basePrice",
+          "unit",
+          "categoryId",
+          "brandId",
+          "description",
+          "imageUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "basePrice": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "CreatePromotionRequest": {
         "required": [
           "code",
@@ -4907,6 +5031,86 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "DailySalesDto": {
+        "required": [
+          "date",
+          "revenue",
+          "orderCount"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "revenue": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "orderCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "DashboardSummaryDto": {
+        "required": [
+          "totalOrders",
+          "pendingOrders",
+          "completedRevenue",
+          "lowStockItems",
+          "recentOrders"
+        ],
+        "type": "object",
+        "properties": {
+          "totalOrders": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pendingOrders": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "completedRevenue": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "lowStockItems": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "recentOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentOrderDto"
+            }
           }
         }
       },
@@ -5530,33 +5734,15 @@
       },
       "PaginatedResponseOfAdminProductDto": {
         "required": [
-          "items",
+          "data",
           "meta"
         ],
         "type": "object",
         "properties": {
-          "items": {
+          "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AdminProductDto"
-            }
-          },
-          "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
-          }
-        }
-      },
-      "PaginatedResponseOfProductSummaryDto": {
-        "required": [
-          "items",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductSummaryDto"
             }
           },
           "meta": {
@@ -5579,7 +5765,7 @@
               "integer",
               "string"
             ],
-            "format": "int32"
+            "format": "int64"
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -5772,90 +5958,6 @@
           }
         }
       },
-      "ProductDetailDto": {
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "sku",
-          "description",
-          "basePrice",
-          "unit",
-          "imageUrl",
-          "categoryId",
-          "categoryName",
-          "categorySlug",
-          "brandId",
-          "brandName",
-          "branchInventory"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "sku": {
-            "type": "string"
-          },
-          "description": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "basePrice": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
-            "format": "double"
-          },
-          "unit": {
-            "type": "string"
-          },
-          "imageUrl": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryName": {
-            "type": "string"
-          },
-          "categorySlug": {
-            "type": "string"
-          },
-          "brandId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "brandName": {
-            "type": "string"
-          },
-          "branchInventory": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/BranchInventoryDto"
-              }
-            ]
-          }
-        }
-      },
       "ProductReviewsDto": {
         "required": [
           "averageRating",
@@ -5912,63 +6014,6 @@
               "string"
             ],
             "format": "int32"
-          }
-        }
-      },
-      "ProductSummaryDto": {
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "sku",
-          "basePrice",
-          "imageUrl",
-          "categoryId",
-          "categoryName",
-          "categorySlug",
-          "brandName"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "sku": {
-            "type": "string"
-          },
-          "basePrice": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
-            "format": "double"
-          },
-          "imageUrl": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryName": {
-            "type": "string"
-          },
-          "categorySlug": {
-            "type": "string"
-          },
-          "brandName": {
-            "type": "string"
           }
         }
       },
@@ -6040,6 +6085,49 @@
           "updatedAtUtc": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "RecentOrderDto": {
+        "required": [
+          "id",
+          "createdAtUtc",
+          "totalAmount",
+          "status",
+          "fulfillmentType",
+          "itemCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "totalAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "fulfillmentType": {
+            "type": "string"
+          },
+          "itemCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -6208,21 +6296,27 @@
       },
       "RecordProductViewRequest": {
         "required": [
-          "anonymousSessionId",
-          "branchId"
+          "productId",
+          "userId",
+          "sessionId"
         ],
         "type": "object",
         "properties": {
-          "anonymousSessionId": {
+          "productId": {
             "type": "string",
             "format": "uuid"
           },
-          "branchId": {
+          "userId": {
             "type": [
               "null",
               "string"
-            ],
-            "format": "uuid"
+            ]
+          },
+          "sessionId": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -6383,6 +6477,57 @@
           }
         }
       },
+      "SalesReportDto": {
+        "required": [
+          "from",
+          "to",
+          "totalRevenue",
+          "completedOrderCount",
+          "averageOrderValue",
+          "daily"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "totalRevenue": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "completedOrderCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "averageOrderValue": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "daily": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailySalesDto"
+            }
+          }
+        }
+      },
       "StatusHistoryDto": {
         "required": [
           "fromStatus",
@@ -6527,6 +6672,62 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UpdateProductRequest": {
+        "required": [
+          "name",
+          "sku",
+          "basePrice",
+          "unit",
+          "categoryId",
+          "brandId",
+          "description",
+          "imageUrl",
+          "isActive"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "basePrice": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
@@ -6764,6 +6965,9 @@
       "name": "Payment-Callback"
     },
     {
+      "name": "Dev-Email"
+    },
+    {
       "name": "Auth"
     },
     {
@@ -6822,6 +7026,9 @@
     },
     {
       "name": "Admin Jobs"
+    },
+    {
+      "name": "Admin-Reporting"
     }
   ]
 }

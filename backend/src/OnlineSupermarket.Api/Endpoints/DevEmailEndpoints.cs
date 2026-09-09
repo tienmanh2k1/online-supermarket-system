@@ -1,4 +1,3 @@
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using OnlineSupermarket.Infrastructure.Services;
 
@@ -39,20 +38,12 @@ public static class DevEmailEndpoints
             });
         }
 
-        var decodedEmail = HttpUtility.UrlDecode(email);
-        if (string.IsNullOrWhiteSpace(decodedEmail))
-        {
-            return Results.BadRequest(new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Invalid email parameter",
-                Detail = "Email cannot be decoded"
-            });
-        }
+        // ASP.NET already decodes query parameters, use directly
+        var searchEmail = email.Trim();
 
         var allEmails = DevEmailStore.Instance.GetAll();
         var matching = allEmails
-            .Where(e => string.Equals(e.Email, decodedEmail, StringComparison.OrdinalIgnoreCase))
+            .Where(e => string.Equals(e.Email, searchEmail, StringComparison.OrdinalIgnoreCase))
             .OrderByDescending(e => e.CapturedAtUtc)
             .FirstOrDefault();
 
@@ -62,7 +53,7 @@ public static class DevEmailEndpoints
             {
                 Status = StatusCodes.Status404NotFound,
                 Title = "No emails found",
-                Detail = $"No password reset emails found for {matching?.Email ?? decodedEmail}"
+                Detail = $"No password reset emails found for {searchEmail}"
             });
         }
 
