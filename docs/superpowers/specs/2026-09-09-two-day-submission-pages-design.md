@@ -15,6 +15,8 @@ Hoàn thiện các khoảng trống giao diện có rủi ro cao nhất trước
 - Tái sử dụng API backend hiện có:
   - `POST /api/auth/password-reset`
   - `POST /api/auth/password-reset/confirm`
+- Bản nộp chạy API với `ASPNETCORE_ENVIRONMENT=Development` như `compose.yaml`, dùng `DevEmailSender`; thêm endpoint đọc email reset mới nhất chỉ được map trong Development để lấy link demo. Không tuyên bố hệ thống có nhà cung cấp email production.
+- Kịch bản nghiệm thu bắt buộc: yêu cầu reset → lấy link từ dev mailbox → mở link trên frontend → đổi mật khẩu → đăng nhập bằng mật khẩu mới.
 
 ### 2. Trang không tìm thấy
 
@@ -26,7 +28,7 @@ Hoàn thiện các khoảng trống giao diện có rủi ro cao nhất trước
 
 - Thêm `/admin/dashboard` và đổi index `/admin` sang dashboard.
 - Thêm mục “Tổng quan” ở đầu sidebar quản trị.
-- Dashboard hiển thị bốn vùng: tổng số đơn, đơn cần xử lý, doanh thu trong kỳ và hàng tồn thấp; kèm danh sách đơn gần đây.
+- Dashboard hiển thị bốn vùng: tổng số đơn, đơn cần xử lý, tổng doanh thu đơn hoàn tất (toàn thời gian) và hàng tồn thấp; kèm danh sách đơn gần đây.
 - Chỉ dùng dữ liệu/API hiện có hoặc endpoint tổng hợp nhỏ nếu việc ghép API hiện tại gây tải hoặc logic trùng lặp. Không thêm widget tùy biến.
 - Có loading, error với nút thử lại và empty state.
 - Tất cả route/API tiếp tục được bảo vệ bởi quyền Admin.
@@ -36,6 +38,7 @@ Hoàn thiện các khoảng trống giao diện có rủi ro cao nhất trước
 - Thêm `/admin/reports/sales` và mục “Báo cáo doanh số” trong sidebar.
 - Hỗ trợ khoảng thời gian với preset 7 ngày, 30 ngày và tháng hiện tại; mặc định 30 ngày.
 - Hiển thị tổng doanh thu, số đơn hoàn tất, giá trị đơn trung bình và bảng doanh thu theo ngày.
+- Report nhóm đơn theo ngày tạo `CreatedAtUtc`, không phải ngày đơn chuyển sang Completed. Preset frontend được tính theo ngày UTC và giao diện phải ghi rõ quy ước này.
 - Nếu endpoint FR-207 chưa tồn tại, thêm một endpoint đọc dữ liệu tối thiểu `GET /api/admin/reports/sales?from=YYYY-MM-DD&to=YYYY-MM-DD`; chỉ tính đơn ở trạng thái hoàn tất theo quy ước domain hiện tại.
 - CSV export, biểu đồ nâng cao và phân tích theo thương hiệu nằm ngoài scope hai ngày.
 
@@ -71,6 +74,8 @@ Nếu cần endpoint báo cáo mới, backend đặt trong nhóm `/api/admin`, k
 - Form đặt lại mật khẩu kiểm tra mật khẩu khớp nhau ở client nhưng backend vẫn là nguồn xác thực cuối cùng.
 - Dashboard/report không hiển thị số 0 giả trong lúc tải hoặc khi API lỗi.
 - Khoảng ngày không hợp lệ bị chặn trước khi gửi request; `from` không được sau `to`.
+- Report cho phép tối đa 366 ngày tính cả hai đầu; `to=9999-12-31` bị từ chối để tránh overflow khi tạo cận trên loại trừ.
+- Lỗi validation report dùng RFC 7807 `ProblemDetails` (`application/problem+json`) thống nhất với khai báo OpenAPI.
 
 ## Kiểm thử và nghiệm thu
 
@@ -79,7 +84,10 @@ Nếu cần endpoint báo cáo mới, backend đặt trong nhóm `/api/admin`, k
 - `npm test -- --run` và `npm run build` phải thành công.
 - Chạy các test backend bị ảnh hưởng và build solution; không bắt buộc chạy bộ integration MySQL nếu môi trường nộp không có database, nhưng phải ghi rõ phần chưa chạy.
 - Kiểm tra thủ công các route ở desktop và viewport mobile cơ bản.
+- Chạy một lượt end-to-end với frontend và API/database thật: dashboard → chi tiết đơn, đổi preset report và đối chiếu dữ liệu seed, reset password đầy đủ rồi đăng nhập bằng mật khẩu mới.
 - Cập nhật sitemap, functional requirements và ảnh/chỉ dẫn chụp màn hình để tài liệu không tuyên bố khác với code.
+
+Frontend là bên duy nhất cập nhật `docs/architecture/sitemap.md` ở gate cuối. Backend cập nhật OpenAPI, functional requirements và phần phân tích; cách chia này tránh xung đột khi hai task chạy song song.
 
 ## Thứ tự giao hàng và timebox
 
