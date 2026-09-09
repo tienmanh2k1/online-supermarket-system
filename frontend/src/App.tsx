@@ -9,6 +9,8 @@ import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { BranchesPage } from './features/products/BranchesPage'
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage'
 import { NotFoundPage } from './features/system/NotFoundPage'
+import { PrivacyPage } from './features/legal/PrivacyPage'
+import { TermsPage } from './features/legal/TermsPage'
 import { ProfilePage } from './features/account/ProfilePage'
 import { AddressListPage } from './features/account/AddressListPage'
 import { CartPage } from './features/cart/CartPage'
@@ -43,6 +45,8 @@ function CompareAppShell() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/branches" element={<BranchesPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/account/profile" element={<ProfilePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/account/addresses" element={<AddressListPage />} />

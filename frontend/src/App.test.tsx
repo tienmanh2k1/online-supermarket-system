@@ -22,6 +22,12 @@ vi.mock('./features/auth/ResetPasswordPage', () => ({
 vi.mock('./features/system/NotFoundPage', () => ({
   NotFoundPage: () => <h1>Not Found Route</h1>,
 }))
+vi.mock('./features/legal/PrivacyPage', () => ({
+  PrivacyPage: () => <h1>Privacy Route</h1>,
+}))
+vi.mock('./features/legal/TermsPage', () => ({
+  TermsPage: () => <h1>Terms Route</h1>,
+}))
 vi.mock('./features/cart/CartPage', () => ({ CartPage: () => <div /> }))
 vi.mock('./features/checkout/CheckoutPage', () => ({ CheckoutPage: () => <div>Checkout Page Route</div> }))
 vi.mock('./features/checkout/CheckoutSuccessPage', () => ({
@@ -161,5 +167,18 @@ it('wires the wildcard not found route', () => {
   render(<App />)
   expect(screen.getByRole('heading', { name: 'Not Found Route' })).toBeInTheDocument()
 })
+
+it('wires the privacy route', () => {
+  window.history.pushState({}, '', '/privacy')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Privacy Route' })).toBeInTheDocument()
+})
+
+it('wires the terms route', () => {
+  window.history.pushState({}, '', '/terms')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Terms Route' })).toBeInTheDocument()
+})
+
 
 

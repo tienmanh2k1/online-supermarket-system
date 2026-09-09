@@ -30,6 +30,16 @@ export function AppShell({ children }: PropsWithChildren) {
         </div>
       </header>
       <main id="top">{children}</main>
+      <footer className="site-footer">
+        <div className="site-footer__content">
+          <p className="site-footer__copyright">© 2026 AptechMart. Siêu thị điện tử tiện lợi.</p>
+          <div className="site-footer__links">
+            <Link to="/privacy">Chính sách bảo mật</Link>
+            <span className="site-footer__sep" aria-hidden="true">•</span>
+            <Link to="/terms">Điều khoản dịch vụ</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
