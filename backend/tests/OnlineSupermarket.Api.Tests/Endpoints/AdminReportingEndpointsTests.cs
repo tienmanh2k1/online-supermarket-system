@@ -87,6 +87,180 @@ public sealed class AdminReportingEndpointsTests : IClassFixture<AuthTestApiFact
     }
 
     // ==========================================
+    // SALES REPORT VALIDATION
+    // ==========================================
+
+    [Fact]
+    public async Task SalesReport_MissingFrom_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?to=2026-09-09");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_MissingTo_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2026-09-01");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_InvalidFromFormat_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=invalid&to=2026-09-09");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_FromGreaterThanTo_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2026-09-10&to=2026-09-01");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_RangeExceeds366Days_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        // 2025-01-01 to 2026-01-02 = 367 days (366 + 1)
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2025-01-01&to=2026-01-02");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_MaxRange_366Days_ReturnsOk()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2025-09-01&to=2026-09-01");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SalesReport_ToMaxDate_ReturnsBadRequest()
+    {
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2026-01-01&to=9999-12-31");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    // ==========================================
+    // SALES REPORT AGGREGATION
+    // ==========================================
+
+    [Fact]
+    public async Task SalesReport_AggregatesCorrectly()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        // Clear existing orders
+        dbContext.Orders.RemoveRange(dbContext.Orders);
+        await dbContext.SaveChangesAsync();
+
+        // Create branch and customer
+        var branch = new Branch("Test Branch", "Address", null, 10.0m, 106.0m);
+        dbContext.Branches.Add(branch);
+        var category = new Category("Test Category", "test-cat");
+        dbContext.Categories.Add(category);
+        var brand = new Brand("Test Brand", "test-brand");
+        dbContext.Brands.Add(brand);
+        await dbContext.SaveChangesAsync();
+
+        var product = new Product(category.Id, brand.Id, "SKU", "Product", "product", null, 10m, "unit", null);
+        dbContext.Products.Add(product);
+        await dbContext.SaveChangesAsync();
+
+        var customer = User.Create("cust@test.com", "hash", "Customer", null, UserRole.Customer);
+        dbContext.Users.Add(customer);
+        await dbContext.SaveChangesAsync();
+
+        var items = new List<(Guid, string, string, decimal, int, decimal)>
+        {
+            (product.Id, "Product", "sku", 10m, 1, 10m)
+        };
+
+        // Completed order within range
+        var completedOrder1 = Order.Create(customer.Id, branch.Id, "Pickup", "Cust", "0123456789", "Pickup", null, items, 100m, 0m, 0m, 100m);
+        completedOrder1.SetStatus(OrderStatus.Completed);
+        dbContext.Entry(completedOrder1).Property("CreatedAtUtc").CurrentValue = new DateTime(2026, 9, 2, 10, 0, 0, DateTimeKind.Utc);
+        dbContext.Orders.Add(completedOrder1);
+
+        // Completed order same day
+        var completedOrder2 = Order.Create(customer.Id, branch.Id, "Pickup", "Cust", "0123456789", "Pickup", null, items, 200m, 0m, 0m, 200m);
+        completedOrder2.SetStatus(OrderStatus.Completed);
+        dbContext.Entry(completedOrder2).Property("CreatedAtUtc").CurrentValue = new DateTime(2026, 9, 2, 14, 0, 0, DateTimeKind.Utc);
+        dbContext.Orders.Add(completedOrder2);
+
+        // Pending order within range (should not count)
+        var pendingOrder = Order.Create(customer.Id, branch.Id, "Pickup", "Cust", "0123456789", "Pickup", null, items, 150m, 0m, 0m, 150m);
+        pendingOrder.SetStatus(OrderStatus.Pending);
+        dbContext.Entry(pendingOrder).Property("CreatedAtUtc").CurrentValue = new DateTime(2026, 9, 3, 10, 0, 0, DateTimeKind.Utc);
+        dbContext.Orders.Add(pendingOrder);
+
+        // Completed order outside range
+        var outsideOrder = Order.Create(customer.Id, branch.Id, "Pickup", "Cust", "0123456789", "Pickup", null, items, 500m, 0m, 0m, 500m);
+        outsideOrder.SetStatus(OrderStatus.Completed);
+        dbContext.Entry(outsideOrder).Property("CreatedAtUtc").CurrentValue = new DateTime(2026, 9, 15, 10, 0, 0, DateTimeKind.Utc);
+        dbContext.Orders.Add(outsideOrder);
+
+        await dbContext.SaveChangesAsync();
+
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2026-09-01&to=2026-09-09");
+        var report = await response.Content.ReadFromJsonAsync<SalesReportDto>();
+
+        Assert.NotNull(report);
+        Assert.Equal(300m, report.TotalRevenue); // 100 + 200
+        Assert.Equal(2, report.CompletedOrderCount);
+        Assert.Equal(150m, report.AverageOrderValue); // 300 / 2
+
+        // Should have entries for each day in range, including zero-revenue days
+        Assert.NotNull(report.Daily);
+        var sept2 = report.Daily.FirstOrDefault(d => d.Date == new DateOnly(2026, 9, 2));
+        Assert.NotNull(sept2);
+        Assert.Equal(300m, sept2.Revenue);
+        Assert.Equal(2, sept2.OrderCount);
+
+        var sept3 = report.Daily.FirstOrDefault(d => d.Date == new DateOnly(2026, 9, 3));
+        Assert.NotNull(sept3);
+        Assert.Equal(0m, sept3.Revenue); // Pending doesn't count
+        Assert.Equal(0, sept3.OrderCount);
+    }
+
+    [Fact]
+    public async Task SalesReport_EmptyRange_ReturnsZeros()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        // Clear existing orders
+        dbContext.Orders.RemoveRange(dbContext.Orders);
+        await dbContext.SaveChangesAsync();
+
+        using var client = await CreateAuthenticatedClientAsync(UserRole.Admin);
+        var response = await client.GetAsync("/api/admin/reports/sales?from=2026-09-01&to=2026-09-09");
+        var report = await response.Content.ReadFromJsonAsync<SalesReportDto>();
+
+        Assert.NotNull(report);
+        Assert.Equal(0m, report.TotalRevenue);
+        Assert.Equal(0, report.CompletedOrderCount);
+        Assert.Equal(0m, report.AverageOrderValue);
+        Assert.NotNull(report.Daily);
+        Assert.NotEmpty(report.Daily);
+    }
+
+    // ==========================================
     // DASHBOARD AGGREGATION
     // ==========================================
 
@@ -101,7 +275,7 @@ public sealed class AdminReportingEndpointsTests : IClassFixture<AuthTestApiFact
         dbContext.BranchInventories.RemoveRange(dbContext.BranchInventories);
         dbContext.Products.RemoveRange(dbContext.Products);
         dbContext.Categories.RemoveRange(dbContext.Categories);
-        dbContext.Brands.RemoveRange(dbContext.Brands);
+        dbContext.Branches.RemoveRange(dbContext.Branches);
         await dbContext.SaveChangesAsync();
 
         // Create branch for inventory
