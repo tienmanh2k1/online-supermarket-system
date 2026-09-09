@@ -4,9 +4,10 @@ import { useAuth } from './AuthContext'
 interface LoginFormProps {
   onSuccess?: () => void
   onSwitchToRegister: () => void
+  onForgotPassword?: () => void
 }
 
-export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
+export function LoginForm({ onSuccess, onSwitchToRegister, onForgotPassword }: LoginFormProps) {
   const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -74,6 +75,17 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
           disabled={isSubmitting}
           required
         />
+      </div>
+
+      <div className="auth-form__forgot-row">
+        <button
+          type="button"
+          className="btn-link"
+          onClick={onForgotPassword}
+          disabled={isSubmitting}
+        >
+          Quên mật khẩu?
+        </button>
       </div>
 
       <button type="submit" className="btn-primary auth-submit-btn" disabled={isSubmitting}>

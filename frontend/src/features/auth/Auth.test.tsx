@@ -5,6 +5,7 @@ import * as authApi from '../../api/authApi'
 import { AuthProvider } from './AuthContext'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
+import { AuthModal } from './AuthModal'
 import { UserMenu } from './UserMenu'
 
 describe('Auth Feature', () => {
@@ -70,6 +71,61 @@ describe('Auth Feature', () => {
         })
         expect(onSuccess).toHaveBeenCalled()
       })
+    })
+
+    it('triggers onForgotPassword when "Quên mật khẩu?" button is clicked', () => {
+      const onForgotPassword = vi.fn()
+      render(
+        <AuthProvider>
+          <LoginForm onSwitchToRegister={() => {}} onForgotPassword={onForgotPassword} />
+        </AuthProvider>
+      )
+
+      const forgotBtn = screen.getByRole('button', { name: /quên mật khẩu/i })
+      fireEvent.click(forgotBtn)
+      expect(onForgotPassword).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('ForgotPasswordFlow in AuthModal', () => {
+    it('switches to forgot password mode, submits email and shows neutral message', async () => {
+      vi.spyOn(authApi, 'requestPasswordResetApi').mockResolvedValue({
+        message: 'If the email exists, a password reset link has been sent.',
+      })
+
+      render(
+        <AuthProvider>
+          <AuthModal isOpen={true} onClose={() => {}} />
+        </AuthProvider>
+      )
+
+      // Click "Quên mật khẩu?" inside login form
+      const forgotBtn = screen.getByRole('button', { name: /quên mật khẩu/i })
+      fireEvent.click(forgotBtn)
+
+      // Heading or title for forgot password
+      expect(await screen.findByRole('heading', { name: /khôi phục mật khẩu/i })).toBeInTheDocument()
+
+      // Submit empty first to check validation
+      const submitBtn = screen.getByRole('button', { name: /gửi/i })
+      fireEvent.click(submitBtn)
+      expect(await screen.findByText(/vui lòng nhập/i)).toBeInTheDocument()
+
+      // Fill email and submit
+      const emailInput = screen.getByLabelText(/địa chỉ email/i)
+      fireEvent.change(emailInput, { target: { value: 'user@example.com' } })
+      fireEvent.click(submitBtn)
+
+      await waitFor(() => {
+        expect(authApi.requestPasswordResetApi).toHaveBeenCalledWith('user@example.com')
+      })
+
+      // Check neutral confirmation message
+      const successMessage = await screen.findByText('Nếu email tồn tại, chúng tôi đã gửi liên kết đặt lại mật khẩu.')
+      expect(successMessage).toBeInTheDocument()
+      // Verify message does not disclose account existence
+      expect(screen.queryByText(/tài khoản không tồn tại/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/tìm thấy tài khoản/i)).not.toBeInTheDocument()
     })
   })
 

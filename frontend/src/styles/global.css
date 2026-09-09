@@ -267,6 +267,20 @@ a { color: inherit; }
   color: #b33927;
 }
 
+.auth-form__alert--success {
+  background: #edf7ed;
+  border-color: #b7dfb9;
+  color: #1e4620;
+}
+
+.auth-form__forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -6px;
+  margin-bottom: 14px;
+}
+
+
 .form-group {
   margin-bottom: 16px;
 }

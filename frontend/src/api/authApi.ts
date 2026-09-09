@@ -62,3 +62,8 @@ export function logoutApi(refreshToken?: string | null, signal?: AbortSignal): P
 export function getMeApi(accessToken: string, signal?: AbortSignal): Promise<UserDto> {
   return getJson<UserDto>('/auth/me', { token: accessToken, signal })
 }
+
+export function requestPasswordResetApi(email: string, signal?: AbortSignal): Promise<{ message: string }> {
+  return postJson<{ message: string }>('/auth/password-reset', { email }, { signal })
+}
+

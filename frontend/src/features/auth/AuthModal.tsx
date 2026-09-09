@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
+import { ForgotPasswordForm } from './ForgotPasswordForm'
 
 interface AuthModalProps {
   isOpen: boolean
-  initialMode?: 'login' | 'register'
+  initialMode?: 'login' | 'register' | 'forgot'
   onClose: () => void
 }
 
 export function AuthModal({ isOpen, initialMode = 'login', onClose }: AuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'register'>(initialMode)
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode)
 
   useEffect(() => {
     setMode(initialMode)
@@ -60,6 +61,14 @@ export function AuthModal({ isOpen, initialMode = 'login', onClose }: AuthModalP
           >
             Đăng ký
           </button>
+          {mode === 'forgot' && (
+            <button
+              type="button"
+              className="auth-modal__tab auth-modal__tab--active"
+            >
+              Khôi phục mật khẩu
+            </button>
+          )}
         </div>
 
         <div className="auth-modal__content">
@@ -67,11 +76,16 @@ export function AuthModal({ isOpen, initialMode = 'login', onClose }: AuthModalP
             <LoginForm
               onSuccess={onClose}
               onSwitchToRegister={() => setMode('register')}
+              onForgotPassword={() => setMode('forgot')}
             />
-          ) : (
+          ) : mode === 'register' ? (
             <RegisterForm
               onSuccess={onClose}
               onSwitchToLogin={() => setMode('login')}
+            />
+          ) : (
+            <ForgotPasswordForm
+              onBackToLogin={() => setMode('login')}
             />
           )}
         </div>
