@@ -1,0 +1,8 @@
+POC re-verify 2026-09-07T11:42:20+07:00 after F4 harden
+ConcurrentML 2nd run:
+Model trained in 1,24s on net10.0, ML.NET recommender
+POC_PASS: 6 finite scores, 6 probes
+
+real	0m3.624s
+user	0m0.015s
+sys	0m0.045s

@@ -1,0 +1,841 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8739456f-0e3c-4df0-baa6-31aca246340b" name="manh@MTM 2026-09-08 13:17:14" runUser="MTM\manh" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-08T13:17:14.8725998+07:00" queuing="2026-09-08T13:17:14.8726003+07:00" start="2026-09-08T13:17:14.0439977+07:00" finish="2026-09-08T13:17:53.8585737+07:00" />
+  <TestSettings name="default" id="d16603ec-9553-435b-9e3e-bd774edda090">
+    <Deployment runDeploymentRoot="manh_MTM_2026-09-08_13_17_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4348bdc2-2482-46d8-a021-2a2a03d36792" testId="1895cde4-8b62-656e-9411-76d31a39f921" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_RanksPurchasesAboveViewsAndDecaysRecency" computerName="MTM" duration="00:00:00.0035122" startTime="2026-09-08T13:17:14.7885247+07:00" endTime="2026-09-08T13:17:14.7920057+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4348bdc2-2482-46d8-a021-2a2a03d36792" />
+    <UnitTestResult executionId="10cd7d30-9144-46e2-9e56-f60afb94dfc0" testId="ddea741b-8dca-61d3-44ca-e2f75974443b" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WithNoSignals_ProducesNoRows" computerName="MTM" duration="00:00:00.0879539" startTime="2026-09-08T13:17:16.6155624+07:00" endTime="2026-09-08T13:17:16.7033508+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10cd7d30-9144-46e2-9e56-f60afb94dfc0" />
+    <UnitTestResult executionId="d166297b-27b1-42be-a660-d17859cda8b5" testId="432a98c1-f17f-d629-9fe9-b0047c94203f" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.EnsureModel_WithSufficientData_TrainsModelAndProducesPositiveMfScores" computerName="MTM" duration="00:00:01.1111401" startTime="2026-09-08T13:17:18.0765509+07:00" endTime="2026-09-08T13:17:19.1877524+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d166297b-27b1-42be-a660-d17859cda8b5" />
+    <UnitTestResult executionId="594f663b-f35e-4f80-8b9c-89ce84dffe9a" testId="9579ca0c-eaf2-b6b5-762c-9c2376cec3a3" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WhenTrainingFails_CleansUpModelAndThrows_PreservingPriorBatch" computerName="MTM" duration="00:00:00.0727729" startTime="2026-09-08T13:17:16.5431867+07:00" endTime="2026-09-08T13:17:16.6153594+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="594f663b-f35e-4f80-8b9c-89ce84dffe9a" />
+    <UnitTestResult executionId="a2cb1967-1c1b-4aca-84ef-027202ce06c8" testId="0d829043-e1b3-ff91-37da-aee4a258a91b" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WithConflict_RollsBackTheWholeBatch" computerName="MTM" duration="00:00:01.8016069" startTime="2026-09-08T13:17:14.7380129+07:00" endTime="2026-09-08T13:17:16.5429662+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2cb1967-1c1b-4aca-84ef-027202ce06c8" />
+    <UnitTestResult executionId="816e323f-5bae-4e1b-ae58-b947d0c46c56" testId="29282538-d708-0e50-940f-820bb6f52d50" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_WeightsPurchasesThreeTimesViews" computerName="MTM" duration="00:00:00.0021415" startTime="2026-09-08T13:17:14.8404683+07:00" endTime="2026-09-08T13:17:14.8405066+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="816e323f-5bae-4e1b-ae58-b947d0c46c56" />
+    <UnitTestResult executionId="70e4775a-ee74-4ad9-a23b-77efad770586" testId="c27282e0-0ec5-0dcf-91b9-93aef0e7bbae" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_ClaimsOnlyUnownedRowsAndReturnsDeterministicCount" computerName="MTM" duration="00:00:00.0627471" startTime="2026-09-08T13:17:52.5146161+07:00" endTime="2026-09-08T13:17:52.7439754+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70e4775a-ee74-4ad9-a23b-77efad770586" />
+    <UnitTestResult executionId="cfc6de20-1190-4db9-848f-516ddc2d9e00" testId="6bfdf6eb-f2ef-1f9e-158f-1d82afea9ffa" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_ReturnsCustomerSafeReasonsAndValidScores" computerName="MTM" duration="00:00:00.0024548" startTime="2026-09-08T13:17:14.7833299+07:00" endTime="2026-09-08T13:17:14.7848663+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cfc6de20-1190-4db9-848f-516ddc2d9e00" />
+    <UnitTestResult executionId="68aebaf5-a3f6-4de6-ad06-d06fe5c635de" testId="a5a7d392-c74f-da67-6cb0-0b4ea41991f8" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_ExcludesAlreadySeenProducts" computerName="MTM" duration="00:00:00.0003576" startTime="2026-09-08T13:17:14.8066699+07:00" endTime="2026-09-08T13:17:14.8069166+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68aebaf5-a3f6-4de6-ad06-d06fe5c635de" />
+    <UnitTestResult executionId="31e356d0-d1d8-44d4-ae89-2355ae650905" testId="0b9ec175-84d9-836a-a2b0-d40ddaaefba1" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_MaterializesAllThreeScopesInOneRun" computerName="MTM" duration="00:00:00.0473110" startTime="2026-09-08T13:17:17.9147932+07:00" endTime="2026-09-08T13:17:17.9621467+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31e356d0-d1d8-44d4-ae89-2355ae650905" />
+    <UnitTestResult executionId="0fa0aab1-91d5-439d-929a-1f078af833e7" testId="1a924f2c-90e8-895c-af5c-3f6733c3d127" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.Score_UnknownUserOrProduct_ReturnsZero" computerName="MTM" duration="00:00:00.8913041" startTime="2026-09-08T13:17:19.9058241+07:00" endTime="2026-09-08T13:17:20.7968246+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0fa0aab1-91d5-439d-929a-1f078af833e7" />
+    <UnitTestResult executionId="a6453dff-d697-4996-ae4d-bc1006300ea4" testId="c22257d1-cc7b-ddff-fa9d-37b50cbe702d" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_NewRunPreservesPriorHistory" computerName="MTM" duration="00:00:00.0558812" startTime="2026-09-08T13:17:18.0055124+07:00" endTime="2026-09-08T13:17:18.0612916+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6453dff-d697-4996-ae4d-bc1006300ea4" />
+    <UnitTestResult executionId="e4e7190b-0945-4808-80f9-aa59dad0de0b" testId="273032a0-671d-9a3b-f530-910f493ab4f3" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ScoreUserWithMf_ExcludesSeenViewsAndPurchases" computerName="MTM" duration="00:00:00.7001901" startTime="2026-09-08T13:17:21.5279816+07:00" endTime="2026-09-08T13:17:22.2277391+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4e7190b-0945-4808-80f9-aa59dad0de0b" />
+    <UnitTestResult executionId="f12c7bf6-e2bc-4c7a-9c97-77e06b03fe48" testId="d657487f-b9a6-82e1-1adc-1651536b2ac6" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_RepeatedCall_ReturnsZero" computerName="MTM" duration="00:00:00.0213764" startTime="2026-09-08T13:17:52.7441531+07:00" endTime="2026-09-08T13:17:52.7777750+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f12c7bf6-e2bc-4c7a-9c97-77e06b03fe48" />
+    <UnitTestResult executionId="fc1aae6f-5ab4-46f5-b977-908f400bfedc" testId="1cfa4b68-a88f-e2d1-390c-8f741422310d" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_LimitsToTwentyResults" computerName="MTM" duration="00:00:00.0003216" startTime="2026-09-08T13:17:14.7882001+07:00" endTime="2026-09-08T13:17:14.7883736+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc1aae6f-5ab4-46f5-b977-908f400bfedc" />
+    <UnitTestResult executionId="b1715900-24df-4a6c-bf40-aed76bc5dddf" testId="3e998626-7fc9-bfed-1348-4c31d8ee11f1" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ClearModel_ResetsModelState" computerName="MTM" duration="00:00:00.7174766" startTime="2026-09-08T13:17:19.1887986+07:00" endTime="2026-09-08T13:17:19.9055018+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1715900-24df-4a6c-bf40-aed76bc5dddf" />
+    <UnitTestResult executionId="f1b7f064-e411-4361-9e05-3282eb99e7cd" testId="500086af-f5cd-f449-4072-1f0c994781e2" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_WithNoMatchingRows_ReturnsZero" computerName="MTM" duration="00:00:00.0155754" startTime="2026-09-08T13:17:52.7779328+07:00" endTime="2026-09-08T13:17:52.8092100+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1b7f064-e411-4361-9e05-3282eb99e7cd" />
+    <UnitTestResult executionId="11bc6ed6-8d94-4dc7-8090-574cd4cfba71" testId="8afbae22-be6b-532a-9314-a64991bd3ad1" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_ExcludesSourceAndInactiveProducts" computerName="MTM" duration="00:00:00.0144311" startTime="2026-09-08T13:17:14.7803483+07:00" endTime="2026-09-08T13:17:14.7823689+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11bc6ed6-8d94-4dc7-8090-574cd4cfba71" />
+    <UnitTestResult executionId="c95d6db4-a8a5-41f6-a9a0-9d120589977d" testId="f83d9293-b5dd-e60f-ea7e-feaa6ba532ec" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_OwnedRows_AreNeverReassignedToAnotherUser" computerName="MTM" duration="00:00:00.0325291" startTime="2026-09-08T13:17:52.8093589+07:00" endTime="2026-09-08T13:17:52.8524079+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c95d6db4-a8a5-41f6-a9a0-9d120589977d" />
+    <UnitTestResult executionId="1b66e03a-098a-4fab-8385-d247dfa4f7da" testId="5aaa2ce0-70dc-daa5-0788-1b35b53d89ef" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ViaJobRunExecutor_WhenTrainingFails_MarksRunFailedInStore" computerName="MTM" duration="00:00:00.1556948" startTime="2026-09-08T13:17:17.7547822+07:00" endTime="2026-09-08T13:17:17.9134280+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b66e03a-098a-4fab-8385-d247dfa4f7da" />
+    <UnitTestResult executionId="1f4a2b9e-881a-47bc-8d0b-7c5d87b58462" testId="05dcc9f2-fb0a-a9c1-c777-60b703f007db" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ScoreUserWithMf_WhenAllCandidatesSeen_DoesNotReinsertSeen" computerName="MTM" duration="00:00:00.7304928" startTime="2026-09-08T13:17:20.7970143+07:00" endTime="2026-09-08T13:17:21.5277780+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f4a2b9e-881a-47bc-8d0b-7c5d87b58462" />
+    <UnitTestResult executionId="478f06b2-0fb9-4564-84ac-27f69dafd3b3" testId="f04f7679-7aec-1186-608b-e11eadc35155" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.EnsureModel_WithBelowThresholdInteractions_DoesNotTrainModel_AndUsesContentFallback" computerName="MTM" duration="00:00:00.0130271" startTime="2026-09-08T13:17:18.0631868+07:00" endTime="2026-09-08T13:17:18.0762829+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="478f06b2-0fb9-4564-84ac-27f69dafd3b3" />
+    <UnitTestResult executionId="f029dc2a-5215-4b7f-aa5c-d91a3ecba035" testId="3bf68c67-37ef-348d-ee2f-014c6670dab7" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_LimitsToEightResults" computerName="MTM" duration="00:00:00.0030425" startTime="2026-09-08T13:17:14.7850449+07:00" endTime="2026-09-08T13:17:14.7880273+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f029dc2a-5215-4b7f-aa5c-d91a3ecba035" />
+    <UnitTestResult executionId="ac9dabac-dac3-4e1e-a507-59d626364249" testId="07a76cd6-4cee-7ded-957f-e5b632fb356d" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_TieBreaksByProductIdAscending" computerName="MTM" duration="00:00:00.0031257" startTime="2026-09-08T13:17:14.8400868+07:00" endTime="2026-09-08T13:17:14.8401426+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac9dabac-dac3-4e1e-a507-59d626364249" />
+    <UnitTestResult executionId="0480528c-8073-4e65-bb62-7b91594d0d82" testId="790cd01d-3480-64a9-78ee-25458e21c246" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ExpiryIsIntervalPlusGrace" computerName="MTM" duration="00:00:00.0430459" startTime="2026-09-08T13:17:17.9623793+07:00" endTime="2026-09-08T13:17:18.0052863+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0480528c-8073-4e65-bb62-7b91594d0d82" />
+    <UnitTestResult executionId="2977277a-21b0-4e46-8f46-ce5886a98b4a" testId="6509be74-e5d9-16dc-79c0-7433e7cc62dc" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WhenPredictionFailsOnTrainedModel_FallsBackToContentWithoutFakingMf" computerName="MTM" duration="00:00:00.9894414" startTime="2026-09-08T13:17:16.7034829+07:00" endTime="2026-09-08T13:17:17.6929025+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2977277a-21b0-4e46-8f46-ce5886a98b4a" />
+    <UnitTestResult executionId="ebd0643b-8995-4f38-99c8-a24f3272df82" testId="63f046d2-88b5-4f98-3ac6-0360e81f31fa" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_CapsRepeatedViewsPerProductPerUtcDay" computerName="MTM" duration="00:00:00.0144136" startTime="2026-09-08T13:17:14.7921862+07:00" endTime="2026-09-08T13:17:14.8065144+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebd0643b-8995-4f38-99c8-a24f3272df82" />
+    <UnitTestResult executionId="c233b8a1-c4a4-41c4-9c34-fe87a75ef839" testId="a56d3eb8-e7a3-1757-6349-723dba8914e3" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_SkipsSignalsOutsideWindow" computerName="MTM" duration="00:00:00.0212235" startTime="2026-09-08T13:17:14.7398799+07:00" endTime="2026-09-08T13:17:14.7677223+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c233b8a1-c4a4-41c4-9c34-fe87a75ef839" />
+    <UnitTestResult executionId="f4ee3a8b-93a7-4de6-aace-6195af80d768" testId="3feabb41-8f28-013b-8510-f538e3165a7f" testName="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ProducesSequentialRanksPerAudience" computerName="MTM" duration="00:00:00.0614332" startTime="2026-09-08T13:17:17.6931550+07:00" endTime="2026-09-08T13:17:17.7545214+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4ee3a8b-93a7-4de6-aace-6195af80d768" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_ExcludesSourceAndInactiveProducts" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="8afbae22-be6b-532a-9314-a64991bd3ad1">
+      <Execution id="11bc6ed6-8d94-4dc7-8090-574cd4cfba71" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreSimilar_ExcludesSourceAndInactiveProducts" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_RepeatedCall_ReturnsZero" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="d657487f-b9a6-82e1-1adc-1651536b2ac6">
+      <Execution id="f12c7bf6-e2bc-4c7a-9c97-77e06b03fe48" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests" name="Merge_RepeatedCall_ReturnsZero" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_CapsRepeatedViewsPerProductPerUtcDay" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="63f046d2-88b5-4f98-3ac6-0360e81f31fa">
+      <Execution id="ebd0643b-8995-4f38-99c8-a24f3272df82" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreUser_CapsRepeatedViewsPerProductPerUtcDay" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WhenPredictionFailsOnTrainedModel_FallsBackToContentWithoutFakingMf" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="6509be74-e5d9-16dc-79c0-7433e7cc62dc">
+      <Execution id="2977277a-21b0-4e46-8f46-ce5886a98b4a" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_WhenPredictionFailsOnTrainedModel_FallsBackToContentWithoutFakingMf" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_ExcludesAlreadySeenProducts" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="a5a7d392-c74f-da67-6cb0-0b4ea41991f8">
+      <Execution id="68aebaf5-a3f6-4de6-ad06-d06fe5c635de" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreUser_ExcludesAlreadySeenProducts" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_ReturnsCustomerSafeReasonsAndValidScores" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="6bfdf6eb-f2ef-1f9e-158f-1d82afea9ffa">
+      <Execution id="cfc6de20-1190-4db9-848f-516ddc2d9e00" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreGlobal_ReturnsCustomerSafeReasonsAndValidScores" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_LimitsToTwentyResults" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="1cfa4b68-a88f-e2d1-390c-8f741422310d">
+      <Execution id="fc1aae6f-5ab4-46f5-b977-908f400bfedc" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreGlobal_LimitsToTwentyResults" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_MaterializesAllThreeScopesInOneRun" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="0b9ec175-84d9-836a-a2b0-d40ddaaefba1">
+      <Execution id="31e356d0-d1d8-44d4-ae89-2355ae650905" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_MaterializesAllThreeScopesInOneRun" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_ClaimsOnlyUnownedRowsAndReturnsDeterministicCount" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="c27282e0-0ec5-0dcf-91b9-93aef0e7bbae">
+      <Execution id="70e4775a-ee74-4ad9-a23b-77efad770586" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests" name="Merge_ClaimsOnlyUnownedRowsAndReturnsDeterministicCount" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_WithNoMatchingRows_ReturnsZero" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="500086af-f5cd-f449-4072-1f0c994781e2">
+      <Execution id="f1b7f064-e411-4361-9e05-3282eb99e7cd" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests" name="Merge_WithNoMatchingRows_ReturnsZero" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.EnsureModel_WithBelowThresholdInteractions_DoesNotTrainModel_AndUsesContentFallback" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="f04f7679-7aec-1186-608b-e11eadc35155">
+      <Execution id="478f06b2-0fb9-4564-84ac-27f69dafd3b3" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="EnsureModel_WithBelowThresholdInteractions_DoesNotTrainModel_AndUsesContentFallback" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.Score_UnknownUserOrProduct_ReturnsZero" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="1a924f2c-90e8-895c-af5c-3f6733c3d127">
+      <Execution id="0fa0aab1-91d5-439d-929a-1f078af833e7" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="Score_UnknownUserOrProduct_ReturnsZero" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WithNoSignals_ProducesNoRows" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="ddea741b-8dca-61d3-44ca-e2f75974443b">
+      <Execution id="10cd7d30-9144-46e2-9e56-f60afb94dfc0" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_WithNoSignals_ProducesNoRows" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_LimitsToEightResults" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="3bf68c67-37ef-348d-ee2f-014c6670dab7">
+      <Execution id="f029dc2a-5215-4b7f-aa5c-d91a3ecba035" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreSimilar_LimitsToEightResults" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ScoreUserWithMf_WhenAllCandidatesSeen_DoesNotReinsertSeen" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="05dcc9f2-fb0a-a9c1-c777-60b703f007db">
+      <Execution id="1f4a2b9e-881a-47bc-8d0b-7c5d87b58462" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="ScoreUserWithMf_WhenAllCandidatesSeen_DoesNotReinsertSeen" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests.Merge_OwnedRows_AreNeverReassignedToAnotherUser" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="f83d9293-b5dd-e60f-ea7e-feaa6ba532ec">
+      <Execution id="c95d6db4-a8a5-41f6-a9a0-9d120589977d" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.ProductViewEventStoreTests" name="Merge_OwnedRows_AreNeverReassignedToAnotherUser" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WithConflict_RollsBackTheWholeBatch" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="0d829043-e1b3-ff91-37da-aee4a258a91b">
+      <Execution id="a2cb1967-1c1b-4aca-84ef-027202ce06c8" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_WithConflict_RollsBackTheWholeBatch" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ExpiryIsIntervalPlusGrace" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="790cd01d-3480-64a9-78ee-25458e21c246">
+      <Execution id="0480528c-8073-4e65-bb62-7b91594d0d82" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_ExpiryIsIntervalPlusGrace" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreUser_WeightsPurchasesThreeTimesViews" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="29282538-d708-0e50-940f-820bb6f52d50">
+      <Execution id="816e323f-5bae-4e1b-ae58-b947d0c46c56" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreUser_WeightsPurchasesThreeTimesViews" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ViaJobRunExecutor_WhenTrainingFails_MarksRunFailedInStore" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="5aaa2ce0-70dc-daa5-0788-1b35b53d89ef">
+      <Execution id="1b66e03a-098a-4fab-8385-d247dfa4f7da" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_ViaJobRunExecutor_WhenTrainingFails_MarksRunFailedInStore" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_SkipsSignalsOutsideWindow" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="a56d3eb8-e7a3-1757-6349-723dba8914e3">
+      <Execution id="c233b8a1-c4a4-41c4-9c34-fe87a75ef839" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreGlobal_SkipsSignalsOutsideWindow" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.EnsureModel_WithSufficientData_TrainsModelAndProducesPositiveMfScores" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="432a98c1-f17f-d629-9fe9-b0047c94203f">
+      <Execution id="d166297b-27b1-42be-a660-d17859cda8b5" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="EnsureModel_WithSufficientData_TrainsModelAndProducesPositiveMfScores" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_NewRunPreservesPriorHistory" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="c22257d1-cc7b-ddff-fa9d-37b50cbe702d">
+      <Execution id="a6453dff-d697-4996-ae4d-bc1006300ea4" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_NewRunPreservesPriorHistory" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ClearModel_ResetsModelState" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="3e998626-7fc9-bfed-1348-4c31d8ee11f1">
+      <Execution id="b1715900-24df-4a6c-bf40-aed76bc5dddf" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="ClearModel_ResetsModelState" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_WhenTrainingFails_CleansUpModelAndThrows_PreservingPriorBatch" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="9579ca0c-eaf2-b6b5-762c-9c2376cec3a3">
+      <Execution id="594f663b-f35e-4f80-8b9c-89ce84dffe9a" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_WhenTrainingFails_CleansUpModelAndThrows_PreservingPriorBatch" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests.ScoreUserWithMf_ExcludesSeenViewsAndPurchases" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="273032a0-671d-9a3b-f530-910f493ab4f3">
+      <Execution id="e4e7190b-0945-4808-80f9-aa59dad0de0b" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.MfScorerTests" name="ScoreUserWithMf_ExcludesSeenViewsAndPurchases" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreSimilar_TieBreaksByProductIdAscending" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="07a76cd6-4cee-7ded-957f-e5b632fb356d">
+      <Execution id="ac9dabac-dac3-4e1e-a507-59d626364249" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreSimilar_TieBreaksByProductIdAscending" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests.ScoreGlobal_RanksPurchasesAboveViewsAndDecaysRecency" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="1895cde4-8b62-656e-9411-76d31a39f921">
+      <Execution id="4348bdc2-2482-46d8-a021-2a2a03d36792" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationScorerTests" name="ScoreGlobal_RanksPurchasesAboveViewsAndDecaysRecency" />
+    </UnitTest>
+    <UnitTest name="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests.ExecuteAsync_ProducesSequentialRanksPerAudience" storage="c:\users\manh\documents\project3\online-supermarket-system\backend\tests\onlinesupermarket.infrastructure.tests\bin\debug\net10.0\onlinesupermarket.infrastructure.tests.dll" id="3feabb41-8f28-013b-8510-f538e3165a7f">
+      <Execution id="f4ee3a8b-93a7-4de6-aace-6195af80d768" />
+      <TestMethod codeBase="C:\Users\manh\Documents\Project3\online-supermarket-system\backend\tests\OnlineSupermarket.Infrastructure.Tests\bin\Debug\net10.0\OnlineSupermarket.Infrastructure.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="OnlineSupermarket.Infrastructure.Tests.Recommendations.RecommendationJobHandlerTests" name="ExecuteAsync_ProducesSequentialRanksPerAudience" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1895cde4-8b62-656e-9411-76d31a39f921" executionId="4348bdc2-2482-46d8-a021-2a2a03d36792" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ddea741b-8dca-61d3-44ca-e2f75974443b" executionId="10cd7d30-9144-46e2-9e56-f60afb94dfc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="432a98c1-f17f-d629-9fe9-b0047c94203f" executionId="d166297b-27b1-42be-a660-d17859cda8b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9579ca0c-eaf2-b6b5-762c-9c2376cec3a3" executionId="594f663b-f35e-4f80-8b9c-89ce84dffe9a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d829043-e1b3-ff91-37da-aee4a258a91b" executionId="a2cb1967-1c1b-4aca-84ef-027202ce06c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29282538-d708-0e50-940f-820bb6f52d50" executionId="816e323f-5bae-4e1b-ae58-b947d0c46c56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c27282e0-0ec5-0dcf-91b9-93aef0e7bbae" executionId="70e4775a-ee74-4ad9-a23b-77efad770586" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6bfdf6eb-f2ef-1f9e-158f-1d82afea9ffa" executionId="cfc6de20-1190-4db9-848f-516ddc2d9e00" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5a7d392-c74f-da67-6cb0-0b4ea41991f8" executionId="68aebaf5-a3f6-4de6-ad06-d06fe5c635de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b9ec175-84d9-836a-a2b0-d40ddaaefba1" executionId="31e356d0-d1d8-44d4-ae89-2355ae650905" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a924f2c-90e8-895c-af5c-3f6733c3d127" executionId="0fa0aab1-91d5-439d-929a-1f078af833e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c22257d1-cc7b-ddff-fa9d-37b50cbe702d" executionId="a6453dff-d697-4996-ae4d-bc1006300ea4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="273032a0-671d-9a3b-f530-910f493ab4f3" executionId="e4e7190b-0945-4808-80f9-aa59dad0de0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d657487f-b9a6-82e1-1adc-1651536b2ac6" executionId="f12c7bf6-e2bc-4c7a-9c97-77e06b03fe48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cfa4b68-a88f-e2d1-390c-8f741422310d" executionId="fc1aae6f-5ab4-46f5-b977-908f400bfedc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e998626-7fc9-bfed-1348-4c31d8ee11f1" executionId="b1715900-24df-4a6c-bf40-aed76bc5dddf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="500086af-f5cd-f449-4072-1f0c994781e2" executionId="f1b7f064-e411-4361-9e05-3282eb99e7cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8afbae22-be6b-532a-9314-a64991bd3ad1" executionId="11bc6ed6-8d94-4dc7-8090-574cd4cfba71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f83d9293-b5dd-e60f-ea7e-feaa6ba532ec" executionId="c95d6db4-a8a5-41f6-a9a0-9d120589977d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5aaa2ce0-70dc-daa5-0788-1b35b53d89ef" executionId="1b66e03a-098a-4fab-8385-d247dfa4f7da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05dcc9f2-fb0a-a9c1-c777-60b703f007db" executionId="1f4a2b9e-881a-47bc-8d0b-7c5d87b58462" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f04f7679-7aec-1186-608b-e11eadc35155" executionId="478f06b2-0fb9-4564-84ac-27f69dafd3b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3bf68c67-37ef-348d-ee2f-014c6670dab7" executionId="f029dc2a-5215-4b7f-aa5c-d91a3ecba035" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07a76cd6-4cee-7ded-957f-e5b632fb356d" executionId="ac9dabac-dac3-4e1e-a507-59d626364249" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="790cd01d-3480-64a9-78ee-25458e21c246" executionId="0480528c-8073-4e65-bb62-7b91594d0d82" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6509be74-e5d9-16dc-79c0-7433e7cc62dc" executionId="2977277a-21b0-4e46-8f46-ce5886a98b4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63f046d2-88b5-4f98-3ac6-0360e81f31fa" executionId="ebd0643b-8995-4f38-99c8-a24f3272df82" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a56d3eb8-e7a3-1757-6349-723dba8914e3" executionId="c233b8a1-c4a4-41c4-9c34-fe87a75ef839" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3feabb41-8f28-013b-8510-f538e3165a7f" executionId="f4ee3a8b-93a7-4de6-aace-6195af80d768" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="29" executed="29" passed="29" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: OnlineSupermarket.Infrastructure.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  OnlineSupermarket.Infrastructure.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    OnlineSupermarket.Infrastructure.Tests&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0842         0.0006         0.0836   2.6645e-01&#xD;
+   1       0.0805         0.0004         0.0801   2.5256e-01&#xD;
+   2       0.0755         0.0005         0.0750   2.4150e-01&#xD;
+   3       0.0708         0.0005         0.0703   2.3247e-01&#xD;
+   4       0.0663         0.0005         0.0658   2.2491e-01&#xD;
+   5       0.0618         0.0005         0.0613   2.1855e-01&#xD;
+   6       0.0576         0.0005         0.0571   2.1346e-01&#xD;
+   7       0.0537         0.0005         0.0532   2.0929e-01&#xD;
+   8       0.0502         0.0005         0.0496   2.0571e-01&#xD;
+   9       0.0469         0.0006         0.0463   2.0262e-01&#xD;
+  10       0.0439         0.0006         0.0433   1.9991e-01&#xD;
+  11       0.0411         0.0006         0.0405   1.9751e-01&#xD;
+  12       0.0385         0.0006         0.0378   1.9537e-01&#xD;
+  13       0.0361         0.0007         0.0354   1.9344e-01&#xD;
+  14       0.0338         0.0007         0.0332   1.9170e-01&#xD;
+  15       0.0318         0.0007         0.0311   1.9012e-01&#xD;
+  16       0.0299         0.0007         0.0292   1.8868e-01&#xD;
+  17       0.0282         0.0007         0.0274   1.8737e-01&#xD;
+  18       0.0266         0.0008         0.0258   1.8617e-01&#xD;
+  19       0.0251         0.0008         0.0243   1.8508e-01&#xD;
+  20       0.0238         0.0008         0.0229   1.8409e-01&#xD;
+  21       0.0225         0.0008         0.0217   1.8319e-01&#xD;
+  22       0.0214         0.0009         0.0205   1.8236e-01&#xD;
+  23       0.0204         0.0009         0.0195   1.8161e-01&#xD;
+  24       0.0194         0.0009         0.0185   1.8092e-01&#xD;
+  25       0.0186         0.0009         0.0177   1.8029e-01&#xD;
+  26       0.0178         0.0010         0.0169   1.7972e-01&#xD;
+  27       0.0171         0.0010         0.0161   1.7920e-01&#xD;
+  28       0.0165         0.0010         0.0155   1.7873e-01&#xD;
+  29       0.0159         0.0010         0.0149   1.7830e-01&#xD;
+  30       0.0153         0.0010         0.0143   1.7791e-01&#xD;
+  31       0.0149         0.0011         0.0138   1.7755e-01&#xD;
+  32       0.0144         0.0011         0.0133   1.7723e-01&#xD;
+  33       0.0140         0.0011         0.0129   1.7693e-01&#xD;
+  34       0.0137         0.0011         0.0126   1.7666e-01&#xD;
+  35       0.0133         0.0011         0.0122   1.7642e-01&#xD;
+  36       0.0130         0.0011         0.0119   1.7620e-01&#xD;
+  37       0.0128         0.0011         0.0116   1.7600e-01&#xD;
+  38       0.0125         0.0012         0.0114   1.7582e-01&#xD;
+  39       0.0123         0.0012         0.0111   1.7566e-01&#xD;
+  40       0.0121         0.0012         0.0109   1.7551e-01&#xD;
+  41       0.0119         0.0012         0.0107   1.7537e-01&#xD;
+  42       0.0118         0.0012         0.0106   1.7525e-01&#xD;
+  43       0.0116         0.0012         0.0104   1.7514e-01&#xD;
+  44       0.0115         0.0012         0.0103   1.7504e-01&#xD;
+  45       0.0114         0.0012         0.0102   1.7495e-01&#xD;
+  46       0.0113         0.0012         0.0100   1.7487e-01&#xD;
+  47       0.0112         0.0013         0.0100   1.7479e-01&#xD;
+  48       0.0111         0.0013         0.0099   1.7472e-01&#xD;
+  49       0.0111         0.0013         0.0098   1.7466e-01&#xD;
+  50       0.0110         0.0013         0.0097   1.7461e-01&#xD;
+  51       0.0109         0.0013         0.0097   1.7456e-01&#xD;
+  52       0.0109         0.0013         0.0096   1.7451e-01&#xD;
+  53       0.0109         0.0013         0.0096   1.7447e-01&#xD;
+  54       0.0108         0.0013         0.0095   1.7444e-01&#xD;
+  55       0.0108         0.0013         0.0095   1.7440e-01&#xD;
+  56       0.0108         0.0013         0.0094   1.7437e-01&#xD;
+  57       0.0107         0.0013         0.0094   1.7434e-01&#xD;
+  58       0.0107         0.0013         0.0094   1.7432e-01&#xD;
+  59       0.0107         0.0013         0.0094   1.7430e-01&#xD;
+  60       0.0107         0.0013         0.0093   1.7428e-01&#xD;
+  61       0.0107         0.0013         0.0093   1.7426e-01&#xD;
+  62       0.0107         0.0013         0.0093   1.7424e-01&#xD;
+  63       0.0107         0.0013         0.0093   1.7423e-01&#xD;
+  64       0.0107         0.0014         0.0093   1.7421e-01&#xD;
+  65       0.0107         0.0014         0.0093   1.7420e-01&#xD;
+  66       0.0107         0.0014         0.0093   1.7419e-01&#xD;
+  67       0.0107         0.0014         0.0093   1.7418e-01&#xD;
+  68       0.0107         0.0014         0.0093   1.7417e-01&#xD;
+  69       0.0107         0.0014         0.0093   1.7416e-01&#xD;
+  70       0.0107         0.0014         0.0093   1.7416e-01&#xD;
+  71       0.0107         0.0014         0.0093   1.7415e-01&#xD;
+  72       0.0107         0.0014         0.0093   1.7414e-01&#xD;
+  73       0.0107         0.0014         0.0093   1.7414e-01&#xD;
+  74       0.0107         0.0014         0.0093   1.7413e-01&#xD;
+  75       0.0107         0.0014         0.0093   1.7413e-01&#xD;
+  76       0.0107         0.0014         0.0093   1.7412e-01&#xD;
+  77       0.0107         0.0014         0.0093   1.7412e-01&#xD;
+  78       0.0107         0.0014         0.0093   1.7412e-01&#xD;
+  79       0.0107         0.0014         0.0093   1.7411e-01&#xD;
+  80       0.0107         0.0014         0.0093   1.7411e-01&#xD;
+  81       0.0107         0.0014         0.0093   1.7411e-01&#xD;
+  82       0.0107         0.0014         0.0093   1.7411e-01&#xD;
+  83       0.0107         0.0014         0.0093   1.7411e-01&#xD;
+  84       0.0107         0.0014         0.0093   1.7410e-01&#xD;
+  85       0.0107         0.0014         0.0093   1.7410e-01&#xD;
+  86       0.0107         0.0014         0.0093   1.7410e-01&#xD;
+  87       0.0107         0.0014         0.0094   1.7410e-01&#xD;
+  88       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  89       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  90       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  91       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  92       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  93       0.0108         0.0014         0.0094   1.7410e-01&#xD;
+  94       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+  95       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+  96       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+  97       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+  98       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+  99       0.0108         0.0014         0.0094   1.7409e-01&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0492         0.0006         0.0486   2.4411e-01&#xD;
+   1       0.0486         0.0006         0.0480   2.3878e-01&#xD;
+   2       0.0480         0.0007         0.0473   2.3416e-01&#xD;
+   3       0.0475         0.0007         0.0468   2.3023e-01&#xD;
+   4       0.0470         0.0007         0.0462   2.2687e-01&#xD;
+   5       0.0464         0.0007         0.0457   2.2395e-01&#xD;
+   6       0.0459         0.0007         0.0451   2.2140e-01&#xD;
+   7       0.0453         0.0008         0.0446   2.1918e-01&#xD;
+   8       0.0449         0.0008         0.0441   2.1726e-01&#xD;
+   9       0.0444         0.0008         0.0436   2.1559e-01&#xD;
+  10       0.0440         0.0008         0.0431   2.1413e-01&#xD;
+  11       0.0435         0.0009         0.0427   2.1286e-01&#xD;
+  12       0.0431         0.0009         0.0422   2.1175e-01&#xD;
+  13       0.0427         0.0009         0.0418   2.1079e-01&#xD;
+  14       0.0423         0.0009         0.0414   2.0994e-01&#xD;
+  15       0.0420         0.0010         0.0410   2.0920e-01&#xD;
+  16       0.0416         0.0010         0.0407   2.0855e-01&#xD;
+  17       0.0413         0.0010         0.0403   2.0798e-01&#xD;
+  18       0.0410         0.0010         0.0399   2.0748e-01&#xD;
+  19       0.0407         0.0010         0.0396   2.0704e-01&#xD;
+  20       0.0403         0.0011         0.0393   2.0666e-01&#xD;
+  21       0.0400         0.0011         0.0390   2.0632e-01&#xD;
+  22       0.0397         0.0011         0.0387   2.0602e-01&#xD;
+  23       0.0394         0.0011         0.0383   2.0576e-01&#xD;
+  24       0.0391         0.0011         0.0380   2.0552e-01&#xD;
+  25       0.0388         0.0011         0.0377   2.0531e-01&#xD;
+  26       0.0385         0.0011         0.0374   2.0512e-01&#xD;
+  27       0.0382         0.0011         0.0371   2.0496e-01&#xD;
+  28       0.0379         0.0011         0.0369   2.0481e-01&#xD;
+  29       0.0377         0.0011         0.0366   2.0469e-01&#xD;
+  30       0.0374         0.0011         0.0363   2.0457e-01&#xD;
+  31       0.0371         0.0011         0.0360   2.0447e-01&#xD;
+  32       0.0369         0.0011         0.0358   2.0438e-01&#xD;
+  33       0.0367         0.0011         0.0356   2.0430e-01&#xD;
+  34       0.0364         0.0011         0.0353   2.0423e-01&#xD;
+  35       0.0362         0.0011         0.0351   2.0417e-01&#xD;
+  36       0.0360         0.0011         0.0349   2.0411e-01&#xD;
+  37       0.0358         0.0011         0.0347   2.0406e-01&#xD;
+  38       0.0356         0.0011         0.0345   2.0402e-01&#xD;
+  39       0.0354         0.0011         0.0343   2.0398e-01&#xD;
+  40       0.0352         0.0011         0.0341   2.0395e-01&#xD;
+  41       0.0351         0.0012         0.0339   2.0392e-01&#xD;
+  42       0.0349         0.0012         0.0337   2.0389e-01&#xD;
+  43       0.0347         0.0012         0.0336   2.0386e-01&#xD;
+  44       0.0346         0.0012         0.0334   2.0384e-01&#xD;
+  45       0.0344         0.0012         0.0332   2.0382e-01&#xD;
+  46       0.0343         0.0012         0.0331   2.0380e-01&#xD;
+  47       0.0341         0.0012         0.0329   2.0379e-01&#xD;
+  48       0.0340         0.0012         0.0328   2.0378e-01&#xD;
+  49       0.0339         0.0012         0.0327   2.0376e-01&#xD;
+  50       0.0337         0.0012         0.0325   2.0375e-01&#xD;
+  51       0.0336         0.0012         0.0324   2.0374e-01&#xD;
+  52       0.0335         0.0012         0.0323   2.0373e-01&#xD;
+  53       0.0334         0.0012         0.0322   2.0372e-01&#xD;
+  54       0.0333         0.0012         0.0321   2.0372e-01&#xD;
+  55       0.0332         0.0012         0.0320   2.0371e-01&#xD;
+  56       0.0331         0.0012         0.0319   2.0370e-01&#xD;
+  57       0.0330         0.0012         0.0318   2.0370e-01&#xD;
+  58       0.0329         0.0012         0.0317   2.0369e-01&#xD;
+  59       0.0328         0.0012         0.0316   2.0369e-01&#xD;
+  60       0.0327         0.0012         0.0315   2.0369e-01&#xD;
+  61       0.0326         0.0012         0.0314   2.0368e-01&#xD;
+  62       0.0326         0.0012         0.0313   2.0368e-01&#xD;
+  63       0.0325         0.0012         0.0313   2.0368e-01&#xD;
+  64       0.0324         0.0012         0.0312   2.0367e-01&#xD;
+  65       0.0323         0.0012         0.0311   2.0367e-01&#xD;
+  66       0.0323         0.0012         0.0310   2.0367e-01&#xD;
+  67       0.0322         0.0012         0.0310   2.0367e-01&#xD;
+  68       0.0322         0.0012         0.0309   2.0367e-01&#xD;
+  69       0.0321         0.0012         0.0309   2.0366e-01&#xD;
+  70       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  71       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  72       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  73       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  74       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  75       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  76       0.0318         0.0012         0.0305   2.0366e-01&#xD;
+  77       0.0317         0.0012         0.0305   2.0366e-01&#xD;
+  78       0.0317         0.0012         0.0304   2.0366e-01&#xD;
+  79       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  80       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  81       0.0316         0.0012         0.0303   2.0365e-01&#xD;
+  82       0.0315         0.0012         0.0303   2.0365e-01&#xD;
+  83       0.0315         0.0013         0.0303   2.0365e-01&#xD;
+  84       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  85       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  86       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  87       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  88       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  89       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  90       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  91       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  92       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  93       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  94       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  95       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  96       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  97       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  98       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  99       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0492         0.0006         0.0486   2.4411e-01&#xD;
+   1       0.0486         0.0006         0.0480   2.3878e-01&#xD;
+   2       0.0480         0.0007         0.0473   2.3416e-01&#xD;
+   3       0.0475         0.0007         0.0468   2.3023e-01&#xD;
+   4       0.0470         0.0007         0.0462   2.2687e-01&#xD;
+   5       0.0464         0.0007         0.0457   2.2395e-01&#xD;
+   6       0.0459         0.0007         0.0451   2.2140e-01&#xD;
+   7       0.0453         0.0008         0.0446   2.1918e-01&#xD;
+   8       0.0449         0.0008         0.0441   2.1726e-01&#xD;
+   9       0.0444         0.0008         0.0436   2.1559e-01&#xD;
+  10       0.0440         0.0008         0.0431   2.1413e-01&#xD;
+  11       0.0435         0.0009         0.0427   2.1286e-01&#xD;
+  12       0.0431         0.0009         0.0422   2.1175e-01&#xD;
+  13       0.0427         0.0009         0.0418   2.1079e-01&#xD;
+  14       0.0423         0.0009         0.0414   2.0994e-01&#xD;
+  15       0.0420         0.0010         0.0410   2.0920e-01&#xD;
+  16       0.0416         0.0010         0.0407   2.0855e-01&#xD;
+  17       0.0413         0.0010         0.0403   2.0798e-01&#xD;
+  18       0.0410         0.0010         0.0399   2.0748e-01&#xD;
+  19       0.0407         0.0010         0.0396   2.0704e-01&#xD;
+  20       0.0403         0.0011         0.0393   2.0666e-01&#xD;
+  21       0.0400         0.0011         0.0390   2.0632e-01&#xD;
+  22       0.0397         0.0011         0.0387   2.0602e-01&#xD;
+  23       0.0394         0.0011         0.0383   2.0576e-01&#xD;
+  24       0.0391         0.0011         0.0380   2.0552e-01&#xD;
+  25       0.0388         0.0011         0.0377   2.0531e-01&#xD;
+  26       0.0385         0.0011         0.0374   2.0512e-01&#xD;
+  27       0.0382         0.0011         0.0371   2.0496e-01&#xD;
+  28       0.0379         0.0011         0.0369   2.0481e-01&#xD;
+  29       0.0377         0.0011         0.0366   2.0469e-01&#xD;
+  30       0.0374         0.0011         0.0363   2.0457e-01&#xD;
+  31       0.0371         0.0011         0.0360   2.0447e-01&#xD;
+  32       0.0369         0.0011         0.0358   2.0438e-01&#xD;
+  33       0.0367         0.0011         0.0356   2.0430e-01&#xD;
+  34       0.0364         0.0011         0.0353   2.0423e-01&#xD;
+  35       0.0362         0.0011         0.0351   2.0417e-01&#xD;
+  36       0.0360         0.0011         0.0349   2.0411e-01&#xD;
+  37       0.0358         0.0011         0.0347   2.0406e-01&#xD;
+  38       0.0356         0.0011         0.0345   2.0402e-01&#xD;
+  39       0.0354         0.0011         0.0343   2.0398e-01&#xD;
+  40       0.0352         0.0011         0.0341   2.0395e-01&#xD;
+  41       0.0351         0.0012         0.0339   2.0392e-01&#xD;
+  42       0.0349         0.0012         0.0337   2.0389e-01&#xD;
+  43       0.0347         0.0012         0.0336   2.0386e-01&#xD;
+  44       0.0346         0.0012         0.0334   2.0384e-01&#xD;
+  45       0.0344         0.0012         0.0332   2.0382e-01&#xD;
+  46       0.0343         0.0012         0.0331   2.0380e-01&#xD;
+  47       0.0341         0.0012         0.0329   2.0379e-01&#xD;
+  48       0.0340         0.0012         0.0328   2.0378e-01&#xD;
+  49       0.0339         0.0012         0.0327   2.0376e-01&#xD;
+  50       0.0337         0.0012         0.0325   2.0375e-01&#xD;
+  51       0.0336         0.0012         0.0324   2.0374e-01&#xD;
+  52       0.0335         0.0012         0.0323   2.0373e-01&#xD;
+  53       0.0334         0.0012         0.0322   2.0372e-01&#xD;
+  54       0.0333         0.0012         0.0321   2.0372e-01&#xD;
+  55       0.0332         0.0012         0.0320   2.0371e-01&#xD;
+  56       0.0331         0.0012         0.0319   2.0370e-01&#xD;
+  57       0.0330         0.0012         0.0318   2.0370e-01&#xD;
+  58       0.0329         0.0012         0.0317   2.0369e-01&#xD;
+  59       0.0328         0.0012         0.0316   2.0369e-01&#xD;
+  60       0.0327         0.0012         0.0315   2.0369e-01&#xD;
+  61       0.0326         0.0012         0.0314   2.0368e-01&#xD;
+  62       0.0326         0.0012         0.0313   2.0368e-01&#xD;
+  63       0.0325         0.0012         0.0313   2.0368e-01&#xD;
+  64       0.0324         0.0012         0.0312   2.0367e-01&#xD;
+  65       0.0323         0.0012         0.0311   2.0367e-01&#xD;
+  66       0.0323         0.0012         0.0310   2.0367e-01&#xD;
+  67       0.0322         0.0012         0.0310   2.0367e-01&#xD;
+  68       0.0322         0.0012         0.0309   2.0367e-01&#xD;
+  69       0.0321         0.0012         0.0309   2.0366e-01&#xD;
+  70       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  71       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  72       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  73       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  74       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  75       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  76       0.0318         0.0012         0.0305   2.0366e-01&#xD;
+  77       0.0317         0.0012         0.0305   2.0366e-01&#xD;
+  78       0.0317         0.0012         0.0304   2.0366e-01&#xD;
+  79       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  80       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  81       0.0316         0.0012         0.0303   2.0365e-01&#xD;
+  82       0.0315         0.0012         0.0303   2.0365e-01&#xD;
+  83       0.0315         0.0013         0.0303   2.0365e-01&#xD;
+  84       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  85       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  86       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  87       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  88       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  89       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  90       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  91       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  92       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  93       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  94       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  95       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  96       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  97       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  98       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  99       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0492         0.0006         0.0486   2.4411e-01&#xD;
+   1       0.0486         0.0006         0.0480   2.3878e-01&#xD;
+   2       0.0480         0.0007         0.0473   2.3416e-01&#xD;
+   3       0.0475         0.0007         0.0468   2.3023e-01&#xD;
+   4       0.0470         0.0007         0.0462   2.2687e-01&#xD;
+   5       0.0464         0.0007         0.0457   2.2395e-01&#xD;
+   6       0.0459         0.0007         0.0451   2.2140e-01&#xD;
+   7       0.0453         0.0008         0.0446   2.1918e-01&#xD;
+   8       0.0449         0.0008         0.0441   2.1726e-01&#xD;
+   9       0.0444         0.0008         0.0436   2.1559e-01&#xD;
+  10       0.0440         0.0008         0.0431   2.1413e-01&#xD;
+  11       0.0435         0.0009         0.0427   2.1286e-01&#xD;
+  12       0.0431         0.0009         0.0422   2.1175e-01&#xD;
+  13       0.0427         0.0009         0.0418   2.1079e-01&#xD;
+  14       0.0423         0.0009         0.0414   2.0994e-01&#xD;
+  15       0.0420         0.0010         0.0410   2.0920e-01&#xD;
+  16       0.0416         0.0010         0.0407   2.0855e-01&#xD;
+  17       0.0413         0.0010         0.0403   2.0798e-01&#xD;
+  18       0.0410         0.0010         0.0399   2.0748e-01&#xD;
+  19       0.0407         0.0010         0.0396   2.0704e-01&#xD;
+  20       0.0403         0.0011         0.0393   2.0666e-01&#xD;
+  21       0.0400         0.0011         0.0390   2.0632e-01&#xD;
+  22       0.0397         0.0011         0.0387   2.0602e-01&#xD;
+  23       0.0394         0.0011         0.0383   2.0576e-01&#xD;
+  24       0.0391         0.0011         0.0380   2.0552e-01&#xD;
+  25       0.0388         0.0011         0.0377   2.0531e-01&#xD;
+  26       0.0385         0.0011         0.0374   2.0512e-01&#xD;
+  27       0.0382         0.0011         0.0371   2.0496e-01&#xD;
+  28       0.0379         0.0011         0.0369   2.0481e-01&#xD;
+  29       0.0377         0.0011         0.0366   2.0469e-01&#xD;
+  30       0.0374         0.0011         0.0363   2.0457e-01&#xD;
+  31       0.0371         0.0011         0.0360   2.0447e-01&#xD;
+  32       0.0369         0.0011         0.0358   2.0438e-01&#xD;
+  33       0.0367         0.0011         0.0356   2.0430e-01&#xD;
+  34       0.0364         0.0011         0.0353   2.0423e-01&#xD;
+  35       0.0362         0.0011         0.0351   2.0417e-01&#xD;
+  36       0.0360         0.0011         0.0349   2.0411e-01&#xD;
+  37       0.0358         0.0011         0.0347   2.0406e-01&#xD;
+  38       0.0356         0.0011         0.0345   2.0402e-01&#xD;
+  39       0.0354         0.0011         0.0343   2.0398e-01&#xD;
+  40       0.0352         0.0011         0.0341   2.0395e-01&#xD;
+  41       0.0351         0.0012         0.0339   2.0392e-01&#xD;
+  42       0.0349         0.0012         0.0337   2.0389e-01&#xD;
+  43       0.0347         0.0012         0.0336   2.0386e-01&#xD;
+  44       0.0346         0.0012         0.0334   2.0384e-01&#xD;
+  45       0.0344         0.0012         0.0332   2.0382e-01&#xD;
+  46       0.0343         0.0012         0.0331   2.0380e-01&#xD;
+  47       0.0341         0.0012         0.0329   2.0379e-01&#xD;
+  48       0.0340         0.0012         0.0328   2.0378e-01&#xD;
+  49       0.0339         0.0012         0.0327   2.0376e-01&#xD;
+  50       0.0337         0.0012         0.0325   2.0375e-01&#xD;
+  51       0.0336         0.0012         0.0324   2.0374e-01&#xD;
+  52       0.0335         0.0012         0.0323   2.0373e-01&#xD;
+  53       0.0334         0.0012         0.0322   2.0372e-01&#xD;
+  54       0.0333         0.0012         0.0321   2.0372e-01&#xD;
+  55       0.0332         0.0012         0.0320   2.0371e-01&#xD;
+  56       0.0331         0.0012         0.0319   2.0370e-01&#xD;
+  57       0.0330         0.0012         0.0318   2.0370e-01&#xD;
+  58       0.0329         0.0012         0.0317   2.0369e-01&#xD;
+  59       0.0328         0.0012         0.0316   2.0369e-01&#xD;
+  60       0.0327         0.0012         0.0315   2.0369e-01&#xD;
+  61       0.0326         0.0012         0.0314   2.0368e-01&#xD;
+  62       0.0326         0.0012         0.0313   2.0368e-01&#xD;
+  63       0.0325         0.0012         0.0313   2.0368e-01&#xD;
+  64       0.0324         0.0012         0.0312   2.0367e-01&#xD;
+  65       0.0323         0.0012         0.0311   2.0367e-01&#xD;
+  66       0.0323         0.0012         0.0310   2.0367e-01&#xD;
+  67       0.0322         0.0012         0.0310   2.0367e-01&#xD;
+  68       0.0322         0.0012         0.0309   2.0367e-01&#xD;
+  69       0.0321         0.0012         0.0309   2.0366e-01&#xD;
+  70       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  71       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  72       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  73       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  74       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  75       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  76       0.0318         0.0012         0.0305   2.0366e-01&#xD;
+  77       0.0317         0.0012         0.0305   2.0366e-01&#xD;
+  78       0.0317         0.0012         0.0304   2.0366e-01&#xD;
+  79       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  80       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  81       0.0316         0.0012         0.0303   2.0365e-01&#xD;
+  82       0.0315         0.0012         0.0303   2.0365e-01&#xD;
+  83       0.0315         0.0013         0.0303   2.0365e-01&#xD;
+  84       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  85       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  86       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  87       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  88       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  89       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  90       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  91       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  92       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  93       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  94       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  95       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  96       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  97       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  98       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  99       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0492         0.0006         0.0486   2.4411e-01&#xD;
+   1       0.0486         0.0006         0.0480   2.3878e-01&#xD;
+   2       0.0480         0.0007         0.0473   2.3416e-01&#xD;
+   3       0.0475         0.0007         0.0468   2.3023e-01&#xD;
+   4       0.0470         0.0007         0.0462   2.2687e-01&#xD;
+   5       0.0464         0.0007         0.0457   2.2395e-01&#xD;
+   6       0.0459         0.0007         0.0451   2.2140e-01&#xD;
+   7       0.0453         0.0008         0.0446   2.1918e-01&#xD;
+   8       0.0449         0.0008         0.0441   2.1726e-01&#xD;
+   9       0.0444         0.0008         0.0436   2.1559e-01&#xD;
+  10       0.0440         0.0008         0.0431   2.1413e-01&#xD;
+  11       0.0435         0.0009         0.0427   2.1286e-01&#xD;
+  12       0.0431         0.0009         0.0422   2.1175e-01&#xD;
+  13       0.0427         0.0009         0.0418   2.1079e-01&#xD;
+  14       0.0423         0.0009         0.0414   2.0994e-01&#xD;
+  15       0.0420         0.0010         0.0410   2.0920e-01&#xD;
+  16       0.0416         0.0010         0.0407   2.0855e-01&#xD;
+  17       0.0413         0.0010         0.0403   2.0798e-01&#xD;
+  18       0.0410         0.0010         0.0399   2.0748e-01&#xD;
+  19       0.0407         0.0010         0.0396   2.0704e-01&#xD;
+  20       0.0403         0.0011         0.0393   2.0666e-01&#xD;
+  21       0.0400         0.0011         0.0390   2.0632e-01&#xD;
+  22       0.0397         0.0011         0.0387   2.0602e-01&#xD;
+  23       0.0394         0.0011         0.0383   2.0576e-01&#xD;
+  24       0.0391         0.0011         0.0380   2.0552e-01&#xD;
+  25       0.0388         0.0011         0.0377   2.0531e-01&#xD;
+  26       0.0385         0.0011         0.0374   2.0512e-01&#xD;
+  27       0.0382         0.0011         0.0371   2.0496e-01&#xD;
+  28       0.0379         0.0011         0.0369   2.0481e-01&#xD;
+  29       0.0377         0.0011         0.0366   2.0469e-01&#xD;
+  30       0.0374         0.0011         0.0363   2.0457e-01&#xD;
+  31       0.0371         0.0011         0.0360   2.0447e-01&#xD;
+  32       0.0369         0.0011         0.0358   2.0438e-01&#xD;
+  33       0.0367         0.0011         0.0356   2.0430e-01&#xD;
+  34       0.0364         0.0011         0.0353   2.0423e-01&#xD;
+  35       0.0362         0.0011         0.0351   2.0417e-01&#xD;
+  36       0.0360         0.0011         0.0349   2.0411e-01&#xD;
+  37       0.0358         0.0011         0.0347   2.0406e-01&#xD;
+  38       0.0356         0.0011         0.0345   2.0402e-01&#xD;
+  39       0.0354         0.0011         0.0343   2.0398e-01&#xD;
+  40       0.0352         0.0011         0.0341   2.0395e-01&#xD;
+  41       0.0351         0.0012         0.0339   2.0392e-01&#xD;
+  42       0.0349         0.0012         0.0337   2.0389e-01&#xD;
+  43       0.0347         0.0012         0.0336   2.0386e-01&#xD;
+  44       0.0346         0.0012         0.0334   2.0384e-01&#xD;
+  45       0.0344         0.0012         0.0332   2.0382e-01&#xD;
+  46       0.0343         0.0012         0.0331   2.0380e-01&#xD;
+  47       0.0341         0.0012         0.0329   2.0379e-01&#xD;
+  48       0.0340         0.0012         0.0328   2.0378e-01&#xD;
+  49       0.0339         0.0012         0.0327   2.0376e-01&#xD;
+  50       0.0337         0.0012         0.0325   2.0375e-01&#xD;
+  51       0.0336         0.0012         0.0324   2.0374e-01&#xD;
+  52       0.0335         0.0012         0.0323   2.0373e-01&#xD;
+  53       0.0334         0.0012         0.0322   2.0372e-01&#xD;
+  54       0.0333         0.0012         0.0321   2.0372e-01&#xD;
+  55       0.0332         0.0012         0.0320   2.0371e-01&#xD;
+  56       0.0331         0.0012         0.0319   2.0370e-01&#xD;
+  57       0.0330         0.0012         0.0318   2.0370e-01&#xD;
+  58       0.0329         0.0012         0.0317   2.0369e-01&#xD;
+  59       0.0328         0.0012         0.0316   2.0369e-01&#xD;
+  60       0.0327         0.0012         0.0315   2.0369e-01&#xD;
+  61       0.0326         0.0012         0.0314   2.0368e-01&#xD;
+  62       0.0326         0.0012         0.0313   2.0368e-01&#xD;
+  63       0.0325         0.0012         0.0313   2.0368e-01&#xD;
+  64       0.0324         0.0012         0.0312   2.0367e-01&#xD;
+  65       0.0323         0.0012         0.0311   2.0367e-01&#xD;
+  66       0.0323         0.0012         0.0310   2.0367e-01&#xD;
+  67       0.0322         0.0012         0.0310   2.0367e-01&#xD;
+  68       0.0322         0.0012         0.0309   2.0367e-01&#xD;
+  69       0.0321         0.0012         0.0309   2.0366e-01&#xD;
+  70       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  71       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  72       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  73       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  74       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  75       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  76       0.0318         0.0012         0.0305   2.0366e-01&#xD;
+  77       0.0317         0.0012         0.0305   2.0366e-01&#xD;
+  78       0.0317         0.0012         0.0304   2.0366e-01&#xD;
+  79       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  80       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  81       0.0316         0.0012         0.0303   2.0365e-01&#xD;
+  82       0.0315         0.0012         0.0303   2.0365e-01&#xD;
+  83       0.0315         0.0013         0.0303   2.0365e-01&#xD;
+  84       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  85       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  86       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  87       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  88       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  89       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  90       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  91       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  92       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  93       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  94       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  95       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  96       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  97       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  98       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  99       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+iter   tr_sqerror    tr_sqerror+    tr_sqerror-          obj&#xD;
+   0       0.0492         0.0006         0.0486   2.4411e-01&#xD;
+   1       0.0486         0.0006         0.0480   2.3878e-01&#xD;
+   2       0.0480         0.0007         0.0473   2.3416e-01&#xD;
+   3       0.0475         0.0007         0.0468   2.3023e-01&#xD;
+   4       0.0470         0.0007         0.0462   2.2687e-01&#xD;
+   5       0.0464         0.0007         0.0457   2.2395e-01&#xD;
+   6       0.0459         0.0007         0.0451   2.2140e-01&#xD;
+   7       0.0453         0.0008         0.0446   2.1918e-01&#xD;
+   8       0.0449         0.0008         0.0441   2.1726e-01&#xD;
+   9       0.0444         0.0008         0.0436   2.1559e-01&#xD;
+  10       0.0440         0.0008         0.0431   2.1413e-01&#xD;
+  11       0.0435         0.0009         0.0427   2.1286e-01&#xD;
+  12       0.0431         0.0009         0.0422   2.1175e-01&#xD;
+  13       0.0427         0.0009         0.0418   2.1079e-01&#xD;
+  14       0.0423         0.0009         0.0414   2.0994e-01&#xD;
+  15       0.0420         0.0010         0.0410   2.0920e-01&#xD;
+  16       0.0416         0.0010         0.0407   2.0855e-01&#xD;
+  17       0.0413         0.0010         0.0403   2.0798e-01&#xD;
+  18       0.0410         0.0010         0.0399   2.0748e-01&#xD;
+  19       0.0407         0.0010         0.0396   2.0704e-01&#xD;
+  20       0.0403         0.0011         0.0393   2.0666e-01&#xD;
+  21       0.0400         0.0011         0.0390   2.0632e-01&#xD;
+  22       0.0397         0.0011         0.0387   2.0602e-01&#xD;
+  23       0.0394         0.0011         0.0383   2.0576e-01&#xD;
+  24       0.0391         0.0011         0.0380   2.0552e-01&#xD;
+  25       0.0388         0.0011         0.0377   2.0531e-01&#xD;
+  26       0.0385         0.0011         0.0374   2.0512e-01&#xD;
+  27       0.0382         0.0011         0.0371   2.0496e-01&#xD;
+  28       0.0379         0.0011         0.0369   2.0481e-01&#xD;
+  29       0.0377         0.0011         0.0366   2.0469e-01&#xD;
+  30       0.0374         0.0011         0.0363   2.0457e-01&#xD;
+  31       0.0371         0.0011         0.0360   2.0447e-01&#xD;
+  32       0.0369         0.0011         0.0358   2.0438e-01&#xD;
+  33       0.0367         0.0011         0.0356   2.0430e-01&#xD;
+  34       0.0364         0.0011         0.0353   2.0423e-01&#xD;
+  35       0.0362         0.0011         0.0351   2.0417e-01&#xD;
+  36       0.0360         0.0011         0.0349   2.0411e-01&#xD;
+  37       0.0358         0.0011         0.0347   2.0406e-01&#xD;
+  38       0.0356         0.0011         0.0345   2.0402e-01&#xD;
+  39       0.0354         0.0011         0.0343   2.0398e-01&#xD;
+  40       0.0352         0.0011         0.0341   2.0395e-01&#xD;
+  41       0.0351         0.0012         0.0339   2.0392e-01&#xD;
+  42       0.0349         0.0012         0.0337   2.0389e-01&#xD;
+  43       0.0347         0.0012         0.0336   2.0386e-01&#xD;
+  44       0.0346         0.0012         0.0334   2.0384e-01&#xD;
+  45       0.0344         0.0012         0.0332   2.0382e-01&#xD;
+  46       0.0343         0.0012         0.0331   2.0380e-01&#xD;
+  47       0.0341         0.0012         0.0329   2.0379e-01&#xD;
+  48       0.0340         0.0012         0.0328   2.0378e-01&#xD;
+  49       0.0339         0.0012         0.0327   2.0376e-01&#xD;
+  50       0.0337         0.0012         0.0325   2.0375e-01&#xD;
+  51       0.0336         0.0012         0.0324   2.0374e-01&#xD;
+  52       0.0335         0.0012         0.0323   2.0373e-01&#xD;
+  53       0.0334         0.0012         0.0322   2.0372e-01&#xD;
+  54       0.0333         0.0012         0.0321   2.0372e-01&#xD;
+  55       0.0332         0.0012         0.0320   2.0371e-01&#xD;
+  56       0.0331         0.0012         0.0319   2.0370e-01&#xD;
+  57       0.0330         0.0012         0.0318   2.0370e-01&#xD;
+  58       0.0329         0.0012         0.0317   2.0369e-01&#xD;
+  59       0.0328         0.0012         0.0316   2.0369e-01&#xD;
+  60       0.0327         0.0012         0.0315   2.0369e-01&#xD;
+  61       0.0326         0.0012         0.0314   2.0368e-01&#xD;
+  62       0.0326         0.0012         0.0313   2.0368e-01&#xD;
+  63       0.0325         0.0012         0.0313   2.0368e-01&#xD;
+  64       0.0324         0.0012         0.0312   2.0367e-01&#xD;
+  65       0.0323         0.0012         0.0311   2.0367e-01&#xD;
+  66       0.0323         0.0012         0.0310   2.0367e-01&#xD;
+  67       0.0322         0.0012         0.0310   2.0367e-01&#xD;
+  68       0.0322         0.0012         0.0309   2.0367e-01&#xD;
+  69       0.0321         0.0012         0.0309   2.0366e-01&#xD;
+  70       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  71       0.0320         0.0012         0.0308   2.0366e-01&#xD;
+  72       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  73       0.0319         0.0012         0.0307   2.0366e-01&#xD;
+  74       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  75       0.0318         0.0012         0.0306   2.0366e-01&#xD;
+  76       0.0318         0.0012         0.0305   2.0366e-01&#xD;
+  77       0.0317         0.0012         0.0305   2.0366e-01&#xD;
+  78       0.0317         0.0012         0.0304   2.0366e-01&#xD;
+  79       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  80       0.0316         0.0012         0.0304   2.0365e-01&#xD;
+  81       0.0316         0.0012         0.0303   2.0365e-01&#xD;
+  82       0.0315         0.0012         0.0303   2.0365e-01&#xD;
+  83       0.0315         0.0013         0.0303   2.0365e-01&#xD;
+  84       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  85       0.0315         0.0013         0.0302   2.0365e-01&#xD;
+  86       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  87       0.0314         0.0013         0.0302   2.0365e-01&#xD;
+  88       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  89       0.0314         0.0013         0.0301   2.0365e-01&#xD;
+  90       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  91       0.0313         0.0013         0.0301   2.0365e-01&#xD;
+  92       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  93       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  94       0.0313         0.0013         0.0300   2.0365e-01&#xD;
+  95       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  96       0.0312         0.0013         0.0300   2.0365e-01&#xD;
+  97       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  98       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+  99       0.0312         0.0013         0.0299   2.0365e-01&#xD;
+[testcontainers.org 00:00:00.09] Connected to Docker:&#xD;
+  Host: npipe://./pipe/docker_engine&#xD;
+  Server Version: 29.6.2&#xD;
+  Kernel Version: 6.18.33.2-microsoft-standard-WSL2&#xD;
+  API Version: 1.55&#xD;
+  Operating System: Docker Desktop&#xD;
+  Total Memory: 15.33 GB&#xD;
+  Labels: &#xD;
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli&#xD;
+[testcontainers.org 00:00:00.40] Docker container d2b9f2f8704f created&#xD;
+[testcontainers.org 00:00:00.48] Start Docker container d2b9f2f8704f&#xD;
+[testcontainers.org 00:00:00.71] Wait for Docker container d2b9f2f8704f to complete readiness checks&#xD;
+[testcontainers.org 00:00:00.72] Docker container d2b9f2f8704f ready&#xD;
+[testcontainers.org 00:00:00.90] Docker container dd5b21fc950a created&#xD;
+[testcontainers.org 00:00:00.91] Start Docker container dd5b21fc950a&#xD;
+[testcontainers.org 00:00:01.15] Execute "mkdir /var/lib/mysql-files" at Docker container dd5b21fc950a&#xD;
+[testcontainers.org 00:00:01.16] Add file to tar archive: Content length: 50 byte(s), Target file: "/etc/mysql/my.cnf"&#xD;
+[testcontainers.org 00:00:01.18] Copy tar archive to container: Content length: 50 byte(s), Docker container: dd5b21fc950a&#xD;
+[testcontainers.org 00:00:01.25] Wait for Docker container dd5b21fc950a to complete readiness checks&#xD;
+[testcontainers.org 00:00:01.27] Execute "mysql online_supermarket_test --wait --silent --execute=SELECT 1;" at Docker container dd5b21fc950a&#xD;
+[testcontainers.org 00:00:07.36] Execute "mysql online_supermarket_test --wait --silent --execute=SELECT 1;" at Docker container dd5b21fc950a&#xD;
+[testcontainers.org 00:00:12.45] Docker container dd5b21fc950a ready&#xD;
+[testcontainers.org 00:00:16.00] Docker container b2e27fb9dd25 created&#xD;
+[testcontainers.org 00:00:16.02] Start Docker container b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:16.24] Execute "mkdir /var/lib/mysql-files" at Docker container b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:16.24] Add file to tar archive: Content length: 50 byte(s), Target file: "/etc/mysql/my.cnf"&#xD;
+[testcontainers.org 00:00:16.24] Copy tar archive to container: Content length: 50 byte(s), Docker container: b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:16.32] Wait for Docker container b2e27fb9dd25 to complete readiness checks&#xD;
+[testcontainers.org 00:00:16.33] Execute "mysql online_supermarket_test --wait --silent --execute=SELECT 1;" at Docker container b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:22.43] Execute "mysql online_supermarket_test --wait --silent --execute=SELECT 1;" at Docker container b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:27.52] Docker container b2e27fb9dd25 ready&#xD;
+[testcontainers.org 00:00:30.53] Delete Docker container b2e27fb9dd25&#xD;
+[testcontainers.org 00:00:30.99] Delete Docker container dd5b21fc950a&#xD;
+[xUnit.net 00:00:39.26]   Finished:    OnlineSupermarket.Infrastructure.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

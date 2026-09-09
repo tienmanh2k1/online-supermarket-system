@@ -447,7 +447,7 @@ public sealed class AdminCatalogEndpointsTests : IClassFixture<AuthTestApiFactor
 
         var page = await response.Content.ReadFromJsonAsync<PaginatedResponse<AdminProductDto>>();
         Assert.NotNull(page);
-        Assert.Contains(page!.Items, p => p.Sku == prod.Sku);
+        Assert.Contains(page!.Data, p => p.Sku == prod.Sku);
         Assert.Equal(20, page.Meta.PageSize);
     }
 

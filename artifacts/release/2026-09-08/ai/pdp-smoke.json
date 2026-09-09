@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-09-08T05:58:57.473Z",
+  "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed",
+  "url": "http://localhost:5173/product/37059735-8e29-4fa6-9971-ad2ea58b3eed",
+  "shelfTitle": "Sản phẩm tương tự",
+  "cardCount": 8,
+  "productTitles": [
+    "MacBook Pro 14\" M3 Pro",
+    "Dell XPS 15 9530 (i7, 16GB, 512GB)",
+    "ASUS ZenBook 14 OLED",
+    "ASUS ROG Strix G16 Gaming",
+    "AirPods Pro 2",
+    "iPhone 15 128GB",
+    "iPhone 15 Pro Max 256GB",
+    "iPad Mini 6 64GB WiFi"
+  ],
+  "screenshot": "pdp-similar.png",
+  "status": "PASS"
+}

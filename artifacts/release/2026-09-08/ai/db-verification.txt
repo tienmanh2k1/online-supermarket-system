@@ -1,0 +1,19 @@
+=== DATABASE VERIFICATION REPORT ===
+Batch Job Run ID: daca78f9-1d6a-4813-b41b-cd81b1e60925
+Verified At (UTC): 2026-09-08T05:38:17.264Z
+
+Scope and Version Counts in MySQL:
+Global	content-v1	9
+SimilarProduct	content-v1	64
+User	mf-v1	14
+
+User 1 Recommendations (userId: 2c9641e3-dd9b-4fd7-9c30-9b8138b55edf):
+Rank	ProductId	Name	Score	Version	Reason	GeneratedAt	ExpiresAt
+1	0baae464-4f4c-49a0-8699-743aa32e28b3	Dell XPS 15 9530 (i7, 16GB, 512GB)	0.874240	mf-v1	G?i � t? m� h�nh AI	2026-09-08 05:38:15.163505	2026-09-08 06:53:15.163505
+2	3201f989-ff03-4a97-be7c-620ea7bc1b32	Samsung Galaxy Tab S9 FE	0.578975	mf-v1	G?i � t? m� h�nh AI	2026-09-08 05:38:15.163505	2026-09-08 06:53:15.163505
+3	bd00c190-a496-484f-8818-98dba5a52533	LG Door-in-Door 601L InstaView	0.178329	mf-v1	G?i � t? m� h�nh AI	2026-09-08 05:38:15.163505	2026-09-08 06:53:15.163505
+
+Seen Product IDs count for U1: 6
+Seen products overlap with recommendations: NONE (0)
+Verified unexpired: YES (expiresAtUtc > generatedAtUtc)
+Verification Status: PASS

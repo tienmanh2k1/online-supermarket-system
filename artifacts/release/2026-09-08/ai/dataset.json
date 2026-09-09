@@ -1,0 +1,303 @@
+{
+  "generatedAtUtc": "2026-09-08T05:34:35.941Z",
+  "branch": {
+    "id": "de4870ff-651e-4eb5-b509-21a834d76bb2",
+    "name": "AptechMart Quận 1"
+  },
+  "users": [
+    {
+      "key": "U1",
+      "id": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "email": "user1@test.com",
+      "fullName": "Nguyen Van An"
+    },
+    {
+      "key": "U2",
+      "id": "416f985e-bf18-400f-8995-99df54303d13",
+      "email": "user2@test.com",
+      "fullName": "Tran Thi Binh"
+    },
+    {
+      "key": "U3",
+      "id": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "email": "user3@test.com",
+      "fullName": "Le Hoang Cuong"
+    },
+    {
+      "key": "U4",
+      "id": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "email": "user4@test.com",
+      "fullName": "Nguyen Van Bon"
+    },
+    {
+      "key": "U5",
+      "id": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "email": "user5@test.com",
+      "fullName": "Hoang Thi Nam"
+    }
+  ],
+  "coldUser": {
+    "key": "Cold",
+    "id": "ad92cf23-cba5-4608-a0ee-252cc9886ec1",
+    "email": "colduser@test.com",
+    "fullName": "Cold Start User",
+    "signalsCount": 0
+  },
+  "products": [
+    {
+      "key": "P1",
+      "id": "37059735-8e29-4fa6-9971-ad2ea58b3eed",
+      "name": "MacBook Air 15\" M3",
+      "sku": "LT-APP-002"
+    },
+    {
+      "key": "P2",
+      "id": "8b189102-5794-4f8a-b664-676e45e1c425",
+      "name": "Samsung Galaxy S24 Ultra 256GB",
+      "sku": "DT-SAM-001"
+    },
+    {
+      "key": "P3",
+      "id": "5ab9dcbe-def1-496d-9714-6d807f1dcedb",
+      "name": "iPhone 15 Pro Max 256GB",
+      "sku": "DT-APP-001"
+    },
+    {
+      "key": "P4",
+      "id": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be",
+      "name": "iPhone 15 128GB",
+      "sku": "DT-APP-002"
+    },
+    {
+      "key": "P5",
+      "id": "285bbaef-ae80-4d1b-a9fb-33661daa67c9",
+      "name": "AirPods Pro 2",
+      "sku": "PK-APP-001"
+    },
+    {
+      "key": "P6",
+      "id": "7f22bfa6-46d4-4db4-8512-c1407d844562",
+      "name": "MacBook Pro 14\" M3 Pro",
+      "sku": "LT-APP-001"
+    },
+    {
+      "key": "P7",
+      "id": "0baae464-4f4c-49a0-8699-743aa32e28b3",
+      "name": "Dell XPS 15 9530 (i7, 16GB, 512GB)",
+      "sku": "LT-DEL-001"
+    },
+    {
+      "key": "P8",
+      "id": "3201f989-ff03-4a97-be7c-620ea7bc1b32",
+      "name": "Samsung Galaxy Tab S9 FE",
+      "sku": "DT-SAM-003"
+    }
+  ],
+  "matrix": [
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P1",
+      "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed"
+    },
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P2",
+      "productId": "8b189102-5794-4f8a-b664-676e45e1c425"
+    },
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P3",
+      "productId": "5ab9dcbe-def1-496d-9714-6d807f1dcedb"
+    },
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P4",
+      "productId": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be"
+    },
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P5",
+      "productId": "285bbaef-ae80-4d1b-a9fb-33661daa67c9"
+    },
+    {
+      "userKey": "U1",
+      "userId": "2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "productKey": "P6",
+      "productId": "7f22bfa6-46d4-4db4-8512-c1407d844562"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P2",
+      "productId": "8b189102-5794-4f8a-b664-676e45e1c425"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P3",
+      "productId": "5ab9dcbe-def1-496d-9714-6d807f1dcedb"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P4",
+      "productId": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P5",
+      "productId": "285bbaef-ae80-4d1b-a9fb-33661daa67c9"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P6",
+      "productId": "7f22bfa6-46d4-4db4-8512-c1407d844562"
+    },
+    {
+      "userKey": "U2",
+      "userId": "416f985e-bf18-400f-8995-99df54303d13",
+      "productKey": "P7",
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P3",
+      "productId": "5ab9dcbe-def1-496d-9714-6d807f1dcedb"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P4",
+      "productId": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P5",
+      "productId": "285bbaef-ae80-4d1b-a9fb-33661daa67c9"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P6",
+      "productId": "7f22bfa6-46d4-4db4-8512-c1407d844562"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P7",
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3"
+    },
+    {
+      "userKey": "U3",
+      "userId": "bf7e7887-942c-49ec-9651-41eb937d2218",
+      "productKey": "P8",
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P4",
+      "productId": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P5",
+      "productId": "285bbaef-ae80-4d1b-a9fb-33661daa67c9"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P6",
+      "productId": "7f22bfa6-46d4-4db4-8512-c1407d844562"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P7",
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P8",
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32"
+    },
+    {
+      "userKey": "U4",
+      "userId": "b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "productKey": "P1",
+      "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P5",
+      "productId": "285bbaef-ae80-4d1b-a9fb-33661daa67c9"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P6",
+      "productId": "7f22bfa6-46d4-4db4-8512-c1407d844562"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P7",
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P8",
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P1",
+      "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed"
+    },
+    {
+      "userKey": "U5",
+      "userId": "41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "productKey": "P2",
+      "productId": "8b189102-5794-4f8a-b664-676e45e1c425"
+    }
+  ],
+  "counts": {
+    "rawViewsInWindow": 35,
+    "completedOrderItemsInWindow": 3,
+    "scorerSignalsCount": 31,
+    "usersCount": 5,
+    "productsCount": 8,
+    "newViewsAddedInThisRun": 0
+  },
+  "u1UnseenCandidates": [
+    {
+      "key": "P7",
+      "id": "0baae464-4f4c-49a0-8699-743aa32e28b3",
+      "name": "Dell XPS 15 9530 (i7, 16GB, 512GB)",
+      "inStock": true,
+      "active": true
+    },
+    {
+      "key": "P8",
+      "id": "3201f989-ff03-4a97-be7c-620ea7bc1b32",
+      "name": "Samsung Galaxy Tab S9 FE",
+      "inStock": true,
+      "active": true
+    }
+  ],
+  "notes": "Ma trận 30 cặp tương tác tổng hợp được thiết kế để đảm bảo MF có đủ tín hiệu phân tách giữa các user và U1 còn ít nhất 2 ứng viên unseen có mặt trong tập train."
+}

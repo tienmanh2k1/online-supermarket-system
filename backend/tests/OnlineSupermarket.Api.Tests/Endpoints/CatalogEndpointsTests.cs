@@ -26,9 +26,9 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         var response = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
             $"/api/products?categoryId={tvAndMonitor.Id}&pageSize=100");
 
-        Assert.Contains(response!.Items, p => p.Sku == "TV-SAM-001");
-        Assert.Contains(response.Items, p => p.Sku == "MH-SAM-001");
-        Assert.DoesNotContain(response.Items, p => p.Sku == "AT-JBL-001");
+        Assert.Contains(response!.Data, p => p.Sku == "TV-SAM-001");
+        Assert.Contains(response.Data, p => p.Sku == "MH-SAM-001");
+        Assert.DoesNotContain(response.Data, p => p.Sku == "AT-JBL-001");
     }
 
     [Fact]
@@ -42,12 +42,12 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         var response = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
             $"/api/products?categoryId={tv.Id}&pageSize=100");
 
-        Assert.All(response!.Items, p => Assert.Equal("tivi", p.CategorySlug));
-        Assert.DoesNotContain(response.Items, p => p.Sku == "MH-SAM-001");
+        Assert.All(response!.Data, p => Assert.Equal("TV", p.CategoryName));
+        Assert.DoesNotContain(response.Data, p => p.Sku == "MH-SAM-001");
 
         var detail = await client.GetFromJsonAsync<ProductDetailDto>(
-            $"/api/products/{response.Items[0].Id}");
-        Assert.Equal("tivi", detail!.CategorySlug);
+            $"/api/products/{response.Data[0].Id}");
+        Assert.Equal("TV", detail!.CategoryName);
     }
 
     [Fact]
@@ -87,9 +87,9 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.DoesNotContain(brandsResponse!, b => b.Slug == "inactive-brand");
 
         var productsResponse = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>("/api/products");
-        Assert.DoesNotContain(productsResponse!.Items, p => p.Sku == "INAC-PROD");
-        Assert.DoesNotContain(productsResponse.Items, p => p.Sku == "INAC-CAT-PROD");
-        Assert.DoesNotContain(productsResponse.Items, p => p.Sku == "INAC-BRAND-PROD");
+        Assert.DoesNotContain(productsResponse!.Data, p => p.Sku == "INAC-PROD");
+        Assert.DoesNotContain(productsResponse.Data, p => p.Sku == "INAC-CAT-PROD");
+        Assert.DoesNotContain(productsResponse.Data, p => p.Sku == "INAC-BRAND-PROD");
 
         var inactiveProdResponse = await client.GetAsync($"/api/products/{inactiveProduct.Id}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, inactiveProdResponse.StatusCode);
@@ -131,13 +131,13 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.DoesNotContain(categories!, c => c.Slug == "leaf-active-1");
 
         var products = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>("/api/products");
-        Assert.DoesNotContain(products!.Items, p => p.Sku == "TREE-PROD-1");
+        Assert.DoesNotContain(products!.Data, p => p.Sku == "TREE-PROD-1");
 
         var detailResponse = await client.GetAsync($"/api/products/{product.Id}");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, detailResponse.StatusCode);
 
         var queryByLeaf = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>($"/api/products?categoryId={leafActive.Id}");
-        Assert.Empty(queryByLeaf!.Items);
+        Assert.Empty(queryByLeaf!.Data);
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.DoesNotContain(categories!, c => c.Slug == "leaf-active-2");
 
         var products = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>("/api/products");
-        Assert.DoesNotContain(products!.Items, p => p.Sku == "TREE-PROD-2");
+        Assert.DoesNotContain(products!.Data, p => p.Sku == "TREE-PROD-2");
     }
 
     [Fact]
@@ -199,8 +199,8 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         var response = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
             $"/api/products?categoryId={root.Id}&pageSize=100");
 
-        Assert.Contains(response!.Items, p => p.Sku == "MULTI-P1");
-        Assert.Contains(response.Items, p => p.Sku == "MULTI-P2");
-        Assert.Contains(response.Items, p => p.Sku == "MULTI-P3");
+        Assert.Contains(response!.Data, p => p.Sku == "MULTI-P1");
+        Assert.Contains(response.Data, p => p.Sku == "MULTI-P2");
+        Assert.Contains(response.Data, p => p.Sku == "MULTI-P3");
     }
 }

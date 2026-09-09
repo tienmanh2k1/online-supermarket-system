@@ -15,7 +15,7 @@ Hoàn thiện các khoảng trống giao diện có rủi ro cao nhất trước
 - Tái sử dụng API backend hiện có:
   - `POST /api/auth/password-reset`
   - `POST /api/auth/password-reset/confirm`
-- Bản nộp chạy API với `ASPNETCORE_ENVIRONMENT=Development` như `compose.yaml`, dùng `DevEmailSender`; thêm endpoint đọc email reset mới nhất chỉ được map trong Development để lấy link demo. Không tuyên bố hệ thống có nhà cung cấp email production.
+- Bản nộp chạy API với `ASPNETCORE_ENVIRONMENT=Development` như `compose.yaml`, dùng `DevEmailSender`; thêm endpoint đọc email reset mới nhất chỉ được map trong Development và yêu cầu policy `AdminOnly` để lấy link demo. E2E dùng bearer token Admin qua API request context riêng, tách khỏi browser context Customer. Không tuyên bố hệ thống có nhà cung cấp email production.
 - Kịch bản nghiệm thu bắt buộc: yêu cầu reset → lấy link từ dev mailbox → mở link trên frontend → đổi mật khẩu → đăng nhập bằng mật khẩu mới.
 
 ### 2. Trang không tìm thấy
@@ -82,6 +82,7 @@ Nếu cần endpoint báo cáo mới, backend đặt trong nhóm `/api/admin`, k
 - Vitest/Testing Library bao phủ route, submit form, loading/error/success/empty state và quyền truy cập Admin.
 - Backend test xác nhận role, validation khoảng ngày và phép tổng hợp report nếu endpoint mới được thêm.
 - `npm test -- --run` và `npm run build` phải thành công.
+- Vitest chỉ thu thập tests trong `frontend/src`; Playwright dùng `frontend/e2e`. Tạo E2E suite trước khi chạy lại cả hai bộ để xác nhận chúng không thu thập nhầm tests của nhau.
 - Chạy các test backend bị ảnh hưởng và build solution; không bắt buộc chạy bộ integration MySQL nếu môi trường nộp không có database, nhưng phải ghi rõ phần chưa chạy.
 - Kiểm tra thủ công các route ở desktop và viewport mobile cơ bản.
 - Chạy một lượt end-to-end với frontend và API/database thật: dashboard → chi tiết đơn, đổi preset report và đối chiếu dữ liệu seed, reset password đầy đủ rồi đăng nhập bằng mật khẩu mới.

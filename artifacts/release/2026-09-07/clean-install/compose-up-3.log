@@ -1,0 +1,155 @@
+ Image clean-test-frontend Building 
+ Image clean-test-api Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.16kB done
+#1 DONE 0.0s
+
+#2 [frontend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 420B 0.0s done
+#2 DONE 0.0s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 569B done
+#3 DONE 0.0s
+
+#4 [auth] library/node:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [auth] library/nginx:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#6 [api internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0
+#6 ...
+
+#7 [api internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0
+#7 DONE 0.7s
+
+#6 [api internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0
+#6 DONE 0.7s
+
+#8 [api internal] load .dockerignore
+#8 transferring context: 117B done
+#8 DONE 0.0s
+
+#9 [api build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1ffd2a92ae84c1291bc1b6887501f8af98e6331e7af6d4c8d37168c5e87a64c
+#9 resolve mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1ffd2a92ae84c1291bc1b6887501f8af98e6331e7af6d4c8d37168c5e87a64c 0.0s done
+#9 DONE 0.0s
+
+#10 [api runtime 1/3] FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:a4556ed033fa96f984bb7a8d348851cb2d36b1281dd2420070045f664fbb5f94
+#10 resolve mcr.microsoft.com/dotnet/aspnet:10.0@sha256:a4556ed033fa96f984bb7a8d348851cb2d36b1281dd2420070045f664fbb5f94 0.0s done
+#10 DONE 0.1s
+
+#11 [api internal] load build context
+#11 transferring context: 171.86kB 0.1s done
+#11 DONE 0.2s
+
+#12 [api build 5/6] RUN dotnet restore OnlineSupermarket.slnx
+#12 CACHED
+
+#13 [api runtime 2/3] WORKDIR /app
+#13 CACHED
+
+#14 [api build 2/6] WORKDIR /src
+#14 CACHED
+
+#15 [api build 3/6] COPY global.json Directory.Build.props OnlineSupermarket.slnx ./
+#15 CACHED
+
+#16 [api build 6/6] RUN dotnet publish backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj     --configuration Release     --no-restore     --output /app/publish
+#16 CACHED
+
+#17 [api build 4/6] COPY backend ./backend
+#17 CACHED
+
+#18 [api runtime 3/3] COPY --from=build /app/publish .
+#18 CACHED
+
+#19 [api] exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:cd1bf24204b01ef3086398ac098ef7bf7e7db31456b1086913fd7455ab5982cb done
+#19 exporting config sha256:8e605fc90612b40ea554a87cf87b775d7f0d8432bc1ee0d4a672d66226ddd412 done
+#19 exporting attestation manifest sha256:3f7866a9c1e3c660a1a1b4f3d919aa1c6fe4f4b6b9af05a7abf3d3949b547413 0.0s done
+#19 exporting manifest list sha256:90f0d5e8e300384beff577bdb11dbb418c4105875ff2cd0d343cac4eff952de7
+#19 exporting manifest list sha256:90f0d5e8e300384beff577bdb11dbb418c4105875ff2cd0d343cac4eff952de7 0.0s done
+#19 naming to docker.io/library/clean-test-api:latest done
+#19 unpacking to docker.io/library/clean-test-api:latest 0.0s done
+#19 DONE 0.2s
+
+#20 [api] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [frontend internal] load metadata for docker.io/library/nginx:1.29-alpine
+#21 DONE 1.4s
+
+#22 [frontend internal] load metadata for docker.io/library/node:24-alpine
+#22 DONE 1.4s
+
+#8 [frontend internal] load .dockerignore
+#8 CACHED
+
+#23 [frontend build 1/6] FROM docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#23 resolve docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf 0.0s done
+#23 DONE 0.0s
+
+#24 [frontend runtime 1/3] FROM docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
+#24 resolve docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de 0.0s done
+#24 DONE 0.1s
+
+#25 [frontend internal] load build context
+#25 transferring context: 960.35kB 0.2s done
+#25 DONE 0.2s
+
+#26 [frontend build 4/6] RUN npm ci
+#26 CACHED
+
+#27 [frontend runtime 2/3] COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+#27 CACHED
+
+#28 [frontend build 2/6] WORKDIR /app
+#28 CACHED
+
+#29 [frontend build 3/6] COPY frontend/package.json frontend/package-lock.json ./
+#29 CACHED
+
+#30 [frontend build 5/6] COPY frontend ./
+#30 CACHED
+
+#31 [frontend build 6/6] RUN npm run build
+#31 CACHED
+
+#32 [frontend runtime 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+#32 CACHED
+
+#33 [frontend] exporting to image
+#33 exporting layers done
+#33 exporting manifest sha256:b5b46e844ee5847944f03ee933d8c9e14a37db34c6dd34f164e23284648e593a done
+#33 exporting config sha256:f205cf8f8319409baec6daad2117f18967b313d7efae754484d40534d191da4d done
+#33 exporting attestation manifest sha256:28c7bd8ec598bc7522167d2550a7259b9cb3af9c38c76f54efd72ed13262d398 0.0s done
+#33 exporting manifest list sha256:9ad347dacc43f010cea9617c4924e50108d2ff4956c0eb877c593e6c1e1428e0
+#33 exporting manifest list sha256:9ad347dacc43f010cea9617c4924e50108d2ff4956c0eb877c593e6c1e1428e0 0.0s done
+#33 naming to docker.io/library/clean-test-frontend:latest done
+#33 unpacking to docker.io/library/clean-test-frontend:latest 0.0s done
+#33 DONE 0.2s
+
+#34 [frontend] resolving provenance for metadata file
+#34 DONE 0.0s
+ Image clean-test-api Built 
+ Image clean-test-frontend Built 
+ Network clean-test_default Creating 
+ Network clean-test_default Created 
+ Volume clean-test_mysql_data Creating 
+ Volume clean-test_mysql_data Created 
+ Container clean-test-mysql-1 Creating 
+ Container clean-test-mysql-1 Created 
+ Container clean-test-api-1 Creating 
+ Container clean-test-api-1 Created 
+ Container clean-test-frontend-1 Creating 
+ Container clean-test-frontend-1 Created 
+ Container clean-test-mysql-1 Starting 
+ Container clean-test-mysql-1 Started 
+ Container clean-test-mysql-1 Waiting 
+ Container clean-test-mysql-1 Healthy 
+ Container clean-test-api-1 Starting 
+ Container clean-test-api-1 Started 
+ Container clean-test-frontend-1 Starting 
+ Container clean-test-frontend-1 Started 

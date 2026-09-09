@@ -1,0 +1,14 @@
+ML.NET POC evidence 2026-09-07T11:09:35+07:00
+Command: dotnet run --project backend/src/OnlineSupermarket.Api/ml-poc/MlPoc.csproj -c Release
+Package: Microsoft.ML.Recommender 0.22.0, TargetFramework net10.0
+Fixture: 5 users x 8 products, 30 interactions, seed 42, fixed (no DB)
+Train time: ~1.0s, no exception, no NaN/Infinity
+Probes (6):
+  user=0 product=7 score=0.2585 finite
+  user=1 product=7 score=0.4774 finite
+  user=2 product=1 score=0.3634 finite
+  user=4 product=6 score=0.9873 finite
+  user=3 product=7 score=0.9881 finite
+  user=0 product=4 score=0.2585 finite
+Result: POC_PASS (6/6 finite >= 5), exit 0 both runs (fresh process, deterministic)
+Repo SHA: 85f48aee73d89e6f3e7fd62a1f31b2499c29ba4a

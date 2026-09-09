@@ -210,7 +210,7 @@ public sealed class RecommendationReadEndpointsTests
         var seed = await SeedMaterializationAsync(factory);
 
         var tooSmall = await seed.Client.GetAsync("/api/recommendations?limit=0");
-        var tooLarge = await seed.Client.GetAsync("/api/recommendations?limit=21");
+        var tooLarge = await seed.Client.GetAsync("/api/recommendations?limit=51");
 
         Assert.Equal(HttpStatusCode.BadRequest, tooSmall.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, tooLarge.StatusCode);

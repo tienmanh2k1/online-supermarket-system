@@ -1,510 +1,182 @@
-# Sitemap Hệ thống AptechMart - Siêu thị Điện tử Trực tuyến
+# Sitemap Hệ Thống AptechMart - Siêu Thị Điện Tử Trực Tuyến
 
-Status: **OFFICIAL**
-Ngày: 2026-08-19
-Phạm vi: Guest, Customer, Admin; route đích; guard và trạng thái lỗi
-Liên kết: Trace tới FR (Functional Requirement) và DFD Process
+Trạng thái: **OFFICIAL (Canonical) — RELEASE READY (Gate A & Gate B Verified)**  
+Ngày cập nhật: 2026-09-08  
+Phạm vi: Cấu trúc điều hướng giao diện React Storefront & Admin Portal thực tế (khớp 100% với `frontend/src/App.tsx`).  
+Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-209) và Sơ đồ Luồng Dữ liệu (DFD P.1 đến P.12).
 
-> **OFFICIAL:** Tài liệu này là canonical sitemap cho hệ thống. Tất cả routes mới phải được thêm vào đây và trace tới FR tương ứng.
+---
 
-## 1. Quy ước
+## 1. Quy Ước Ký Hiệu & Điều Kiện Truy Cập
 
-- **Route**: Đường dẫn đích (không phải endpoint hiện tại).
-- **Actor**: Guest, Customer, Admin.
-- **Guard**: Điều kiện truy cập; từ chối nếu không đủ quyền.
-- **States**: `empty` (không có dữ liệu), `loading`, `error`, `unauthorized`, `not-found`, `ready` (thành công).
-- **FR-NNN**: Functional Requirement ID từ đặc tả.
-- **DFD P.N**: Process ID từ DFD.
+- **Actor (Tác nhân)**:
+  - `Guest`: Khách vãng lai chưa đăng nhập.
+  - `Customer`: Khách hàng đã đăng nhập bằng tài khoản người dùng hợp lệ.
+  - `Admin`: Quản trị viên hệ thống có vai trò `role === "Admin"`.
+- **Route Guard (Bảo vệ tuyến đường)**:
+  - `Public`: Cho phép mọi tác nhân truy cập tự do.
+  - `CustomerRoute`: Yêu cầu phải có Access Token JWT hợp lệ; nếu chưa đăng nhập sẽ kích hoạt `AuthModal`.
+  - `AdminRoute`: Kiểm tra vai trò của người dùng; nếu không phải `Admin` sẽ chuyển hướng về `/` (Home) hoặc chặn truy cập.
+- **UI States (Trạng thái giao diện)**:
+  - `loading`: Hiển thị Skeleton hoặc Spinner trong quá trình nạp dữ liệu bất đồng bộ.
+  - `empty`: Hiển thị thông báo khi danh sách rỗng (ví dụ: giỏ hàng trống, chưa có đơn hàng, không tìm thấy sản phẩm).
+  - `error`: Bắt lỗi và hiển thị thông báo lỗi thân thiện (kèm nút Retry nếu có).
+  - `ready`: Hiển thị đầy đủ nội dung chức năng.
 
-## 2. Cây Điều hướng Tổng thể
+---
+
+## 2. Cây Điều Hướng Tổng Thể (Sitemap Tree)
 
 ```
-┌─ Landing / Home
+┌─ STOREFRONT PATH (Guest & Customer)
 │   │
-│   ├─ About Us
-│   ├─ Branch Info
-│   └─ Contact
+│   ├─ / (hoặc /browse, /products) ────────── Trang chủ & Duyệt sản phẩm
+│   │                                         (Chọn chi nhánh, lọc đa tiêu chí, tìm kiếm,
+│   │                                          kệ AI gợi ý trang chủ Home Recommendation)
+│   │
+│   ├─ /product/:id ───────────────────────── Trang chi tiết sản phẩm
+│   │                                         (Thông tin, giá & tồn kho chi nhánh,
+│   │                                          kệ gợi ý Similar Products, danh sách Verified Reviews,
+│   │                                          nút Thêm vào giỏ & So sánh)
+│   │
+│   ├─ /branches ──────────────────────────── Danh sách siêu thị / chi nhánh
+│   │                                         (Xem thông tin, địa chỉ, hotline, chọn chi nhánh mua sắm)
+│   │
+│   ├─ /account/profile (hoặc /profile) ──── Hồ sơ cá nhân [Customer Guard]
+│   │                                         (Xem thông tin tài khoản, đổi mật khẩu)
+│   │
+│   ├─ /account/addresses (hoặc /addresses) ─ Sổ địa chỉ giao hàng [Customer Guard]
+│   │                                         (Danh sách, Thêm/Sửa/Xóa địa chỉ, Đặt mặc định)
+│   │
+│   ├─ /shopping/cart ─────────────────────── Giỏ hàng đa chi nhánh
+│   │                                         (Quản lý mặt hàng, tăng/giảm số lượng, kiểm tra tồn kho)
+│   │
+│   ├─ /shopping/checkout ─────────────────── Thanh toán & Đặt hàng [Customer Guard]
+│   │                                         (Chọn phương thức nhận: Pickup/Delivery, áp dụng Coupon,
+│   │                                          chọn cổng thanh toán: COD, VNPay, MoMo)
+│   │
+│   ├─ /shopping/checkout/success ─────────── Xác nhận đặt hàng thành công [Customer Guard]
+│   │                                         (Mã đơn hàng, chi tiết thanh toán sandbox, hướng dẫn)
+│   │
+│   ├─ /orders/history ────────────────────── Lịch sử đơn hàng [Customer Guard]
+│   │                                         (Danh sách đơn đã đặt, bộ lọc trạng thái đơn)
+│   │
+│   └─ /orders/history/:id ────────────────── Chi tiết đơn hàng [Customer Guard]
+│                                             (Timeline trạng thái đơn, snapshot sản phẩm & địa chỉ,
+│                                              nút gửi Đánh giá xác thực cho sản phẩm đã nhận)
 │
-├─ GUEST PATH
+├─ GLOBAL FLOATING MODALS & WIDGETS
 │   │
-│   ├─ /browse
-│   │   ├─ /products (search/filter/pagination)
-│   │   └─ /product/:id (detail)
-│   │       └─ /compare (localStorage-based)
+│   ├─ AuthModal ──────────────────────────── Modal Xác thực người dùng
+│   │                                         (Đăng nhập, Đăng ký, Quên mật khẩu, Đặt lại mật khẩu)
 │   │
-│   ├─ /auth
-│   │   ├─ /login
-│   │   ├─ /register
-│   │   └─ /forgot-password
-│   │
-│   └─ [No checkout/review/admin]
+│   └─ CompareModal ───────────────────────── Khay so sánh sản phẩm nổi
+│                                             (So sánh thông số, giá bán và đặc tính kỹ thuật)
 │
-├─ CUSTOMER PATH (Guest + additional)
-│   │
-│   ├─ /account
-│   │   ├─ /profile (edit)
-│   │   ├─ /addresses (CRUD)
-│   │   └─ /settings
-│   │
-│   ├─ /shopping
-│   │   ├─ /branch-selector
-│   │   ├─ /cart
-│   │   ├─ /checkout
-│   │   │   ├─ Choose fulfilment (PICKUP/DELIVERY)
-│   │   │   ├─ Choose payment (COD/VNPay/MoMo)
-│   │   │   └─ Confirm Order
-│   │   │
-│   │   ├─ /payment/:id (display return URL result)
-│   │   └─ /order-confirmation
-│   │
-│   ├─ /orders
-│   │   ├─ /history (list)
-│   │   ├─ /detail/:id (status, items, delivery snapshot)
-│   │   └─ /review/:orderId/:itemId (create/edit)
-│   │
-│   └─ [No admin access]
-│
-└─ ADMIN PATH (Full access + reporting)
+└─ ADMIN PORTAL PATH (/admin - Protected by AdminRoute)
     │
-    ├─ /admin/dashboard
-    │   ├─ /sales-report
-    │   ├─ /order-analytics
-    │   ├─ /demand-forecast
-    │   ├─ /stock-alerts
-    │   └─ /ai-recommendations
+    ├─ /admin ─────────────────────────────── Điều hướng mặc định (Redirect sang /admin/catalog/categories)
     │
-    ├─ /admin/catalog
-    │   ├─ /categories (CRUD)
-    │   ├─ /brands (CRUD)
-    │   └─ /products (CRUD + bulk)
+    ├─ /admin/catalog/categories ──────────── Quản lý Danh mục sản phẩm (CRUD, phân cấp cây danh mục)
     │
-    ├─ /admin/branch
-    │   ├─ /branches (CRUD)
-    │   ├─ /inventory (per branch)
-    │   │   ├─ /branch/:id/stock
-    │   │   └─ /branch/:id/transactions (history)
-    │   └─ /pricing (manage selling_price per branch)
+    ├─ /admin/catalog/brands ──────────────── Quản lý Thương hiệu sản phẩm (CRUD, logo, trạng thái)
     │
-    ├─ /admin/promotion
-    │   ├─ /promotions (CRUD)
-    │   └─ /coupon-codes (list/activate/deactivate)
+    ├─ /admin/catalog/products ────────────── Quản lý Thông tin sản phẩm (CRUD, SKU, giá cơ sở, ảnh)
     │
-    ├─ /admin/orders
-    │   ├─ /list (filter by status)
-    │   ├─ /detail/:id (update status, history)
-    │   └─ /fulfillment (PICKUP/DELIVERY management)
+    ├─ /admin/branches ────────────────────── Quản lý Chi nhánh siêu thị (CRUD, hotline, tọa độ GPS)
     │
-    ├─ /admin/users
-    │   ├─ /customers (list, lock/disable)
-    │   └─ /customer/:id (detail, edit)
+    ├─ /admin/inventory ───────────────────── Quản lý Tồn kho chi nhánh (Giá bán, On-hand, Sổ cái kho)
     │
-    └─ /admin/settings
-        ├─ /security (backup, audit log)
-        └─ /integration (payment provider keys — env only, not UI)
+    ├─ /admin/orders ──────────────────────── Quản lý Danh sách đơn hàng (Lọc theo chi nhánh, trạng thái)
+    │
+    ├─ /admin/orders/:id ──────────────────── Quản lý Chi tiết đơn hàng (Cập nhật tiến độ: Confirmed -> Delivered)
+    │
+    ├─ /admin/promotions ──────────────────── Quản lý Khuyến mãi & Mã Coupon (Thiết lập voucher, hạn mức)
+    │
+    ├─ /admin/users ───────────────────────── Quản lý Người dùng hệ thống (Xem danh sách, Khóa/Mở khóa)
+    │
+    ├─ /admin/forecast ────────────────────── Bàn làm việc Dự báo Nhu cầu (Xem dự báo 7-14 ngày, chạy job)
+    │
+    └─ /admin/recommendations ─────────────── Quản trị Mô hình Gợi ý AI (Trigger huấn luyện, xem mẫu kết quả)
 ```
 
-## 3. Trang Chi tiết
+---
 
-### GUEST & CUSTOMER — Public Routes
+## 3. Chi Tiết Các Tuyến Đường Storefront (Khách Hàng)
 
-#### `/` — Landing Page
-- **Actor**: Guest, Customer
-- **Guard**: None
-- **Purpose**: Điểm vào chính; hiển thị tính năng, chi nhánh, link đến các phần.
-- **States**: `ready` (tổng quát), `loading` (branch list), `error` (nếu API thất bại)
-- **FR-Link**: FR-101 (Browse), FR-102 (View branch)
-- **DFD-Link**: Context, P.1
-- **Actions**: View About Us, Branch Info, Login, Register, Browse Products
+### 3.1. Nhóm Khám Phá & Sản Phẩm (Catalog Browsing)
+| Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
+|---|---|:---:|---|---|
+| `/`, `/browse`, `/products` | `ProductBrowsePage` | Public | Xem danh sách sản phẩm phân trang; lọc theo danh mục, thương hiệu, khoảng giá; tìm kiếm theo tên; chọn chi nhánh mua sắm; hiển thị kệ gợi ý sản phẩm trang chủ (`RecommendationShelf`). | `GET /api/products`<br>`GET /api/categories`<br>`GET /api/brands`<br>`GET /api/branches`<br>`GET /api/recommendations/home` |
+| `/product/:id` | `ProductDetailPage` | Public | Xem chi tiết sản phẩm, giá bán và tồn kho tại chi nhánh hiện tại; kệ gợi ý sản phẩm tương tự (`Similar Products`); danh sách đánh giá đã xác minh (Verified Reviews); gửi form đánh giá nếu đủ điều kiện mua hàng; nút thêm vào giỏ và so sánh. | `GET /api/products/{id}`<br>`GET /api/recommendations/products/{id}/similar`<br>`GET /api/reviews/products/{id}`<br>`POST /api/reviews`<br>`POST /api/views` |
+| `/branches` | `BranchesPage` | Public | Danh sách mạng lưới siêu thị AptechMart; hiển thị địa chỉ, hotline, giờ mở cửa; hỗ trợ khách hàng bấm chọn chi nhánh mua sắm mặc định. | `GET /api/branches` |
 
-#### `/browse` — Browse & Search
-- **Actor**: Guest, Customer
-- **Guard**: None
-- **Purpose**: Tìm kiếm, lọc, phân trang sản phẩm; chọn chi nhánh.
-- **States**:
-  - `empty`: Không có sản phẩm (lọc quá cụ thể)
-  - `loading`: Đang tải danh sách
-  - `error`: API failed
-  - `ready`: Danh sách + giá/tồn kho chi nhánh hiện tại
-- **FR-Link**: FR-101 (Search/Filter), FR-103 (Branch-specific price/stock)
-- **DFD-Link**: P.1.1 (Branch), P.1.2 (Search), P.1.3 (Price/Stock)
-- **Actions**: Change branch, Filter (category/brand/price), Sort, Paginate
+### 3.2. Nhóm Tài Khoản & Địa Chỉ (Customer Account)
+| Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
+|---|---|:---:|---|---|
+| `/account/profile`, `/profile` | `ProfilePage` | Customer | Xem thông tin tài khoản (Họ tên, email, số điện thoại, vai trò); cập nhật họ tên & số điện thoại; form đổi mật khẩu an toàn. | `GET /api/users/profile`<br>`PUT /api/users/profile`<br>`POST /api/auth/change-password` |
+| `/account/addresses`, `/addresses` | `AddressListPage` | Customer | Quản lý sổ địa chỉ giao hàng; thêm địa chỉ mới, chỉnh sửa thông tin giao nhận, xóa địa chỉ; thiết lập địa chỉ nhận hàng mặc định. | `GET /api/addresses`<br>`POST /api/addresses`<br>`PUT /api/addresses/{id}`<br>`DELETE /api/addresses/{id}`<br>`PUT /api/addresses/{id}/default` |
 
-#### `/product/:id` — Product Detail
-- **Actor**: Guest, Customer
-- **Guard**: None
-- **Purpose**: Xem chi tiết sản phẩm; giá, tồn kho chi nhánh; thêm vào giỏ hoặc so sánh.
-- **States**: `loading`, `error`, `not-found`, `ready`
-- **FR-Link**: FR-103 (Product detail), FR-104 (Technical attributes), FR-107 (Add to cart)
-- **DFD-Link**: P.1.3 (Stock check)
-- **Actions**: View specs, View images, Add to cart (Customer only), Add to compare (localStorage), Change branch
+### 3.3. Nhóm Mua Hàng & Thanh Toán (Cart & Checkout)
+| Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
+|---|---|:---:|---|---|
+| `/shopping/cart` | `CartPage` | Public / Customer | Xem các mặt hàng trong giỏ gắn với chi nhánh hiện tại; cập nhật số lượng; kiểm tra tồn kho tức thì; xóa sản phẩm; tính toán tổng tiền tạm tính. | `GET /api/cart`<br>`POST /api/cart/items`<br>`PUT /api/cart/items/{id}`<br>`DELETE /api/cart/items/{id}` |
+| `/shopping/checkout` | `CheckoutPage` | Customer | Lựa chọn hình thức nhận hàng (Nhận tại siêu thị - Pickup hoặc Giao hàng tận nơi - Delivery); chọn địa chỉ nhận hàng; nhập và áp dụng mã giảm giá (Coupon); chọn phương thức thanh toán (COD, VNPay Sandbox, MoMo Sandbox); khóa giữ tồn kho giao dịch và tạo đơn. | `POST /api/checkout/apply-coupon`<br>`POST /api/checkout`<br>`POST /api/payments/vnpay/create`<br>`POST /api/payments/momo/create` |
+| `/shopping/checkout/success` | `CheckoutSuccessPage` | Customer | Màn hình thông báo đặt hàng thành công; hiển thị mã đơn hàng, trạng thái thanh toán và thông tin điều hướng tiếp theo. | `GET /api/orders/{id}` |
 
-#### `/compare` — Product Comparison (Client-side)
-- **Actor**: Guest, Customer
-- **Guard**: None; localStorage managed client-side
-- **Purpose**: So sánh 3–4 sản phẩm cùng danh mục (price, specs, stock).
-- **States**: `empty` (chưa chọn), `ready` (compare table)
-- **FR-Link**: FR-104 (Product comparison)
-- **DFD-Link**: P.1.3 (Fetch current price/stock when branch changes)
-- **Actions**: Remove item, Change branch (reload prices/stock), Clear compare
-
-#### `/auth/login` — Login
-- **Actor**: Guest → Customer (on success)
-- **Guard**: Not authenticated
-- **Purpose**: Đăng nhập bằng email + password.
-- **States**: `ready`, `loading`, `error` (invalid credentials, rate limit)
-- **FR-Link**: FR-115 (Authentication)
-- **DFD-Link**: P.2.1
-- **Actions**: Enter email/password, Submit, Forgot password link
-
-#### `/auth/register` — Register
-- **Actor**: Guest → Customer (on success)
-- **Guard**: Not authenticated
-- **Purpose**: Đăng ký tài khoản mới.
-- **States**: `ready`, `loading`, `error` (email exists, validation failed, rate limit)
-- **FR-Link**: FR-114 (Registration)
-- **DFD-Link**: P.2.1
-- **Actions**: Enter email, password, name, phone; Submit; Login link
-
-#### `/auth/forgot-password` — Forgot Password (Out of scope for v1, placeholder)
-- **Actor**: Guest
-- **Guard**: Not authenticated
-- **Purpose**: Placeholder; không gửi email thật trong v1.
-- **States**: `ready`, `loading`, `error`
-- **FR-Link**: Out of scope
-- **DFD-Link**: None
-- **Actions**: Enter email; Show message
+### 3.4. Nhóm Đơn Hàng & Lịch Sử (Order Tracking)
+| Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
+|---|---|:---:|---|---|
+| `/orders/history` | `OrderHistoryPage` | Customer | Danh sách toàn bộ đơn hàng của người dùng; lọc đơn theo trạng thái (`Pending`, `Confirmed`, `Shipping`, `Delivered`, `Cancelled`); hiển thị ngày đặt và tổng tiền. | `GET /api/orders` |
+| `/orders/history/:id` | `OrderDetailPage` | Customer | Chi tiết đơn hàng: dòng thời gian tiến độ xử lý đơn; snapshot thông tin người nhận và địa chỉ; danh sách các mặt hàng đã mua kèm đơn giá snapshot; nút viết đánh giá cho từng sản phẩm đã giao. | `GET /api/orders/{id}`<br>`POST /api/reviews` |
 
 ---
 
-### CUSTOMER — Account & Shopping Routes
+## 4. Chi Tiết Các Tuyến Đường Admin Portal (Quản Trị Viên)
 
-#### `/account/profile` — Profile Management
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer
-- **Purpose**: Xem/sửa thông tin tài khoản (name, email, phone).
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-105 (Profile management)
-- **DFD-Link**: P.2.2
-- **Actions**: Edit profile, Change password, Logout
+Tất cả các tuyến đường quản trị đều nằm dưới tiền tố `/admin` và được bảo vệ nghiêm ngặt bởi thành phần `AdminRoute` (`role === "Admin"`).
 
-#### `/account/addresses` — Address Management
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer
-- **Purpose**: Thêm/sửa/xóa/đặt mặc định địa chỉ giao hàng.
-- **States**: `empty` (no addresses), `loading`, `error`, `ready` (address list)
-- **FR-Link**: FR-106 (Address management)
-- **DFD-Link**: P.2.3
-- **Actions**: Add address, Edit, Delete, Set as default
-
-#### `/shopping/branch-selector` — Branch Selector
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer
-- **Purpose**: Chọn chi nhánh; ảnh hưởng tới giỏ hàng, giá, tồn kho.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-102 (Branch selection)
-- **DFD-Link**: P.1.1, P.3.1
-- **Actions**: View branches, Select (reload cart), View distance/hours
-
-#### `/shopping/cart` — Shopping Cart
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer
-- **Purpose**: Xem giỏ hàng; thêm/bớt sản phẩm; cập nhật khi đổi chi nhánh.
-- **States**: `empty` (no items), `loading`, `error`, `ready` (cart summary)
-- **FR-Link**: FR-107 (Cart), FR-102 (Validate stock per branch)
-- **DFD-Link**: P.3.2, P.3.3
-- **Actions**:
-  - Add quantity, Remove item, Clear cart
-  - Change branch → Reload cart (validate availability)
-  - Proceed to checkout
-
-#### `/shopping/checkout` — Checkout (Multi-step)
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer; Cart not empty
-- **Purpose**: Finalize order; recalculate price/promotion/fee; reserve stock; choose fulfilment/payment.
-- **States**: `loading`, `error` (409 insufficient stock, 400 validation), `ready` (checkout form)
-- **FR-Link**: FR-108 (Checkout), FR-109 (Fulfilment), FR-110 (Payment), FR-111 (Promotions)
-- **DFD-Link**: P.4 (all substeps), P.5 (payment method select)
-- **Substeps**:
-  1. Review cart summary (price recalculation)
-  2. Enter/select delivery address or select pickup branch
-  3. Choose fulfilment (PICKUP/DELIVERY)
-  4. Apply coupon code (if any)
-  5. Choose payment method (COD/VNPay/MoMo)
-  6. Review order total
-  7. Confirm → Create order + reserve stock (transactional)
-- **Actions**: Back, Apply coupon, Change address, Select fulfilment, Select payment, Confirm
-
-#### `/shopping/payment/:id` — Payment Result Display
-- **Actor**: Customer
-- **Guard**: Authenticated; Order ID belongs to user
-- **Purpose**: Display return URL result dari VNPay/MoMo sandbox (không update trạng thái).
-- **States**: `loading` (checking callback), `error` (payment failed), `ready` (success)
-- **FR-Link**: FR-110 (Payment result)
-- **DFD-Link**: P.5.3 (Return URL only; callback handled server-side)
-- **Actions**: View result, Return to orders, Continue shopping
-- **Note**: Actual status update happens via server-side IPN callback
-
-#### `/shopping/order-confirmation` — Order Confirmation
-- **Actor**: Customer
-- **Guard**: Authenticated; Order just created
-- **Purpose**: Xác nhận đơn hàng được tạo; hiển thị order ID, trạng thái.
-- **States**: `ready`
-- **FR-Link**: FR-108 (Order creation)
-- **DFD-Link**: P.4.4
-- **Actions**: View order details, Continue shopping, Go to orders
-
-#### `/orders/history` — Order History
-- **Actor**: Customer
-- **Guard**: Authenticated + role:Customer
-- **Purpose**: Danh sách đơn hàng của khách; filter theo trạng thái.
-- **States**: `empty` (no orders), `loading`, `error`, `ready`
-- **FR-Link**: FR-112 (Order history)
-- **DFD-Link**: P.6.1
-- **Actions**: Filter by status (Pending/Confirmed/Preparing/Ready/Completed), View detail, Create review
-
-#### `/orders/detail/:id` — Order Detail
-- **Actor**: Customer
-- **Guard**: Authenticated; Order belongs to user
-- **Purpose**: Xem chi tiết đơn hàng; trạng thái, items, snapshot người nhận/địa chỉ, thanh toán.
-- **States**: `loading`, `error`, `not-found`, `ready`
-- **FR-Link**: FR-112 (Order status), FR-109 (Fulfilment method display)
-- **DFD-Link**: P.6.1
-- **Actions**: View status history, View fulfilment snapshot, Create review (if Completed)
-
-#### `/orders/review/:orderId/:itemId` — Create/Edit Review
-- **Actor**: Customer
-- **Guard**: Authenticated; Order Completed; belongs to user; per OrderItem max 1 review
-- **Purpose**: Đánh giá sản phẩm; rating 1–5 + comment.
-- **States**: `loading`, `error`, `ready`, `unauthorized` (not eligible)
-- **FR-Link**: FR-113 (Product review)
-- **DFD-Link**: P.6.2
-- **Actions**: Submit rating + comment, Cancel
-
----
-
-### ADMIN — Dashboard & Management Routes
-
-#### `/admin/dashboard` — Admin Dashboard
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Tổng quan doanh số, đơn hàng, dự báo, cảnh báo.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-208 (Stock alert), FR-209 (AI Recommendation)
-- **DFD-Link**: P.11 (Forecast), P.12 (Alerts, Recommendations)
-- **Actions**: View reports, View alerts, Drill down
-
-#### `/admin/dashboard/sales-report` — Sales Report
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Báo cáo doanh số theo ngày/tuần/tháng, theo danh mục/thương hiệu.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-207 (Sales reporting)
-- **DFD-Link**: P.11.1, P.11.2
-- **Actions**: Filter by date range, category, brand; Export
-
-#### `/admin/dashboard/demand-forecast` — Demand Forecast
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Xem dự báo nhu cầu 7–14 ngày cho từng sản phẩm/chi nhánh.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-208 (Demand forecast)
-- **DFD-Link**: P.11.1
-- **Actions**: View forecast, View confidence, Drill by product/branch
-
-#### `/admin/dashboard/stock-alerts` — Stock Alerts
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Cảnh báo tồn kho dưới ngưỡng; cấp độ (Đủ/Sắp thiếu/Cần nhập).
-- **States**: `loading`, `error`, `ready`, `empty` (no alerts)
-- **FR-Link**: FR-208 (Stock alerts)
-- **DFD-Link**: P.11.2
-- **Actions**: View alerts, Acknowledge, View recommended quantity
-
-#### `/admin/catalog/products` — Product Admin (CRUD)
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: CRUD sản phẩm; tên, SKU, danh mục, thương hiệu, mô tả kỹ thuật, hình.
-- **States**: `empty`, `loading`, `error`, `ready`
-- **FR-Link**: FR-202 (Product management)
-- **DFD-Link**: P.7.2
-- **Actions**: List, Create, Edit, Delete (soft), Bulk upload
-
-#### `/admin/catalog/categories` — Category Admin (CRUD)
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: CRUD danh mục; hỗ trợ cây cha-con.
-- **States**: `empty`, `loading`, `error`, `ready`
-- **FR-Link**: FR-201 (Category management)
-- **DFD-Link**: P.7.1
-- **Actions**: List (tree), Create, Edit, Delete
-
-#### `/admin/branch/inventory` — Branch Inventory Management
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Quản lý tồn kho theo chi nhánh; giá bán, số lượng, reorder level.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: FR-203 (Inventory management)
-- **DFD-Link**: P.8.2
-- **Actions**: Select branch, View/Edit prices/quantities, View transaction history, Add stock
-
-#### `/admin/branch/inventory/:branchId/transactions` — Inventory Transactions
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Lịch sử giao dịch tồn kho (StockIn, Reserve, Release, Sale, Adjustment).
-- **States**: `loading`, `error`, `empty`, `ready`
-- **FR-Link**: FR-203 (Inventory audit)
-- **DFD-Link**: P.8.3
-- **Actions**: Filter by type/date, View detail, Export
-
-#### `/admin/promotion/promotions` — Promotion Admin (CRUD)
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: CRUD khuyến mãi; discount type, value, min order, usage limit, thời gian.
-- **States**: `empty`, `loading`, `error`, `ready`
-- **FR-Link**: FR-204 (Promotion management)
-- **DFD-Link**: P.9.1
-- **Actions**: List, Create, Edit, Deactivate, View usage
-
-#### `/admin/orders/list` — Order Management List
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Danh sách tất cả đơn hàng; filter theo trạng thái, ngày, khách.
-- **States**: `empty`, `loading`, `error`, `ready`
-- **FR-Link**: FR-205 (Order management)
-- **DFD-Link**: P.10.1
-- **Actions**: Filter, Sort, Search, Select order for detail/update
-
-#### `/admin/orders/detail/:id` — Order Detail & Status Update
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Xem chi tiết đơn hàng; cập nhật trạng thái, ghi chú.
-- **States**: `loading`, `error`, `not-found`, `ready`
-- **FR-Link**: FR-205 (Order status update)
-- **DFD-Link**: P.10.2
-- **Actions**: Transition status (Pending→Confirmed→Preparing→Ready/Shipping→Completed), Add note, View history
-
-#### `/admin/orders/fulfillment` — Fulfillment Management
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Quản lý giao hàng; tách PICKUP vs DELIVERY; xem snapshot địa chỉ.
-- **States**: `loading`, `error`, `empty`, `ready`
-- **FR-Link**: FR-205 (Fulfillment tracking)
-- **DFD-Link**: P.10 (snapshot from order creation)
-- **Actions**: Filter by method, View address snapshot, Update delivery status, Generate picking slip (PICKUP)
-
-#### `/admin/users/customers` — Customer Management
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Danh sách khách hàng; lock/disable tài khoản.
-- **States**: `loading`, `error`, `empty`, `ready`
-- **FR-Link**: FR-206 (User management)
-- **DFD-Link**: P.2
-- **Actions**: Search, View detail, Lock, Disable, Reset password
-
-#### `/admin/settings/security` — Security & Backup
-- **Actor**: Admin
-- **Guard**: Authenticated + role:Admin
-- **Purpose**: Audit log, backup, security settings.
-- **States**: `loading`, `error`, `ready`
-- **FR-Link**: NFR-501 (Audit), NFR-502 (Backup)
-- **DFD-Link**: None (off-path)
-- **Actions**: View audit log, Trigger backup, Configure retention
-
----
-
-## 4. Bảng Traceability
-
-| Route | Scope | Actor | Requirement | DFD | Fulfilment | Guard |
-|---|---|---|---|---|---|---|
-| `/` | MVP | Guest, Customer | FR-101, FR-102 | Context, P.1 | N/A | None |
-| `/browse` | MVP | Guest, Customer | FR-101, FR-102, FR-103, FR-104 | P.1.1–P.1.3 | Display | None |
-| `/product/:id` | MVP | Guest, Customer | FR-103, FR-104 | P.1.3 | Display | None |
-| `/compare` | MVP | Guest, Customer | FR-104 | P.1.3 | Display | None |
-| `/auth/login` | MVP | Guest | FR-114, FR-115 | P.2.1 | Display | NotAuth |
-| `/auth/register` | MVP | Guest | FR-114, FR-115 | P.2.1 | Display | NotAuth |
-| `/auth/forgot-password` | INFORMATIONAL | Guest | NON_FR_INFORMATIONAL | None | Display | NotAuth |
-| `/account/profile` | MVP | Customer | FR-105 | P.2.2 | Form | Auth+Customer |
-| `/account/addresses` | MVP | Customer | FR-106 | P.2.3 | Form | Auth+Customer |
-| `/shopping/branch-selector` | MVP | Customer | FR-102 | P.1.1, P.3.1 | Form | Auth+Customer |
-| `/shopping/cart` | MVP | Customer | FR-107, FR-102 | P.3.2–P.3.3 | Form | Auth+Customer |
-| `/shopping/checkout` | MVP | Customer | FR-108, FR-109, FR-110, FR-111 | P.4, P.5 | Form | Auth+Customer, Cart not empty |
-| `/shopping/payment/:id` | MVP | Customer | FR-110 | P.5.3 | Display | Auth+Customer |
-| `/shopping/order-confirmation` | MVP | Customer | FR-108 | P.4.4 | Display | Auth+Customer |
-| `/orders/history` | MVP | Customer | FR-112 | P.6.1 | Display | Auth+Customer |
-| `/orders/detail/:id` | MVP | Customer | FR-112, FR-109 | P.6.1 | Display | Auth+Customer, Ownership check |
-| `/orders/review/:orderId/:itemId` | MVP | Customer | FR-113 | P.6.2 | Form | Auth+Customer, Order Completed, No prior review |
-| `/admin/dashboard` | MVP | Admin | FR-208, FR-209 | P.11–P.12 | Display | Auth+Admin |
-| `/admin/dashboard/sales-report` | DEFERRED | Admin | SD-001 | P.11.1, P.11.2 | Display | Auth+Admin |
-| `/admin/dashboard/demand-forecast` | MVP | Admin | FR-208 | P.11.1 | Display | Auth+Admin |
-| `/admin/dashboard/stock-alerts` | MVP | Admin | FR-208 | P.11.2 | Display | Auth+Admin |
-| `/admin/catalog/products` | MVP | Admin | FR-202 | P.7.2 | CRUD | Auth+Admin |
-| `/admin/catalog/categories` | MVP | Admin | FR-201 | P.7.1 | CRUD | Auth+Admin |
-| `/admin/branch/inventory` | MVP | Admin | FR-203 | P.8.2 | CRUD | Auth+Admin |
-| `/admin/branch/inventory/:branchId/transactions` | MVP | Admin | FR-203 | P.8.3 | Display | Auth+Admin |
-| `/admin/promotion/promotions` | MVP | Admin | FR-204 | P.9.1 | CRUD | Auth+Admin |
-| `/admin/orders/list` | MVP | Admin | FR-205 | P.10.1–P.10.2 | Display | Auth+Admin |
-| `/admin/orders/detail/:id` | MVP | Admin | FR-205 | P.10.2 | Form | Auth+Admin |
-| `/admin/orders/fulfillment` | MVP | Admin | FR-205 | P.10 | Display | Auth+Admin |
-| `/admin/users/customers` | MVP | Admin | FR-206 | P.2 | CRUD | Auth+Admin |
-| `/admin/settings/security` | INFORMATIONAL | Admin | NON_FR_INFORMATIONAL | None | Display | Auth+Admin |
-
----
-
-## 5. Implementation Status
-
-| Route / Phân hệ | Loại | Status | Notes / Endpoints |
+| Route | Tên Trang / Component | Chức Năng Quản Trị Chi Tiết | API Endpoints Liên Kết |
 |---|---|---|---|
-| `/` | Frontend | ✅ Implemented | Landing page, Hero, Branch intro |
-| `/api/health` | Backend | ✅ Implemented | Health check endpoint |
-| `/api/auth/register` | Backend & UI | ✅ Implemented | FR-114 (Đăng ký tài khoản) |
-| `/api/auth/login` | Backend & UI | ✅ Implemented | FR-115 (Đăng nhập JWT + Refresh Token) |
-| `/api/auth/refresh` | Backend | ✅ Implemented | Refresh token rotation |
-| `/api/auth/logout` | Backend & UI | ✅ Implemented | Logout + revoke token |
-| `/api/auth/me` | Backend & UI | ✅ Implemented | Get current user profile |
-| `/api/auth/password-reset` | Backend & UI | ✅ Implemented | Quên mật khẩu & xác nhận đổi mật khẩu |
-| `/api/users/me/addresses` | Backend & UI | ✅ Implemented | FR-106 (CRUD địa chỉ & đặt mặc định) |
-| `/api/users/me` | Backend & UI | ✅ Implemented | FR-105 (Cập nhật hồ sơ & đổi mật khẩu) |
-| `/api/products` | Backend API | ✅ Implemented | FR-101, FR-103 (Catalog, tìm kiếm, lọc, phân trang) |
-| `/api/branches` | Backend API | ✅ Implemented | FR-102 (Chi nhánh, tồn kho, giá theo chi nhánh) |
-| `/api/cart` | Backend API | ✅ Implemented | FR-107 (Giỏ hàng theo chi nhánh, thêm/sửa/xóa item) |
-| `/api/checkout` | Backend API | ✅ Implemented | FR-108, FR-109, FR-110 (Checkout giao dịch, thanh toán COD/VNPay/MoMo sandbox, callback) |
-| `/api/orders` | Backend API | ✅ Implemented | FR-112 (Lịch sử đơn hàng, chi tiết đơn) |
-| `/api/admin/orders` | Backend API | ✅ Implemented | FR-205 (Admin xem đơn, cập nhật trạng thái đơn) |
-| `/api/admin/users` | Backend API | ✅ Implemented | FR-206 (Admin xem danh sách, khóa/mở tài khoản) |
-| `/api/admin/branches/:id/inventory` | Backend API | ✅ Implemented | FR-203 (Admin cập nhật tồn kho & giá chi nhánh) |
-| `/browse` (Storefront UI) | Frontend | 🔄 Planned | Giao diện duyệt sản phẩm storefront |
-| `/shopping/cart` (Cart UI) | Frontend | 🔄 Planned | Giao diện giỏ hàng khách hàng |
-| `/shopping/checkout` (Checkout UI) | Frontend | 🔄 Planned | Giao diện thanh toán & đặt hàng |
-| `/orders/history` (Orders UI) | Frontend | 🔄 Planned | Giao diện theo dõi đơn hàng |
-| `/admin/*` (Admin Dashboard UI) | Frontend | 🔄 Planned | Giao diện portal quản trị |
+| `/admin/catalog/categories` | `AdminCategoriesPage` | Quản lý danh mục sản phẩm đa cấp: xem cây danh mục, thêm mới danh mục, chỉnh sửa tên, cấu hình danh mục cha, kích hoạt hoặc ẩn danh mục. | `GET /api/admin/categories`<br>`POST /api/admin/categories`<br>`PUT /api/admin/categories/{id}` |
+| `/admin/catalog/brands` | `AdminBrandsPage` | Quản lý thương hiệu đối tác: danh sách thương hiệu, thêm thương hiệu mới, sửa đổi thông tin, ẩn/hiện thương hiệu trên Storefront. | `GET /api/admin/brands`<br>`POST /api/admin/brands`<br>`PUT /api/admin/brands/{id}` |
+| `/admin/catalog/products` | `AdminProductsPage` | Quản lý kho sản phẩm toàn hệ thống: thêm mới sản phẩm, cập nhật mã SKU, giá bán cơ sở, đơn vị tính, chọn danh mục lá, upload URL ảnh sản phẩm. | `GET /api/admin/products`<br>`POST /api/admin/products`<br>`PUT /api/admin/products/{id}` |
+| `/admin/branches` | `AdminBranchesPage` | Quản lý danh sách chi nhánh: thêm chi nhánh mới, cập nhật địa chỉ, số điện thoại hotline, tọa độ kinh độ/vĩ độ và trạng thái hoạt động. | `GET /api/admin/branches`<br>`POST /api/admin/branches`<br>`PUT /api/admin/branches/{id}` |
+| `/admin/inventory` | `AdminInventoryPage` | Quản lý tồn kho đa chi nhánh: lọc sản phẩm theo chi nhánh, điều chỉnh giá bán `selling_price`, cập nhật số lượng tồn kho thực tế, định mức nhập hàng; xem lịch sử giao dịch sổ cái kho (`inventory_transactions`). | `GET /api/admin/branches/{id}/inventory`<br>`PUT /api/admin/branches/{id}/inventory/{productId}`<br>`GET /api/admin/inventory/transactions` |
+| `/admin/orders` | `AdminOrdersPage` | Quản lý danh sách đơn hàng toàn hệ thống: lọc theo chi nhánh siêu thị thực hiện đơn, lọc theo trạng thái đơn hàng, tìm kiếm theo mã đơn hoặc người mua. | `GET /api/admin/orders` |
+| `/admin/orders/:id` | `AdminOrderDetailPage` | Chi tiết và xử lý đơn hàng: xem thông tin thanh toán, chuyển trạng thái đơn hàng tuần tự (`Confirmed` -> `Preparing` -> `Shipping` -> `Delivered`); hủy đơn hàng và tự động kích hoạt hoàn kho qua sổ cái. | `GET /api/admin/orders/{id}`<br>`PUT /api/admin/orders/{id}/status` |
+| `/admin/promotions` | `AdminPromotionsPage` | Quản lý chương trình khuyến mãi: tạo mã giảm giá (giảm theo % hoặc số tiền cố định), thiết lập hạn mức đơn tối thiểu, số lượng sử dụng tối đa, kích hoạt hoặc tạm dừng áp dụng. | `GET /api/admin/promotions`<br>`POST /api/admin/promotions`<br>`PUT /api/admin/promotions/{id}/status` |
+| `/admin/users` | `AdminUsersPage` | Quản lý tài khoản người dùng: tra cứu danh sách khách hàng và quản trị viên; khóa tài khoản có dấu hiệu vi phạm hoặc mở khóa tài khoản; tự động thu hồi phiên đăng nhập khi bị khóa. | `GET /api/admin/users`<br>`PUT /api/admin/users/{id}/status` |
+| `/admin/forecast` | `AdminForecastPage` | Bàn làm việc dự báo nhu cầu hàng hóa: chọn chi nhánh siêu thị, xem biểu đồ dự báo tiêu thụ cho 7 ngày và 14 ngày tới; kích hoạt chạy job tính toán lại dự báo nhu cầu. | `GET /api/admin/forecasts`<br>`POST /api/admin/jobs/forecast/runs` |
+| `/admin/recommendations` | `AdminRecommendationsPage` | Bảng điều khiển mô hình gợi ý AI: kích hoạt chạy batch huấn luyện mô hình ML.NET Matrix Factorization; polling theo dõi tiến độ thời gian thực; kiểm tra dữ liệu gợi ý mẫu phân biệt rõ phiên bản `mf-v1` và fallback `content-v1`. | `POST /api/admin/jobs/recommendations/runs`<br>`GET /api/admin/jobs/recommendations/runs/{id}`<br>`GET /api/admin/recommendations/samples` |
 
 ---
 
-## 6. Error Handling & States per Route
+## 5. Bảng Đối Soát Traceability (Route -> Yêu Cầu Chức Năng FR -> Component)
 
-### Universal Error States
-
-- **401 Unauthorized**: User not authenticated or token expired; redirect to login.
-- **403 Forbidden**: User lacks permission (role mismatch, ownership check failed).
-- **404 Not Found**: Resource does not exist.
-- **409 Conflict**: Insufficient stock during checkout.
-- **422 Unprocessable Entity**: Validation failed (email format, price range, etc.).
-- **500 Internal Server Error**: Server error; show user-friendly message + error ID for support.
-- **Rate Limit (429)**: Too many requests; backoff and retry.
-
-### Per-Route Handling
-
-- `/shopping/checkout`: On 409 → Show "Insufficient stock" message; suggest reducing quantity or changing branch.
-- `/shopping/payment/:id`: Polling callback status; timeout after 5 min → show "Payment pending" with check-order-status link.
-- `/admin/orders/fulfillment`: If order deleted → Show "Order no longer exists".
-
----
-
-## 7. Responsive & Accessibility
-
-- All routes responsive on mobile/tablet/desktop.
-- Print-friendly for invoices, picking slips (PICKUP fulfillment).
-- Color contrast ≥ 4.5:1 for text; ≥ 3:1 for UI components.
-- Keyboard navigation: Tab, Enter, Escape.
-- ARIA labels for form inputs, buttons, alerts.
-- Form validation feedback in real-time + on submit.
+| Yêu Cầu Chức Năng | Tên Tính Năng Nghiệp Vụ | Tuyến Đường (Route) Giao Diện | React Component Hiện Thực |
+|---|---|---|---|
+| **FR-101** | Tìm kiếm, lọc và phân trang sản phẩm | `/`, `/browse`, `/products` | `ProductBrowsePage` |
+| **FR-102** | Xem thông tin chi tiết sản phẩm | `/product/:id` | `ProductDetailPage` |
+| **FR-103** | Lựa chọn chi nhánh và hiển thị tồn kho/giá | `/branches`, `/` | `BranchesPage`, `BranchSelectorModal` |
+| **FR-104** | So sánh thông số sản phẩm trực quan | Toàn hệ thống (Floating) | `CompareModal` |
+| **FR-105** | Quản lý hồ sơ và đổi mật khẩu | `/account/profile`, `/profile` | `ProfilePage` |
+| **FR-106** | Quản lý sổ địa chỉ giao hàng | `/account/addresses`, `/addresses` | `AddressListPage` |
+| **FR-107** | Giỏ hàng trực tuyến theo chi nhánh | `/shopping/cart` | `CartPage` |
+| **FR-108** | Quy trình đặt hàng an toàn (Checkout) | `/shopping/checkout` | `CheckoutPage` |
+| **FR-109** | Theo dõi lịch sử và chi tiết đơn hàng | `/orders/history`, `/orders/history/:id` | `OrderHistoryPage`, `OrderDetailPage` |
+| **FR-110** | Thanh toán trực tuyến (COD, VNPay, MoMo) | `/shopping/checkout`, `/shopping/checkout/success` | `CheckoutPage`, `CheckoutSuccessPage` |
+| **FR-111** | Áp dụng mã giảm giá (Coupon) khi checkout | `/shopping/checkout` | `CheckoutPage` |
+| **FR-112** | Hủy đơn hàng và tự động giải phóng tồn kho | `/orders/history/:id` | `OrderDetailPage` |
+| **FR-113** | Đánh giá sản phẩm đã mua (Verified Reviews) | `/product/:id`, `/orders/history/:id` | `ProductDetailPage`, `ReviewFormModal` |
+| **FR-114** | Đăng ký tài khoản khách hàng mới | Toàn hệ thống (Auth Header) | `AuthModal` (Tab Register) |
+| **FR-115** | Đăng nhập JWT và khôi phục mật khẩu | Toàn hệ thống (Auth Header) | `AuthModal` (Tab Login / Forgot) |
+| **FR-201** | Quản trị Danh mục và Thương hiệu | `/admin/catalog/categories`, `/admin/catalog/brands` | `AdminCategoriesPage`, `AdminBrandsPage` |
+| **FR-202** | Quản trị Thông tin sản phẩm | `/admin/catalog/products` | `AdminProductsPage` |
+| **FR-203** | Quản trị Tồn kho và Chi nhánh siêu thị | `/admin/branches`, `/admin/inventory` | `AdminBranchesPage`, `AdminInventoryPage` |
+| **FR-204** | Quản trị Chiến dịch Khuyến mãi & Voucher | `/admin/promotions` | `AdminPromotionsPage` |
+| **FR-205** | Quản lý và xử lý Đơn hàng (Admin) | `/admin/orders`, `/admin/orders/:id` | `AdminOrdersPage`, `AdminOrderDetailPage` |
+| **FR-206** | Quản trị và phân quyền Người dùng | `/admin/users` | `AdminUsersPage` |
+| **FR-207** | Báo cáo phân tích và thống kê vận hành | `/admin/inventory`, `/admin/orders` | `AdminInventoryPage`, `AdminOrdersPage` |
+| **FR-208** | Gợi ý sản phẩm cá nhân hóa thông minh (AI) | `/`, `/product/:id`, `/admin/recommendations` | `RecommendationShelf`, `AdminRecommendationsPage` |
+| **FR-209** | Dự báo nhu cầu hàng hóa chi nhánh (Forecast) | `/admin/forecast` | `AdminForecastPage` |

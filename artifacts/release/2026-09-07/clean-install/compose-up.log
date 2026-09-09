@@ -1,0 +1,215 @@
+ Image clean-test-api Building 
+ Image clean-test-frontend Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.16kB done
+#1 DONE 0.0s
+
+#2 [frontend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 420B 0.0s done
+#2 DONE 0.1s
+
+#3 [api internal] load build definition from Dockerfile
+#3 transferring dockerfile: 569B done
+#3 DONE 0.1s
+
+#4 [api internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0
+#4 ...
+
+#5 [api internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0
+#5 DONE 0.9s
+
+#4 [api internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0
+#4 DONE 0.9s
+
+#6 [api internal] load .dockerignore
+#6 transferring context: 117B done
+#6 DONE 0.0s
+
+#7 [api internal] load build context
+#7 DONE 0.0s
+
+#8 [api build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1ffd2a92ae84c1291bc1b6887501f8af98e6331e7af6d4c8d37168c5e87a64c
+#8 resolve mcr.microsoft.com/dotnet/sdk:10.0@sha256:e1ffd2a92ae84c1291bc1b6887501f8af98e6331e7af6d4c8d37168c5e87a64c 0.0s done
+#8 DONE 0.0s
+
+#9 [api runtime 1/3] FROM mcr.microsoft.com/dotnet/aspnet:10.0@sha256:a4556ed033fa96f984bb7a8d348851cb2d36b1281dd2420070045f664fbb5f94
+#9 resolve mcr.microsoft.com/dotnet/aspnet:10.0@sha256:a4556ed033fa96f984bb7a8d348851cb2d36b1281dd2420070045f664fbb5f94 0.0s done
+#9 DONE 0.0s
+
+#10 [auth] library/node:pull token for registry-1.docker.io
+#10 DONE 0.0s
+
+#7 [api internal] load build context
+#7 ...
+
+#11 [frontend internal] load metadata for docker.io/library/node:24-alpine
+#11 DONE 2.0s
+
+#12 [auth] library/nginx:pull token for registry-1.docker.io
+#12 DONE 0.0s
+
+#7 [api internal] load build context
+#7 transferring context: 12.52MB 1.7s done
+#7 DONE 1.8s
+
+#13 [frontend internal] load metadata for docker.io/library/nginx:1.29-alpine
+#13 DONE 2.9s
+
+#14 [api build 2/6] WORKDIR /src
+#14 CACHED
+
+#15 [api build 3/6] COPY global.json Directory.Build.props OnlineSupermarket.slnx ./
+#15 CACHED
+
+#16 [api build 4/6] COPY backend ./backend
+#16 ...
+
+#6 [frontend internal] load .dockerignore
+#6 transferring context: 117B done
+#6 DONE 0.0s
+
+#17 [frontend runtime 1/3] FROM docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de
+#17 resolve docker.io/library/nginx:1.29-alpine@sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de 0.0s done
+#17 DONE 0.0s
+
+#18 [frontend build 1/6] FROM docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#18 resolve docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf 0.0s done
+#18 DONE 0.1s
+
+#19 [frontend internal] load build context
+#19 transferring context: 960.35kB 0.1s done
+#19 DONE 0.2s
+
+#20 [frontend build 2/6] WORKDIR /app
+#20 CACHED
+
+#21 [frontend build 3/6] COPY frontend/package.json frontend/package-lock.json ./
+#21 CACHED
+
+#22 [frontend build 4/6] RUN npm ci
+#22 CACHED
+
+#23 [frontend build 5/6] COPY frontend ./
+#23 DONE 0.2s
+
+#16 [api build 4/6] COPY backend ./backend
+#16 DONE 0.6s
+
+#24 [api build 5/6] RUN dotnet restore OnlineSupermarket.slnx
+#24 2.434   Determining projects to restore...
+#24 3.808   Restored /src/backend/src/OnlineSupermarket.Domain/OnlineSupermarket.Domain.csproj (in 249 ms).
+#24 ...
+
+#25 [frontend build 6/6] RUN npm run build
+#25 1.851 
+#25 1.851 > aptechmart-frontend@0.1.0 build
+#25 1.851 > tsc --noEmit && vite build
+#25 1.851 
+#25 ...
+
+#24 [api build 5/6] RUN dotnet restore OnlineSupermarket.slnx
+#24 17.61   Restored /src/backend/tests/OnlineSupermarket.Domain.Tests/OnlineSupermarket.Domain.Tests.csproj (in 14.06 sec).
+#24 20.00   Restored /src/backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj (in 16.47 sec).
+#24 20.04   Restored /src/backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj (in 16.51 sec).
+#24 20.04   Restored /src/backend/src/OnlineSupermarket.Infrastructure/OnlineSupermarket.Infrastructure.csproj (in 16.51 sec).
+#24 20.25   Restored /src/backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj (in 16.72 sec).
+#24 DONE 20.9s
+
+#25 [frontend build 6/6] RUN npm run build
+#25 ...
+
+#26 [api build 6/6] RUN dotnet publish backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj     --configuration Release     --no-restore     --output /app/publish
+#26 ...
+
+#25 [frontend build 6/6] RUN npm run build
+#25 21.15 vite v7.3.6 building client environment for production...
+#25 21.31 transforming...
+#25 24.25 ✓ 140 modules transformed.
+#25 24.73 rendering chunks...
+#25 24.75 computing gzip size...
+#25 24.77 dist/index.html                   0.57 kB │ gzip:   0.38 kB
+#25 24.77 dist/assets/index-CIM8aAQG.css   89.39 kB │ gzip:  15.81 kB
+#25 24.77 dist/assets/index-XgxRriES.js   440.69 kB │ gzip: 119.85 kB
+#25 24.77 ✓ built in 3.55s
+#25 24.89 npm notice
+#25 24.89 npm notice New major version of npm available! 11.19.0 -> 12.0.2
+#25 24.89 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+#25 24.89 npm notice To update run: npm install -g npm@12.0.2
+#25 24.89 npm notice
+#25 DONE 25.0s
+
+#26 [api build 6/6] RUN dotnet publish backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj     --configuration Release     --no-restore     --output /app/publish
+#26 ...
+
+#27 [frontend runtime 2/3] COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+#27 CACHED
+
+#28 [frontend runtime 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+#28 DONE 0.1s
+
+#29 [frontend] exporting to image
+#29 exporting layers
+#29 exporting layers 0.2s done
+#29 exporting manifest sha256:b5b46e844ee5847944f03ee933d8c9e14a37db34c6dd34f164e23284648e593a 0.0s done
+#29 exporting config sha256:f205cf8f8319409baec6daad2117f18967b313d7efae754484d40534d191da4d 0.0s done
+#29 exporting attestation manifest sha256:e870cac1924bc741c5fbc4efd5bcbc1e1f113666f985196e931614af6ce464a5 0.1s done
+#29 exporting manifest list sha256:73ddc6d1d021f590ad4142eae1ebca199c01027cd9e1668e9dd50362da369b45
+#29 exporting manifest list sha256:73ddc6d1d021f590ad4142eae1ebca199c01027cd9e1668e9dd50362da369b45 0.0s done
+#29 naming to docker.io/library/clean-test-frontend:latest done
+#29 unpacking to docker.io/library/clean-test-frontend:latest 0.1s done
+#29 DONE 0.4s
+
+#26 [api build 6/6] RUN dotnet publish backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj     --configuration Release     --no-restore     --output /app/publish
+#26 ...
+
+#30 [frontend] resolving provenance for metadata file
+#30 DONE 0.0s
+
+#26 [api build 6/6] RUN dotnet publish backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj     --configuration Release     --no-restore     --output /app/publish
+#26 7.551   OnlineSupermarket.Domain -> /src/backend/src/OnlineSupermarket.Domain/bin/Release/net10.0/OnlineSupermarket.Domain.dll
+#26 12.47   OnlineSupermarket.Infrastructure -> /src/backend/src/OnlineSupermarket.Infrastructure/bin/Release/net10.0/OnlineSupermarket.Infrastructure.dll
+#26 15.95   OnlineSupermarket.Api -> /src/backend/src/OnlineSupermarket.Api/bin/Release/net10.0/OnlineSupermarket.Api.dll
+#26 16.08   OnlineSupermarket.Api -> /app/publish/
+#26 DONE 16.3s
+
+#31 [api runtime 2/3] WORKDIR /app
+#31 CACHED
+
+#32 [api runtime 3/3] COPY --from=build /app/publish .
+#32 DONE 0.1s
+
+#33 [api] exporting to image
+#33 exporting layers
+#33 exporting layers 1.1s done
+#33 exporting manifest sha256:464ae319a20bb3ba60056e07c6628252e087b0ee37cfd9f6fc5ad2f4b588f5fc 0.0s done
+#33 exporting config sha256:8832499e5302e2a9d6b107015b9fc9b1ec68045ea4741dc69166eab68493c244 0.0s done
+#33 exporting attestation manifest sha256:1d958fe7c2eb9e8622aea7bb4704622efb472265cd6ed3795a16b945d60de4f4 0.0s done
+#33 exporting manifest list sha256:8921c5472feb30cdcec605731a89fd810a5bc1db4521db7dedf89c2489945c27
+#33 exporting manifest list sha256:8921c5472feb30cdcec605731a89fd810a5bc1db4521db7dedf89c2489945c27 0.0s done
+#33 naming to docker.io/library/clean-test-api:latest done
+#33 unpacking to docker.io/library/clean-test-api:latest
+#33 unpacking to docker.io/library/clean-test-api:latest 0.4s done
+#33 DONE 1.7s
+
+#34 [api] resolving provenance for metadata file
+#34 DONE 0.0s
+ Image clean-test-api Built 
+ Image clean-test-frontend Built 
+ Network clean-test_default Creating 
+ Network clean-test_default Created 
+ Volume clean-test_mysql_data Creating 
+ Volume clean-test_mysql_data Created 
+ Container clean-test-mysql-1 Creating 
+ Container clean-test-mysql-1 Created 
+ Container clean-test-api-1 Creating 
+ Container clean-test-api-1 Created 
+ Container clean-test-frontend-1 Creating 
+ Container clean-test-frontend-1 Created 
+ Container clean-test-mysql-1 Starting 
+ Container clean-test-mysql-1 Started 
+ Container clean-test-mysql-1 Waiting 
+ Container clean-test-mysql-1 Healthy 
+ Container clean-test-api-1 Starting 
+ Container clean-test-api-1 Started 
+ Container clean-test-frontend-1 Starting 
+ Container clean-test-frontend-1 Started 

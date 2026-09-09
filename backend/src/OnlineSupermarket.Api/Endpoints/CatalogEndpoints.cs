@@ -25,7 +25,7 @@ public static class CatalogEndpoints
 
         // AI Recommendation APIs
         group.MapPost("/products/{id:guid}/view", RecordProductViewAsync);
-        group.MapGet("/recommendations", GetRecommendationsAsync);
+        // /recommendations mapped in RecommendationEndpoints.cs
 
         return routes;
     }
@@ -46,14 +46,38 @@ public static class CatalogEndpoints
         if (pageSize < 1) pageSize = 20;
         if (pageSize > 100) pageSize = 100;
 
+        // Get all categories for ancestor checking
+        var allCategories = await dbContext.Categories
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        // Filter to only categories with active ancestors
+        var activeCategoryIds = allCategories
+            .Where(c => c.IsActive && HasActiveAncestors(c, allCategories))
+            .Select(c => c.Id)
+            .ToHashSet();
+
+        // Build category descendants list if categoryId specified
+        HashSet<Guid>? categoryIds = null;
+        if (categoryId.HasValue)
+        {
+            var descendants = GetDescendantCategoryIds(categoryId.Value, allCategories);
+            // Intersect with active categories
+            categoryIds = descendants.Intersect(activeCategoryIds).ToHashSet();
+        }
+
         var query = dbContext.Products
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Brand)
-            .Where(p => p.IsActive)
+            .Where(p =>
+                p.IsActive &&
+                activeCategoryIds.Contains(p.CategoryId) &&
+                p.Brand != null && p.Brand.IsActive)
             .AsQueryable();
 
-        if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId.Value);
+        if (categoryIds != null && categoryIds.Count > 0) query = query.Where(p => categoryIds.Contains(p.CategoryId));
+        else if (categoryId.HasValue) query = query.Where(p => false); // category requested but no valid descendants
         if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId.Value);
         if (minPrice.HasValue) query = query.Where(p => p.BasePrice >= minPrice.Value);
         if (maxPrice.HasValue) query = query.Where(p => p.BasePrice <= maxPrice.Value);
@@ -99,6 +123,16 @@ public static class CatalogEndpoints
             .FirstOrDefaultAsync(p => p.Id == id && p.IsActive, cancellationToken);
 
         if (product == null) return Results.NotFound(new { message = "Product not found." });
+
+        // Check category and brand are active with active ancestors
+        var allCategories = await dbContext.Categories.AsNoTracking().ToListAsync(cancellationToken);
+        var category = allCategories.FirstOrDefault(c => c.Id == product.CategoryId);
+        if (category == null || !category.IsActive || !HasActiveAncestors(category, allCategories))
+            return Results.NotFound(new { message = "Product not found." });
+
+        var brand = await dbContext.Brands.AsNoTracking().FirstOrDefaultAsync(b => b.Id == product.BrandId, cancellationToken);
+        if (brand == null || !brand.IsActive)
+            return Results.NotFound(new { message = "Product not found." });
 
         BranchInventoryDto? inventory = null;
         if (branchId.HasValue)
@@ -241,11 +275,44 @@ public static class CatalogEndpoints
         return Results.Ok(recommendations);
     }
 
+    private static HashSet<Guid> GetDescendantCategoryIds(Guid rootId, IList<Category> allCategories)
+    {
+        var result = new HashSet<Guid>();
+        var queue = new Queue<Guid>();
+        queue.Enqueue(rootId);
+        while (queue.Count > 0)
+        {
+            var currentId = queue.Dequeue();
+            result.Add(currentId);
+            var children = allCategories.Where(c => c.ParentCategoryId == currentId).Select(c => c.Id);
+            foreach (var childId in children) queue.Enqueue(childId);
+        }
+        return result;
+    }
+
     private static async Task<IResult> GetCategoriesAsync([FromServices] AppDbContext dbContext = null!, CancellationToken cancellationToken = default)
     {
-        var categories = await dbContext.Categories.AsNoTracking().Where(c => c.IsActive).OrderBy(c => c.Name)
-            .Select(c => new CategoryDto(c.Id, c.Name, c.Slug, c.ParentCategoryId, c.IsActive)).ToListAsync(cancellationToken);
-        return Results.Ok(categories);
+        var allCategories = await dbContext.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync(cancellationToken);
+
+        // Filter to only active categories with active ancestors
+        var activeWithActiveAncestors = allCategories
+            .Where(c => c.IsActive && HasActiveAncestors(c, allCategories))
+            .Select(c => new CategoryDto(c.Id, c.Name, c.Slug, c.ParentCategoryId, c.IsActive))
+            .ToList();
+
+        return Results.Ok(activeWithActiveAncestors);
+    }
+
+    private static bool HasActiveAncestors(Category category, IList<Category> allCategories)
+    {
+        var current = category;
+        while (current.ParentCategoryId.HasValue)
+        {
+            var parent = allCategories.FirstOrDefault(c => c.Id == current.ParentCategoryId.Value);
+            if (parent == null || !parent.IsActive) return false;
+            current = parent;
+        }
+        return true;
     }
 
     private static async Task<IResult> GetBrandsAsync([FromServices] AppDbContext dbContext = null!, CancellationToken cancellationToken = default)

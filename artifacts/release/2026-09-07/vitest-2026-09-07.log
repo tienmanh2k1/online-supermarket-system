@@ -1,0 +1,13 @@
+
+> aptechmart-frontend@0.1.0 test
+> vitest --run
+
+
+ RUN  v4.1.10 C:/Users/manh/Documents/Project3/online-supermarket-system/frontend
+
+
+ Test Files  45 passed (45)
+      Tests  330 passed (330)
+   Start at  11:55:09
+   Duration  22.94s (transform 9.30s, setup 36.30s, import 18.33s, tests 51.12s, environment 203.21s)
+

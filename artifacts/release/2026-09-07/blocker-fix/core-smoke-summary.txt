@@ -1,0 +1,17 @@
+Core smoke 2026-09-07T11:02:59+07:00
+Checksum/markers:
+== auth ==
+Customer->admin/orders GET: 403
+Customer->admin/users GET: 403
+no-token->admin/orders: 401
+Customer->admin/inventory PUT: 403
+== checkout ==
+POST /api/checkout (3-item cart, Pickup): HTTP 201 orderId=1911a7af
+POST /checkout/payment COD: HTTP 200 status=PendingCollection
+order Confirmed->Completed via admin PUT status transitions: all 200
+== ledger ==
+Reserve x3 (+1 reserved each), then Sale x3 on_hand -1 reserved -1
+==jobs==
+Forecast run Succeeded (sma-v1, 56 rows)
+Recommendation run Succeeded (content-v1 Global3/User19)
+orphaned queued run requeued by startup recovery -> Succeeded

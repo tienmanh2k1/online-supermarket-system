@@ -1,0 +1,120 @@
+{
+  "jobRunId": "daca78f9-1d6a-4813-b41b-cd81b1e60925",
+  "generatedAtUtc": "2026-09-08T05:38:15.163505",
+  "expiresAtUtc": "2026-09-08T06:53:15.163505",
+  "algorithmVersion": "mf-v1",
+  "items": [
+    {
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3",
+      "scope": "User",
+      "audienceKey": "user:2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "score": 0.87424,
+      "rank": 1,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be",
+      "scope": "User",
+      "audienceKey": "user:41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "score": 0.874265,
+      "rank": 1,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed",
+      "scope": "User",
+      "audienceKey": "user:416f985e-bf18-400f-8995-99df54303d13",
+      "score": 0.804357,
+      "rank": 1,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "8b189102-5794-4f8a-b664-676e45e1c425",
+      "scope": "User",
+      "audienceKey": "user:b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "score": 0.804358,
+      "rank": 1,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "8b189102-5794-4f8a-b664-676e45e1c425",
+      "scope": "User",
+      "audienceKey": "user:bf7e7887-942c-49ec-9651-41eb937d2218",
+      "score": 0.492593,
+      "rank": 1,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32",
+      "scope": "User",
+      "audienceKey": "user:2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "score": 0.578975,
+      "rank": 2,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "5ab9dcbe-def1-496d-9714-6d807f1dcedb",
+      "scope": "User",
+      "audienceKey": "user:41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "score": 0.57898,
+      "rank": 2,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32",
+      "scope": "User",
+      "audienceKey": "user:416f985e-bf18-400f-8995-99df54303d13",
+      "score": 0.653528,
+      "rank": 2,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "5ab9dcbe-def1-496d-9714-6d807f1dcedb",
+      "scope": "User",
+      "audienceKey": "user:b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "score": 0.653522,
+      "rank": 2,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "37059735-8e29-4fa6-9971-ad2ea58b3eed",
+      "scope": "User",
+      "audienceKey": "user:bf7e7887-942c-49ec-9651-41eb937d2218",
+      "score": 0.492573,
+      "rank": 2,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "bd00c190-a496-484f-8818-98dba5a52533",
+      "scope": "User",
+      "audienceKey": "user:2c9641e3-dd9b-4fd7-9c30-9b8138b55edf",
+      "score": 0.178329,
+      "rank": 3,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "bd00c190-a496-484f-8818-98dba5a52533",
+      "scope": "User",
+      "audienceKey": "user:41578616-0cb7-40c9-ba71-da9d4ca31df8",
+      "score": 0.178328,
+      "rank": 3,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "bd00c190-a496-484f-8818-98dba5a52533",
+      "scope": "User",
+      "audienceKey": "user:416f985e-bf18-400f-8995-99df54303d13",
+      "score": 0.325303,
+      "rank": 3,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "bd00c190-a496-484f-8818-98dba5a52533",
+      "scope": "User",
+      "audienceKey": "user:b9a0af5c-462d-4842-8b29-66d37c59e2da",
+      "score": 0.325297,
+      "rank": 3,
+      "reason": "Gợi ý từ mô hình AI"
+    }
+  ]
+}

@@ -67,7 +67,7 @@ public sealed record DailySalesDto(DateOnly Date, decimal Revenue, int OrderCoun
 
 **Interfaces:**
 - Verifies: `POST /api/auth/password-reset` và `POST /api/auth/password-reset/confirm`.
-- Produces in Development only: `GET /api/dev/password-reset-emails/latest?email=<encoded-email> -> { email, resetUrl, capturedAtUtc }`.
+- Produces in Development only, with policy `AdminOnly`: `GET /api/dev/password-reset-emails/latest?email=<encoded-email> -> { email, resetUrl, capturedAtUtc }`. Caller phải gửi bearer token Admin.
 
 - [ ] **Step 1: Thêm contract tests còn thiếu**
 
@@ -81,7 +81,7 @@ Expected: PASS. Nếu fail do hành vi không đúng contract, sửa tối thi�
 
 - [ ] **Step 3: Viết test fail cho dev mailbox và cấu hình khởi động**
 
-Test Development map endpoint, email không có trả 404, email có trả entry mới nhất. Test Production không map endpoint và tiếp tục từ chối cấu hình email không có provider. Test cấu hình tương đương bản nộp (`ASPNETCORE_ENVIRONMENT=Development`, `Email:UseDevMode=true`) khởi động được.
+Test Development map endpoint: anonymous trả 401, Customer trả 403; Admin truy vấn email không có trả 404, email có trả entry mới nhất. Test Production với `Email:UseDevMode=true` khởi động được nhưng mailbox vẫn trả 404 kể cả với token Admin; test riêng Production không có provider và không bật dev mode phải từ chối khởi động. Test cấu hình tương đương bản nộp (`ASPNETCORE_ENVIRONMENT=Development`, `Email:UseDevMode=true`) khởi động được.
 
 - [ ] **Step 4: Map dev mailbox chỉ trong Development**
 
@@ -92,11 +92,15 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-Handler đọc `DevEmailStore.Instance.GetAll()`, match email không phân biệt hoa thường, chọn `CapturedAtUtc` mới nhất và không log token/reset URL. Endpoint này không được map chỉ vì `Email:UseDevMode=true` trong Production.
+Trong `MapDevEmailEndpoints`, gắn `.RequireAuthorization("AdminOnly")` lên endpoint hoặc nhóm `/api/dev/password-reset-emails`. Handler đọc `DevEmailStore.Instance.GetAll()`, match email không phân biệt hoa thường, chọn `CapturedAtUtc` mới nhất và không log token/reset URL. Endpoint này không được map chỉ vì `Email:UseDevMode=true` trong Production.
 
 - [ ] **Step 5: Chạy test và ghi kịch bản demo**
 
-Kịch bản bắt buộc ở README/hướng dẫn chạy: start `docker compose`; request reset từ UI; gọi dev mailbox endpoint để lấy `resetUrl`; ghép URL frontend nếu response là relative path; mở link; đổi mật khẩu; đăng nhập lại. Ghi rõ đây là mailbox demo, không phải email provider production.
+Run: `dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter "FullyQualifiedName~PasswordResetEndpointsTests|FullyQualifiedName~DevEmailEndpointsTests"`
+
+Expected: PASS, bao gồm quyền mailbox và cấu hình môi trường.
+
+Kịch bản bắt buộc ở README/hướng dẫn chạy: start `docker compose`; request reset từ UI cho Customer demo; đăng nhập Admin qua API và gửi bearer token Admin khi gọi dev mailbox để lấy `resetUrl`; ghép URL frontend nếu response là relative path; mở link; đổi mật khẩu; đăng nhập lại bằng Customer. Không ghi token hoặc reset URL vào log/báo cáo. Ghi rõ đây là mailbox demo, không phải email provider production.
 
 - [ ] **Step 6: Commit**
 
@@ -266,7 +270,7 @@ Khai báo `.Produces<DashboardSummaryDto>()`, `.Produces<SalesReportDto>()`, `.P
 
 - [ ] **Step 2: Chạy focused API tests**
 
-Run: `dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter "FullyQualifiedName~AdminReportingEndpointsTests|FullyQualifiedName~PasswordResetEndpointsTests|FullyQualifiedName~OpenApiContractTests"`
+Run: `dotnet test backend/tests/OnlineSupermarket.Api.Tests/OnlineSupermarket.Api.Tests.csproj --filter "FullyQualifiedName~AdminReportingEndpointsTests|FullyQualifiedName~PasswordResetEndpointsTests|FullyQualifiedName~DevEmailEndpointsTests|FullyQualifiedName~OpenApiContractTests"`
 
 Expected: PASS.
 
@@ -289,5 +293,5 @@ Commit: `docs: document admin reporting contract`
 - Gửi cho Frontend ví dụ JSON thật của hai endpoint.
 - Xác nhận enum/status dùng PascalCase như DTO order hiện tại.
 - Xác nhận ngày report là `YYYY-MM-DD`, timezone tính theo UTC.
-- Gửi endpoint dev mailbox và xác nhận nó chỉ tồn tại trong Development để Frontend chạy E2E reset-password.
+- Gửi endpoint dev mailbox và xác nhận nó chỉ tồn tại trong Development, yêu cầu bearer token Admin; Frontend dùng API request context Admin riêng để chạy E2E reset-password của Customer.
 - Nếu integration MySQL chưa chạy, ghi rõ; không gọi là verified production behavior chỉ từ InMemory tests.

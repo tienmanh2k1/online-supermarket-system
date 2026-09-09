@@ -1,0 +1,67 @@
+ M backend/src/OnlineSupermarket.Api/OnlineSupermarket.Api.csproj
+ M backend/src/OnlineSupermarket.Infrastructure/DependencyInjection.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Intelligence/ForecastJobHandler.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Jobs/IJobRunStore.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Jobs/IntelligenceWorker.cs
+ D backend/src/OnlineSupermarket.Infrastructure/Jobs/JobRunStore.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/AppDbContextFactory.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/BackgroundJobRunConfiguration.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Configurations/RecommendationResultConfiguration.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260807082824_InitialFoundation.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260807082824_InitialFoundation.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260817162519_AddIdentityFoundation.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260817162519_AddIdentityFoundation.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260821120246_AddAddressesAndPasswordResetTokens.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260821120246_AddAddressesAndPasswordResetTokens.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260825170000_AddCartsOrdersAndPayments.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260825170000_AddCartsOrdersAndPayments.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260901171024_AddPromotions.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260901171024_AddPromotions.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903145758_AddInventoryTransactions.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903145758_AddInventoryTransactions.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903160131_AddReviews.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903160131_AddReviews.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903161025_AddProductViewEvents.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903161025_AddProductViewEvents.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903170019_AddBackgroundJobRuns.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260903170019_AddBackgroundJobRuns.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904055925_AddRecommendationResults.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904055925_AddRecommendationResults.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904151359_AddDemandForecasts.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904151359_AddDemandForecasts.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904160056_AddBackgroundJobRunBranch.Designer.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/20260904160056_AddBackgroundJobRunBranch.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Persistence/Migrations/AppDbContextModelSnapshot.cs
+ M backend/src/OnlineSupermarket.Infrastructure/Recommendations/RecommendationJobHandler.cs
+ M backend/tests/OnlineSupermarket.Api.Tests/Auth/AuthTestApiFactory.cs
+ M backend/tests/OnlineSupermarket.Api.Tests/TestApiFactory.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/ForecastJobHandlerTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/ForecastRecurringScheduleTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Intelligence/IntelligencePerformanceSmokeTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/IntelligenceWorkerTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/JobLeaseTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/JobRunStoreTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/OnlineSupermarket.Infrastructure.Tests.csproj
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlFixture.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlInventoryTransactionTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlJobRunLifecycleConcurrencyTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Persistence/MySqlSchemaTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Recommendations/ProductViewEventStoreTests.cs
+ M backend/tests/OnlineSupermarket.Infrastructure.Tests/Recommendations/RecommendationJobHandlerTests.cs
+ M compose.yaml
+ M docs/requirements/functional-requirements.md
+ M docs/superpowers/plans/2026-09-06-remediation-continuation.md
+?? artifacts/
+?? backend/scripts/__pycache__/
+?? backend/src/OnlineSupermarket.Api/Pomelo.EntityFrameworkCore.MySql/
+?? backend/src/OnlineSupermarket.Api/test-console/
+?? backend/src/OnlineSupermarket.Infrastructure/Jobs/EfJobRunStore.cs
+?? backend/src/OnlineSupermarket.Infrastructure/Jobs/JobRunExecutor.cs
+?? backend/src/OnlineSupermarket.Infrastructure/Jobs/JobRunPublishGuard.cs
+?? backend/tests/OnlineSupermarket.Api.Tests/ManualDbContextFactory.cs
+?? backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/JobRunExecutorTests.cs
+?? backend/tests/OnlineSupermarket.Infrastructure.Tests/Jobs/TestDbContextFactory.cs
+?? docs/progress/
+?? scripts/assemble_master_report.py
+?? scripts/generate_excel_reports.py
+?? submission/

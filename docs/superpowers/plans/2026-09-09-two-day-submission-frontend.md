@@ -48,7 +48,7 @@ export interface SalesReportDto {
 
 - `GET /api/admin/dashboard/summary`
 - `GET /api/admin/reports/sales?from=YYYY-MM-DD&to=YYYY-MM-DD`
-- `GET /api/dev/password-reset-emails/latest?email=<encoded-email>` chỉ tồn tại khi API chạy Development; chỉ dùng cho demo/E2E, không gọi từ UI production.
+- `GET /api/dev/password-reset-emails/latest?email=<encoded-email>` chỉ tồn tại khi API chạy Development và yêu cầu bearer token Admin (`AdminOnly`); chỉ dùng cho demo/E2E qua API request context Admin riêng, không gọi từ UI production.
 - Dashboard `completedRevenue` là tổng toàn thời gian của các đơn Completed.
 - Report nhóm theo ngày tạo đơn UTC; preset frontend phải dùng UTC, không dùng ngày local của trình duyệt.
 
@@ -299,8 +299,13 @@ Commit: `feat(frontend): add legal pages`
 - Modify: `AptechMart_eProject_Submission/II_eProject_Report/SCREENSHOT_CAPTURE_GUIDE.md`
 - Create: `frontend/playwright.config.ts`
 - Create: `frontend/e2e/submission-pages.spec.ts`
+- Modify: `frontend/vite.config.ts`
 
-- [ ] **Step 1: Chạy toàn bộ frontend tests**
+- [ ] **Step 1: Tách test runners và tạo E2E suite**
+
+Trong `vite.config.ts`, giới hạn `test.include` thành `['src/**/*.{test,spec}.{ts,tsx}']` để Vitest không thu thập `e2e/submission-pages.spec.ts`. Trong `playwright.config.ts`, đặt `testDir: './e2e'`, cấu hình `baseURL` theo frontend bản nộp (mặc định `http://localhost:5173`). Dùng `test`, `expect` và `defineConfig` từ `playwright/test` đã có trong dependency `playwright`; không thêm package. Tạo suite theo Step 4 trước khi chạy các gate dưới đây.
+
+Chạy các lệnh npm/npx trong thư mục `frontend`; chạy Docker Compose ở repository root. Chuẩn bị Chromium cho Playwright bằng `npx playwright install chromium` nếu máy chưa có browser tương ứng.
 
 Run: `npm test -- --run`
 
@@ -318,7 +323,7 @@ Khởi động stack bản nộp bằng `docker compose up --build -d`, xác nh�
 
 - [ ] **Step 4: Chạy E2E contract thật**
 
-Trong `submission-pages.spec.ts`, đọc `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD` với mặc định seed `admin@test.com`/`Test@123`. Tạo Customer riêng cho mỗi run qua register bằng email chứa timestamp và mật khẩu `Test@123`, tránh thay đổi tài khoản seed. Kiểm tra: đăng nhập Admin → mở dashboard → assert dữ liệu seed có recent order và click sang chi tiết; đổi report từ 30 ngày sang 7 ngày → gọi chính API report qua Playwright request và đối chiếu KPI tổng tiền; yêu cầu reset Customer vừa tạo → lấy `resetUrl` từ dev mailbox endpoint → mở URL trên frontend → đặt mật khẩu `Changed@123` → đăng nhập bằng mật khẩu mới. Test cũng kiểm tra URL sai, `/privacy`, `/terms` và customer bị chặn khỏi admin.
+Trong `submission-pages.spec.ts`, đọc `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD` với mặc định seed `admin@test.com`/`Test@123`. Đăng nhập Admin qua API để tạo API request context riêng có header `Authorization: Bearer <accessToken>`; dùng context này khi gọi report và dev mailbox, không đưa token Admin vào browser context Customer. Tạo Customer riêng cho mỗi run qua register bằng email chứa timestamp và mật khẩu `Test@123`, tránh thay đổi tài khoản seed. Kiểm tra: đăng nhập Admin → mở dashboard → assert dữ liệu seed có recent order và click sang chi tiết; đổi report từ 30 ngày sang 7 ngày → gọi chính API report qua context Admin và đối chiếu KPI tổng tiền; yêu cầu reset Customer vừa tạo → lấy `resetUrl` từ dev mailbox qua context Admin → mở URL trên frontend trong browser context Customer riêng → đặt mật khẩu `Changed@123` → đăng nhập bằng mật khẩu mới. Test cũng kiểm tra URL sai, `/privacy`, `/terms` và customer bị chặn khỏi admin. Không log token/reset URL; không bật trace/video cho luồng reset chứa token.
 
 Run: `npx playwright test e2e/submission-pages.spec.ts`
 

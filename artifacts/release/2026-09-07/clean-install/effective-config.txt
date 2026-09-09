@@ -1,0 +1,74 @@
+name: clean-test
+networks:
+  default:
+    name: clean-test_default
+services:
+  api:
+    build:
+      context: C:\Users\manh\Documents\Project3\clean-install-test
+      dockerfile: backend/src/OnlineSupermarket.Api/Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: ${ConnectionStrings__DefaultConnection}
+      Infrastructure__DisableBackgroundServices: "false"
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: "8087"
+        target: 8080
+    restart: unless-stopped
+  frontend:
+    build:
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      context: C:\Users\manh\Documents\Project3\clean-install-test
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      api:
+        condition: service_started
+        required: true
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: "5178"
+        target: 80
+    restart: unless-stopped
+  mysql:
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+    healthcheck:
+      interval: 5s
+      retries: 20
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} --silent
+      timeout: 5s
+    image: mysql:8.4
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: "33067"
+        target: 3306
+    restart: unless-stopped
+    volumes:
+      - source: mysql_data
+        target: /var/lib/mysql
+        type: volume
+        volume: {}
+volumes:
+  mysql_data:
+    name: clean-test_mysql_data

@@ -1,0 +1,25 @@
+{
+  "verifiedAtUtc": "2026-09-08T05:41:17.870Z",
+  "anonymousSessionId": "00c202c6...[REDACTED]",
+  "targetProductId": "0baae464-4f4c-49a0-8699-743aa32e28b3",
+  "viewEventId": "29f56f18-28bf-4622-a05a-66c6256a3917",
+  "preLoginState": {
+    "userId": null,
+    "persisted": true
+  },
+  "loginMergeFlow": {
+    "userEmail": "mergeuser@test.com",
+    "userId": "63cd1842-1e8c-4a34-9dae-170b624c316a",
+    "wiring": "AuthContext.login() -> recommendationApi.mergeSession()",
+    "httpStatus": 200,
+    "mergedCount": 1,
+    "postLoginUserId": "63cd1842-1e8c-4a34-9dae-170b624c316a"
+  },
+  "securityAndIdempotency": {
+    "repeatedMergeCount": 0,
+    "unauthorizedHttpStatus": 401,
+    "crossAccountMergeCount": 0,
+    "ownershipLeakage": false
+  },
+  "seenProductExclusionVerified": true
+}

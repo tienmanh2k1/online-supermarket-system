@@ -1,0 +1,5 @@
+Test source copy: 2026-09-07 2026-09-07T09:39:58+07:00
+Repo HEAD: 85f48aee73d89e6f3e7fd62a1f31b2499c29ba4a
+Working-tree diff applied at copy time (see repo git baseline); test copy excludes bin/obj/node_modules/dist/.git/.vs/.codegraph/artifacts
+Compose overrides: ports mysql:33067 api:8087 frontend:5178, project clean-test, DB online_supermarket_test, new volume clean-test_mysql_data
+Config from .env.example with test-only credentials (not real .env values).

@@ -1,0 +1,7 @@
+Restart/recovery evidence 2026-09-07T11:53:57+07:00
+api container stopped, orphan Queued run inserted directly in DB (id=08262c4f-70cb-4e25-bd61-f1fb3403e49a, lock_key=orphan:...)
+api restarted (up -d api from clean-install-test)
+health after restart:
+{"status":"ok"} HTTP 200
+same orphan run after recovery pass:
+Succeeded

@@ -1,0 +1,36 @@
+{
+  "sourceScope": "User",
+  "generatedAtUtc": "2026-09-08T05:38:15.163505",
+  "items": [
+    {
+      "productId": "0baae464-4f4c-49a0-8699-743aa32e28b3",
+      "name": "Dell XPS 15 9530 (i7, 16GB, 512GB)",
+      "slug": "dell-xps-15-9530",
+      "imageUrl": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500&q=80",
+      "price": 35990000,
+      "availableQuantity": 30,
+      "score": 0.87424,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "3201f989-ff03-4a97-be7c-620ea7bc1b32",
+      "name": "Samsung Galaxy Tab S9 FE",
+      "slug": "samsung-galaxy-tab-s9-fe",
+      "imageUrl": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500&q=80",
+      "price": 12990000,
+      "availableQuantity": 30,
+      "score": 0.578975,
+      "reason": "Gợi ý từ mô hình AI"
+    },
+    {
+      "productId": "bd00c190-a496-484f-8818-98dba5a52533",
+      "name": "LG Door-in-Door 601L InstaView",
+      "slug": "lg-door-in-door-601l-instaview",
+      "imageUrl": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
+      "price": 42990000,
+      "availableQuantity": 30,
+      "score": 0.178329,
+      "reason": "Gợi ý từ mô hình AI"
+    }
+  ]
+}
