@@ -73,6 +73,15 @@ export interface DashboardSummaryDto {
   }>
 }
 
+export interface SalesReportDto {
+  from: string
+  to: string
+  totalRevenue: number
+  completedOrderCount: number
+  averageOrderValue: number
+  daily: Array<{ date: string; revenue: number; orderCount: number }>
+}
+
 export interface UserSummaryDto {
   id: string
   email: string
@@ -113,6 +122,12 @@ export const adminApi = {
   // Dashboard summary
   getDashboardSummary: (token: string, signal?: AbortSignal) =>
     getJson<DashboardSummaryDto>('/admin/dashboard/summary', { token, signal }),
+
+  // Sales report
+  getSalesReport: (from: string, to: string, token: string, signal?: AbortSignal) => {
+    const query = new URLSearchParams({ from, to })
+    return getJson<SalesReportDto>(`/admin/reports/sales?${query}`, { token, signal })
+  },
 
   // Users
   listUsers: (page: number, pageSize: number, token: string, signal?: AbortSignal) =>

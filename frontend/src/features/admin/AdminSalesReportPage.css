@@ -1,0 +1,245 @@
+.admin-sales-report {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-sales-report__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.admin-sales-report__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--forest, #0b3d2e);
+  margin: 0;
+}
+
+.admin-sales-report__timezone-note {
+  font-size: 0.825rem;
+  color: #557069;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-sales-report__filters {
+  background: #fff;
+  border: 1px solid rgba(11, 61, 46, 0.12);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-sales-report__filter-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-sales-report__presets {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-sales-report__preset-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(11, 61, 46, 0.2);
+  background: #fff;
+  color: var(--forest, #0b3d2e);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-sales-report__preset-btn:hover {
+  background: #f8faf9;
+  border-color: var(--forest, #0b3d2e);
+}
+
+.admin-sales-report__preset-btn--active {
+  background: var(--forest, #0b3d2e);
+  color: #fff;
+  border-color: var(--forest, #0b3d2e);
+}
+
+.admin-sales-report__custom-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-sales-report__date-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--forest, #0b3d2e);
+}
+
+.admin-sales-report__date-input {
+  padding: 6px 10px;
+  border: 1px solid rgba(11, 61, 46, 0.25);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.admin-sales-report__date-input:focus {
+  border-color: var(--forest, #0b3d2e);
+  box-shadow: 0 0 0 2px rgba(11, 61, 46, 0.12);
+}
+
+.admin-sales-report__submit-btn {
+  padding: 7px 16px;
+  background: var(--forest, #0b3d2e);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-sales-report__submit-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-sales-report__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.admin-sales-report__kpi-card {
+  background: #fff;
+  border: 1px solid rgba(11, 61, 46, 0.12);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sales-report__kpi-label {
+  color: #557069;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-sales-report__kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--forest, #0b3d2e);
+}
+
+.admin-sales-report__kpi-value--revenue {
+  color: var(--leaf, #1f7a4d);
+}
+
+.admin-sales-report__section {
+  background: #fff;
+  border: 1px solid rgba(11, 61, 46, 0.12);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.admin-sales-report__section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.admin-sales-report__section-title {
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--forest, #0b3d2e);
+  margin: 0;
+}
+
+.admin-sales-report__count-badge {
+  font-size: 0.85rem;
+  color: #557069;
+  font-weight: 600;
+}
+
+.admin-sales-report__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-sales-report__table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: #f8faf9;
+  color: #557069;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(11, 61, 46, 0.08);
+}
+
+.admin-sales-report__table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(11, 61, 46, 0.06);
+  color: var(--ink, #1a202c);
+}
+
+.admin-sales-report__table tr:hover td {
+  background: #fbfdfc;
+}
+
+.admin-sales-report__empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: #557069;
+}
+
+.admin-sales-report__error {
+  background: #fdf2f0;
+  border: 1px solid #f5c2bc;
+  color: #b33927;
+  padding: 16px 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-sales-report__retry-btn {
+  padding: 8px 16px;
+  background: #b33927;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-sales-report__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #557069;
+  font-size: 1.1rem;
+}

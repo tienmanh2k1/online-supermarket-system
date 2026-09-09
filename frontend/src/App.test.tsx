@@ -54,6 +54,9 @@ vi.mock('./features/admin/AdminLayout', async () => {
 vi.mock('./features/admin/AdminDashboardPage', () => ({
   AdminDashboardPage: () => <h1>Admin Dashboard Route</h1>,
 }))
+vi.mock('./features/admin/AdminSalesReportPage', () => ({
+  AdminSalesReportPage: () => <h1>Admin Sales Report Route</h1>,
+}))
 vi.mock('./features/admin/categories/AdminCategoriesPage', () => ({
   AdminCategoriesPage: () => <h1>Admin Categories Route</h1>,
 }))
@@ -98,6 +101,12 @@ it('wires the admin dashboard route', () => {
   window.history.pushState({}, '', '/admin/dashboard')
   render(<App />)
   expect(screen.getByRole('heading', { name: 'Admin Dashboard Route' })).toBeInTheDocument()
+})
+
+it('wires the admin sales report route', () => {
+  window.history.pushState({}, '', '/admin/reports/sales')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Admin Sales Report Route' })).toBeInTheDocument()
 })
 
 it('wires the admin inventory route', () => {
