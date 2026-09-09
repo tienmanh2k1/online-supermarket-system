@@ -67,17 +67,17 @@ export interface SalesReportDto {
 - Produces: `requestPasswordResetApi(email: string, signal?: AbortSignal): Promise<{ message: string }>`.
 - Produces: `ForgotPasswordForm({ onBackToLogin }: { onBackToLogin: () => void })`.
 
-- [ ] **Step 1: Viết test fail cho nút “Quên mật khẩu?” và submit email**
+- [x] **Step 1: Viết test fail cho nút “Quên mật khẩu?” và submit email**
 
 Mock `requestPasswordResetApi`, mở modal login, click “Quên mật khẩu?”, nhập `user@example.com`, submit, rồi assert thông báo trung tính xuất hiện và không chứa thông tin email tồn tại hay không.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/auth/Auth.test.tsx`
 
 Expected: FAIL vì chưa có nút/form/API.
 
-- [ ] **Step 3: Thêm API và state `forgot` cho modal**
+- [x] **Step 3: Thêm API và state `forgot` cho modal**
 
 ```ts
 export function requestPasswordResetApi(email: string, signal?: AbortSignal) {
@@ -87,7 +87,7 @@ export function requestPasswordResetApi(email: string, signal?: AbortSignal) {
 
 Đổi `mode` thành `'login' | 'register' | 'forgot'`; `LoginForm` nhận `onForgotPassword`; `ForgotPasswordForm` validate email rỗng, khóa nút khi gửi và luôn dùng copy thành công: “Nếu email tồn tại, chúng tôi đã gửi liên kết đặt lại mật khẩu.”
 
-- [ ] **Step 4: Chạy test xanh và commit**
+- [x] **Step 4: Chạy test xanh và commit**
 
 Run: `npm test -- --run src/features/auth/Auth.test.tsx`
 
@@ -108,17 +108,17 @@ Commit: `feat(frontend): add forgot password request flow`
 - Produces: `confirmPasswordResetApi(token: string, newPassword: string, signal?: AbortSignal): Promise<{ message: string }>`.
 - Route: `/reset-password?token=<opaque-token>`.
 
-- [ ] **Step 1: Viết test fail cho token thiếu, password không khớp và submit thành công**
+- [x] **Step 1: Viết test fail cho token thiếu, password không khớp và submit thành công**
 
 Test riêng ba case: thiếu token không gọi API; hai password khác nhau báo lỗi client; token hợp lệ gọi API `{ token, newPassword }` và hiển thị nút quay lại đăng nhập/trang chủ.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/auth/ResetPasswordPage.test.tsx`
 
 Expected: FAIL vì component chưa tồn tại.
 
-- [ ] **Step 3: Cài API, page và route**
+- [x] **Step 3: Cài API, page và route**
 
 ```ts
 export function confirmPasswordResetApi(token: string, newPassword: string, signal?: AbortSignal) {
@@ -128,7 +128,7 @@ export function confirmPasswordResetApi(token: string, newPassword: string, sign
 
 Page đọc token bằng `useSearchParams`, có `new-password` và `confirm-password`, `autoComplete="new-password"`, validate rỗng/không khớp, xử lý lỗi 400 thành “Liên kết không hợp lệ hoặc đã hết hạn.”
 
-- [ ] **Step 4: Chạy test và commit**
+- [x] **Step 4: Chạy test và commit**
 
 Run: `npm test -- --run src/features/auth/ResetPasswordPage.test.tsx src/App.test.tsx`
 
@@ -147,21 +147,21 @@ Commit: `feat(frontend): add reset password page`
 **Interfaces:**
 - Route: `*` render trong `AppShell`.
 
-- [ ] **Step 1: Viết route test fail**
+- [x] **Step 1: Viết route test fail**
 
 Render app tại `/duong-dan-khong-ton-tai`, assert heading “Không tìm thấy trang”, link `/` và `/products`.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/system/NotFoundPage.test.tsx`
 
 Expected: FAIL vì route hiện render shell trống.
 
-- [ ] **Step 3: Tạo page và đặt `<Route path="*" element={<NotFoundPage />} />` cuối nhóm route public**
+- [x] **Step 3: Tạo page và đặt `<Route path="*" element={<NotFoundPage />} />` cuối nhóm route public**
 
 Không redirect tự động; dùng `<Link>` để giữ SPA navigation.
 
-- [ ] **Step 4: Chạy test và commit**
+- [x] **Step 4: Chạy test và commit**
 
 Run: `npm test -- --run src/features/system/NotFoundPage.test.tsx src/App.test.tsx`
 
@@ -183,17 +183,17 @@ Commit: `feat(frontend): add not found page`
 - Consumes: `DashboardSummaryDto` và `GET /api/admin/dashboard/summary`.
 - Produces: `/admin/dashboard`; `/admin` redirect tới `dashboard`.
 
-- [ ] **Step 1: Viết test fail cho ready, empty, error/retry và navigation**
+- [x] **Step 1: Viết test fail cho ready, empty, error/retry và navigation**
 
 Mock `adminApi.getDashboardSummary`. Assert bốn metric với nhãn “Tổng doanh thu đơn hoàn tất”, recent order links, spinner `aria-busy`, error `role="alert"`, retry gọi API lần hai; assert sidebar có “Tổng quan”.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/admin/AdminDashboardPage.test.tsx`
 
 Expected: FAIL vì API/page chưa tồn tại.
 
-- [ ] **Step 3: Thêm DTO/API và page**
+- [x] **Step 3: Thêm DTO/API và page**
 
 ```ts
 getDashboardSummary: (token: string, signal?: AbortSignal) =>
@@ -202,11 +202,11 @@ getDashboardSummary: (token: string, signal?: AbortSignal) =>
 
 Page lấy `accessToken`, abort request khi unmount, format tiền bằng `Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })`; recent orders link tới `/admin/orders/:id`.
 
-- [ ] **Step 4: Nối route và sidebar**
+- [x] **Step 4: Nối route và sidebar**
 
 Thêm `{ to: '/admin/dashboard', label: 'Tổng quan', icon: '📊' }` đầu `NAV_ITEMS`; đổi admin index redirect từ `catalog/categories` sang `dashboard`.
 
-- [ ] **Step 5: Chạy test và commit**
+- [x] **Step 5: Chạy test và commit**
 
 Run: `npm test -- --run src/features/admin/AdminDashboardPage.test.tsx src/features/admin/AdminRoute.test.tsx src/App.test.tsx`
 
@@ -228,17 +228,17 @@ Commit: `feat(frontend): add admin dashboard`
 - Consumes: `SalesReportDto` và `GET /api/admin/reports/sales`.
 - Produces: `/admin/reports/sales`.
 
-- [ ] **Step 1: Viết test fail cho mặc định 30 ngày, preset, validation và state**
+- [x] **Step 1: Viết test fail cho mặc định 30 ngày, preset, validation và state**
 
 Đóng băng thời gian trong Vitest; dùng ngày UTC và assert lần đầu gửi ngày kết thúc UTC hiện tại cùng ngày bắt đầu 29 ngày trước. Test `from > to` không gọi API, preset 7 ngày tải lại, lỗi có retry. Fixture không có đơn phải có `completedOrderCount: 0` nhưng `daily` vẫn chứa đủ các ngày với `revenue: 0` và `orderCount: 0`; assert zero-state dựa trên count và bảng ngày vẫn render.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/admin/AdminSalesReportPage.test.tsx`
 
 Expected: FAIL vì page/API chưa tồn tại.
 
-- [ ] **Step 3: Thêm query builder và page**
+- [x] **Step 3: Thêm query builder và page**
 
 ```ts
 getSalesReport: (from: string, to: string, token: string, signal?: AbortSignal) => {
@@ -249,7 +249,7 @@ getSalesReport: (from: string, to: string, token: string, signal?: AbortSignal) 
 
 Dùng `<input type="date">`, ba preset 7 ngày/30 ngày/tháng này được tính bằng các helper UTC, ba KPI, average order value và table `date/revenue/orderCount`; không thêm chart library. Hiển thị chú thích “Nhóm theo ngày tạo đơn (UTC)” cạnh bộ lọc.
 
-- [ ] **Step 4: Nối route/sidebar, chạy test và commit**
+- [x] **Step 4: Nối route/sidebar, chạy test và commit**
 
 Run: `npm test -- --run src/features/admin/AdminSalesReportPage.test.tsx src/App.test.tsx`
 
@@ -270,21 +270,21 @@ Commit: `feat(frontend): add minimal sales report`
 **Interfaces:**
 - Produces: `/privacy`, `/terms` và footer links toàn site.
 
-- [ ] **Step 1: Viết test fail cho routes và footer links**
+- [x] **Step 1: Viết test fail cho routes và footer links**
 
 Assert Privacy mô tả tài khoản, địa chỉ, đơn hàng và thanh toán; Terms mô tả tài khoản, đặt hàng và giới hạn sandbox; footer link dùng route nội bộ.
 
-- [ ] **Step 2: Chạy test đỏ**
+- [x] **Step 2: Chạy test đỏ**
 
 Run: `npm test -- --run src/features/legal/LegalPages.test.tsx`
 
 Expected: FAIL vì pages chưa tồn tại.
 
-- [ ] **Step 3: Tạo nội dung tĩnh, route và footer**
+- [x] **Step 3: Tạo nội dung tĩnh, route và footer**
 
 Không thêm cam kết hoàn tiền/đổi trả chưa có trong requirements; ghi rõ VNPay/MoMo là sandbox trong bản đồ án.
 
-- [ ] **Step 4: Chạy test và commit**
+- [x] **Step 4: Chạy test và commit**
 
 Run: `npm test -- --run src/features/legal/LegalPages.test.tsx src/App.test.tsx`
 
@@ -301,7 +301,7 @@ Commit: `feat(frontend): add legal pages`
 - Create: `frontend/e2e/submission-pages.spec.ts`
 - Modify: `frontend/vite.config.ts`
 
-- [ ] **Step 1: Tách test runners và tạo E2E suite**
+- [x] **Step 1: Tách test runners và tạo E2E suite**
 
 Trong `vite.config.ts`, giới hạn `test.include` thành `['src/**/*.{test,spec}.{ts,tsx}']` để Vitest không thu thập `e2e/submission-pages.spec.ts`. Trong `playwright.config.ts`, đặt `testDir: './e2e'`, cấu hình `baseURL` theo frontend bản nộp (mặc định `http://localhost:5173`). Dùng `test`, `expect` và `defineConfig` từ `playwright/test` đã có trong dependency `playwright`; không thêm package. Tạo suite theo Step 4 trước khi chạy các gate dưới đây.
 
@@ -311,17 +311,17 @@ Run: `npm test -- --run`
 
 Expected: tất cả test PASS, không có unhandled rejection.
 
-- [ ] **Step 2: Build production**
+- [x] **Step 2: Build production**
 
 Run: `npm run build`
 
 Expected: TypeScript và Vite build thành công.
 
-- [ ] **Step 3: Chạy frontend và API/database thật**
+- [x] **Step 3: Chạy frontend và API/database thật**
 
 Khởi động stack bản nộp bằng `docker compose up --build -d`, xác nhận API health và frontend tải được. Không thay bằng mock server.
 
-- [ ] **Step 4: Chạy E2E contract thật**
+- [x] **Step 4: Chạy E2E contract thật**
 
 Trong `submission-pages.spec.ts`, đọc `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD` với mặc định seed `admin@test.com`/`Test@123`. Đăng nhập Admin qua API để tạo API request context riêng có header `Authorization: Bearer <accessToken>`; dùng context này khi gọi report và dev mailbox, không đưa token Admin vào browser context Customer. Tạo Customer riêng cho mỗi run qua register bằng email chứa timestamp và mật khẩu `Test@123`, tránh thay đổi tài khoản seed. Kiểm tra: đăng nhập Admin → mở dashboard → assert dữ liệu seed có recent order và click sang chi tiết; đổi report từ 30 ngày sang 7 ngày → gọi chính API report qua context Admin và đối chiếu KPI tổng tiền; yêu cầu reset Customer vừa tạo → lấy `resetUrl` từ dev mailbox qua context Admin → mở URL trên frontend trong browser context Customer riêng → đặt mật khẩu `Changed@123` → đăng nhập bằng mật khẩu mới. Test cũng kiểm tra URL sai, `/privacy`, `/terms` và customer bị chặn khỏi admin. Không log token/reset URL; không bật trace/video cho luồng reset chứa token.
 
@@ -329,11 +329,11 @@ Run: `npx playwright test e2e/submission-pages.spec.ts`
 
 Expected: PASS với API, MySQL và frontend thật.
 
-- [ ] **Step 5: Smoke viewport và đồng bộ tài liệu**
+- [x] **Step 5: Smoke viewport và đồng bộ tài liệu**
 
 Kiểm tra các route mới ở desktop và mobile viewport. Frontend là owner duy nhất của `docs/architecture/sitemap.md`; chỉ ghi `IMPLEMENTED` cho route đã qua E2E, test và build. Cập nhật hướng dẫn screenshot cho Dashboard, Sales Report, Reset Password và 404.
 
-- [ ] **Step 6: Commit gate**
+- [x] **Step 6: Commit gate**
 
 Commit: `docs: update frontend submission routes`
 

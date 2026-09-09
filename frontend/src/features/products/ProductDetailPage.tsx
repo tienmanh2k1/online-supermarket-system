@@ -472,7 +472,7 @@ export function ProductDetailPage() {
                         id: id!,
                         categoryId: product.categoryId,
                         categoryName: product.categoryName,
-                        categorySlug: product.categorySlug,
+                        categorySlug: product.categorySlug ?? '',
                       })
                       if (warning) {
                         alert(warning)
@@ -482,7 +482,7 @@ export function ProductDetailPage() {
                         id: id!,
                         categoryId: product.categoryId,
                         categoryName: product.categoryName,
-                        categorySlug: product.categorySlug,
+                        categorySlug: product.categorySlug ?? '',
                       })
                       if (added || hasProduct) {
                         openModal()

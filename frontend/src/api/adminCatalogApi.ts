@@ -98,7 +98,11 @@ export const adminCatalogApi = {
     patchJson<AdminBrandDto>(`/admin/catalog/brands/${encodeURIComponent(id)}/status`, req, { token, signal }),
 
   // Products
-  getProducts: (params: AdminProductListParams | undefined, token: string, signal?: AbortSignal) => {
+  getProducts: (
+    params: AdminProductListParams | undefined,
+    token: string,
+    signal?: AbortSignal
+  ): Promise<PaginatedResponse<AdminProductDto>> => {
     const searchParams = new URLSearchParams()
     if (params) {
       if (params.page !== undefined) searchParams.append('page', params.page.toString())
@@ -110,7 +114,14 @@ export const adminCatalogApi = {
     }
     const q = searchParams.toString()
     const path = q ? `/admin/catalog/products?${q}` : '/admin/catalog/products'
-    return getJson<PaginatedResponse<AdminProductDto>>(path, { token, signal })
+    return getJson<any>(path, { token, signal }).then((res) => {
+      const list: AdminProductDto[] = res.data ?? res.items ?? []
+      return {
+        data: list,
+        items: list,
+        meta: res.meta,
+      }
+    })
   },
 
   createProduct: (req: UpsertProductRequest, token: string, signal?: AbortSignal) =>

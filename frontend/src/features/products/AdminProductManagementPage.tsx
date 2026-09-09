@@ -27,7 +27,7 @@ export function AdminProductManagementPage() {
         catalogApi.getCategories(),
         catalogApi.getBrands()
       ])
-      setProducts(prodRes.data)
+      setProducts(prodRes.data ?? prodRes.items)
       setCategories(cats)
       setBrands(brs)
       if (cats.length > 0) setForm(f => ({ ...f, categoryId: cats[0].id }))

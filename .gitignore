@@ -9,6 +9,8 @@
 !.env.example
 *.user
 TestResults/
+test-results/
+playwright-report/
 
 # Local AI agent workflow (never publish)
 .ai/

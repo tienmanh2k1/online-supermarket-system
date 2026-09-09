@@ -7,6 +7,8 @@ export interface ProductSummaryDto {
   sku: string
   basePrice: number
   imageUrl: string | null
+  categoryId?: string
+  categorySlug?: string
   categoryName: string
   brandName: string
 }
@@ -28,6 +30,7 @@ export interface ProductDetailDto {
   unit: string
   imageUrl: string | null
   categoryId: string
+  categorySlug?: string
   categoryName: string
   brandId: string
   brandName: string
@@ -57,7 +60,8 @@ export interface PaginationMeta {
 }
 
 export interface PaginatedResponse<T> {
-  data: T[]
+  items: T[]
+  data?: T[]
   meta: PaginationMeta
 }
 
@@ -99,7 +103,13 @@ export const catalogApi = {
     if (params?.pageSize && params.pageSize > 0) query.set('pageSize', params.pageSize.toString())
 
     const queryString = query.toString() ? `?${query.toString()}` : ''
-    return getJson<PaginatedResponse<ProductSummaryDto>>(`/products${queryString}`, options)
+    const res = await getJson<any>(`/products${queryString}`, options)
+    const list: ProductSummaryDto[] = res.data ?? res.items ?? []
+    return {
+      data: list,
+      items: list,
+      meta: res.meta,
+    }
   },
 
   async getProductById(id: string, branchId?: string, options?: RequestOptions | AbortSignal): Promise<ProductDetailDto> {

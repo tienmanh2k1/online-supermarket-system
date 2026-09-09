@@ -57,13 +57,24 @@ Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-2
 │   │
 │   ├─ /shopping/checkout/success ─────────── Xác nhận đặt hàng thành công [Customer Guard]
 │   │                                         (Mã đơn hàng, chi tiết thanh toán sandbox, hướng dẫn)
+│   ├─ /reset-password ────────────────────── Trang đặt lại mật khẩu [IMPLEMENTED]
+│   │                                         (Khôi phục mật khẩu qua token xác thực an toàn)
+│   │
+│   ├─ /privacy ───────────────────────────── Chính sách bảo mật [IMPLEMENTED]
+│   │                                         (Thu thập dữ liệu, bảo mật thanh toán, quyền người dùng)
+│   │
+│   ├─ /terms ─────────────────────────────── Điều khoản dịch vụ [IMPLEMENTED]
+│   │                                         (Quy định tài khoản, đặt hàng, giới hạn thử nghiệm sandbox)
 │   │
 │   ├─ /orders/history ────────────────────── Lịch sử đơn hàng [Customer Guard]
 │   │                                         (Danh sách đơn đã đặt, bộ lọc trạng thái đơn)
 │   │
-│   └─ /orders/history/:id ────────────────── Chi tiết đơn hàng [Customer Guard]
-│                                             (Timeline trạng thái đơn, snapshot sản phẩm & địa chỉ,
-│                                              nút gửi Đánh giá xác thực cho sản phẩm đã nhận)
+│   ├─ /orders/history/:id ────────────────── Chi tiết đơn hàng [Customer Guard]
+│   │                                         (Timeline trạng thái đơn, snapshot sản phẩm & địa chỉ,
+│   │                                          nút gửi Đánh giá xác thực cho sản phẩm đã nhận)
+│   │
+│   └─ * (hoặc đường dẫn không tồn tại) ───── Trang 404 Không tìm thấy [IMPLEMENTED]
+│                                             (Thông báo lỗi thân thiện, nút điều hướng về Storefront)
 │
 ├─ GLOBAL FLOATING MODALS & WIDGETS
 │   │
@@ -75,7 +86,13 @@ Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-2
 │
 └─ ADMIN PORTAL PATH (/admin - Protected by AdminRoute)
     │
-    ├─ /admin ─────────────────────────────── Điều hướng mặc định (Redirect sang /admin/catalog/categories)
+    ├─ /admin ─────────────────────────────── Điều hướng mặc định (Redirect sang /admin/dashboard) [IMPLEMENTED]
+    │
+    ├─ /admin/dashboard ───────────────────── Bảng tổng quan hệ thống [IMPLEMENTED]
+    │                                         (4 chỉ số KPI chính, doanh thu hoàn tất, đơn hàng gần đây)
+    │
+    ├─ /admin/reports/sales ───────────────── Báo cáo doanh số bán hàng [IMPLEMENTED]
+    │                                         (Lọc khoảng ngày UTC, preset 7d/30d/tháng, 3 KPI, bảng theo ngày)
     │
     ├─ /admin/catalog/categories ──────────── Quản lý Danh mục sản phẩm (CRUD, phân cấp cây danh mục)
     │
@@ -130,6 +147,14 @@ Liên kết: Traceability tới các Yêu cầu Chức năng (FR-101 đến FR-2
 | `/orders/history` | `OrderHistoryPage` | Customer | Danh sách toàn bộ đơn hàng của người dùng; lọc đơn theo trạng thái (`Pending`, `Confirmed`, `Shipping`, `Delivered`, `Cancelled`); hiển thị ngày đặt và tổng tiền. | `GET /api/orders` |
 | `/orders/history/:id` | `OrderDetailPage` | Customer | Chi tiết đơn hàng: dòng thời gian tiến độ xử lý đơn; snapshot thông tin người nhận và địa chỉ; danh sách các mặt hàng đã mua kèm đơn giá snapshot; nút viết đánh giá cho từng sản phẩm đã giao. | `GET /api/orders/{id}`<br>`POST /api/reviews` |
 
+### 3.5. Nhóm Hệ Thống & Pháp Lý (System & Legal)
+| Route | Tên Trang / Component | Guard | Chức Năng Chính | API Endpoints Liên Kết |
+|---|---|:---:|---|---|
+| `/reset-password` | `ResetPasswordPage` | Public | Đặt lại mật khẩu tài khoản qua mã token bảo mật; xác thực khớp mật khẩu mới, cập nhật qua backend và hướng dẫn đăng nhập. | `POST /api/auth/reset-password` |
+| `/privacy` | `PrivacyPage` | Public | Chính sách quyền riêng tư: quy định thu thập, mục đích sử dụng thông tin cá nhân, địa chỉ, đơn hàng và cam kết bảo vệ dữ liệu. | N/A |
+| `/terms` | `TermsPage` | Public | Điều khoản dịch vụ: quy định tài khoản, đặt hàng và giao nhận (Pickup/Delivery), giới hạn môi trường sandbox (VNPay, MoMo). | N/A |
+| `*` | `NotFoundPage` | Public | Trang báo lỗi 404 thân thiện khi truy cập route không tồn tại; điều hướng nhanh về trang chủ hoặc danh mục sản phẩm. | N/A |
+
 ---
 
 ## 4. Chi Tiết Các Tuyến Đường Admin Portal (Quản Trị Viên)
@@ -138,6 +163,8 @@ Tất cả các tuyến đường quản trị đều nằm dưới tiền tố 
 
 | Route | Tên Trang / Component | Chức Năng Quản Trị Chi Tiết | API Endpoints Liên Kết |
 |---|---|---|---|
+| `/admin`, `/admin/dashboard` | `AdminDashboardPage` | Bảng tổng quan hệ thống: 4 thẻ KPI trọng yếu (Tổng số đơn, Đơn cần xử lý, Doanh thu đơn hoàn tất, Hàng tồn thấp) và danh sách đơn hàng gần đây kèm liên kết chi tiết. | `GET /api/admin/dashboard/summary` |
+| `/admin/reports/sales` | `AdminSalesReportPage` | Báo cáo doanh số bán hàng: bộ lọc khoảng ngày (UTC), 3 preset (7 ngày, 30 ngày, tháng này), 3 KPI (Tổng doanh thu, Đơn hoàn tất, Giá trị đơn TB) và bảng doanh thu từng ngày. | `GET /api/admin/reports/sales` |
 | `/admin/catalog/categories` | `AdminCategoriesPage` | Quản lý danh mục sản phẩm đa cấp: xem cây danh mục, thêm mới danh mục, chỉnh sửa tên, cấu hình danh mục cha, kích hoạt hoặc ẩn danh mục. | `GET /api/admin/categories`<br>`POST /api/admin/categories`<br>`PUT /api/admin/categories/{id}` |
 | `/admin/catalog/brands` | `AdminBrandsPage` | Quản lý thương hiệu đối tác: danh sách thương hiệu, thêm thương hiệu mới, sửa đổi thông tin, ẩn/hiện thương hiệu trên Storefront. | `GET /api/admin/brands`<br>`POST /api/admin/brands`<br>`PUT /api/admin/brands/{id}` |
 | `/admin/catalog/products` | `AdminProductsPage` | Quản lý kho sản phẩm toàn hệ thống: thêm mới sản phẩm, cập nhật mã SKU, giá bán cơ sở, đơn vị tính, chọn danh mục lá, upload URL ảnh sản phẩm. | `GET /api/admin/products`<br>`POST /api/admin/products`<br>`PUT /api/admin/products/{id}` |
@@ -170,13 +197,14 @@ Tất cả các tuyến đường quản trị đều nằm dưới tiền tố 
 | **FR-112** | Hủy đơn hàng và tự động giải phóng tồn kho | `/orders/history/:id` | `OrderDetailPage` |
 | **FR-113** | Đánh giá sản phẩm đã mua (Verified Reviews) | `/product/:id`, `/orders/history/:id` | `ProductDetailPage`, `ReviewFormModal` |
 | **FR-114** | Đăng ký tài khoản khách hàng mới | Toàn hệ thống (Auth Header) | `AuthModal` (Tab Register) |
-| **FR-115** | Đăng nhập JWT và khôi phục mật khẩu | Toàn hệ thống (Auth Header) | `AuthModal` (Tab Login / Forgot) |
+| **FR-115** | Đăng nhập JWT và khôi phục mật khẩu | Toàn hệ thống (Auth Header), `/reset-password` | `AuthModal` (Tab Login / Forgot), `ResetPasswordPage` |
 | **FR-201** | Quản trị Danh mục và Thương hiệu | `/admin/catalog/categories`, `/admin/catalog/brands` | `AdminCategoriesPage`, `AdminBrandsPage` |
 | **FR-202** | Quản trị Thông tin sản phẩm | `/admin/catalog/products` | `AdminProductsPage` |
 | **FR-203** | Quản trị Tồn kho và Chi nhánh siêu thị | `/admin/branches`, `/admin/inventory` | `AdminBranchesPage`, `AdminInventoryPage` |
 | **FR-204** | Quản trị Chiến dịch Khuyến mãi & Voucher | `/admin/promotions` | `AdminPromotionsPage` |
 | **FR-205** | Quản lý và xử lý Đơn hàng (Admin) | `/admin/orders`, `/admin/orders/:id` | `AdminOrdersPage`, `AdminOrderDetailPage` |
 | **FR-206** | Quản trị và phân quyền Người dùng | `/admin/users` | `AdminUsersPage` |
-| **FR-207** | Báo cáo phân tích và thống kê vận hành | `/admin/inventory`, `/admin/orders` | `AdminInventoryPage`, `AdminOrdersPage` |
+| **FR-207** | Báo cáo phân tích và thống kê vận hành | `/admin/dashboard`, `/admin/reports/sales`, `/admin/inventory`, `/admin/orders` | `AdminDashboardPage`, `AdminSalesReportPage`, `AdminInventoryPage`, `AdminOrdersPage` |
 | **FR-208** | Gợi ý sản phẩm cá nhân hóa thông minh (AI) | `/`, `/product/:id`, `/admin/recommendations` | `RecommendationShelf`, `AdminRecommendationsPage` |
 | **FR-209** | Dự báo nhu cầu hàng hóa chi nhánh (Forecast) | `/admin/forecast` | `AdminForecastPage` |
+| **FR-SYS** | Điều khoản, bảo mật và điều hướng 404 | `/privacy`, `/terms`, `*` | `PrivacyPage`, `TermsPage`, `NotFoundPage` |

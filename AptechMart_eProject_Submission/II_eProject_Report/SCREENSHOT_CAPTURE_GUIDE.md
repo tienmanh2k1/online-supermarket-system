@@ -94,8 +94,21 @@ npm run dev
    - Password input field
    - "Sign In" button
    - Link "Create Account"
+   - Link "Quên mật khẩu?"
 
 ---
+
+### 📸 HÌNH 4.2b: KHÔI PHỤC VÀ ĐẶT LẠI MẬT KHẨU
+**URL**: http://localhost:5173/reset-password?token=SAMPLE_TOKEN
+
+**Các bước**:
+1. Mở liên kết đặt lại mật khẩu từ dev mailbox hoặc click "Quên mật khẩu?"
+2. **BẮT BUỘC** hiển thị:
+   - Tiêu đề "Đặt lại mật khẩu"
+   - Trường nhập mật khẩu mới ("Mật khẩu mới")
+   - Trường xác nhận mật khẩu mới ("Xác nhận mật khẩu mới")
+   - Nút hành động "Đặt lại mật khẩu"
+   - Trạng thái thông báo thành công và liên kết quay về trang chủ
 
 ### 📸 HÌNH 4.3: AUTHENTICATED STATE
 **URL**: http://localhost:5173 (sau khi đăng nhập)
@@ -312,20 +325,50 @@ npm run dev
 
 ---
 
-### 📸 HÌNH 4.16: SALES ANALYTICS & FORECASTING ⚠️ THIẾU
-**URL**: http://localhost:5173/admin/reports
+### 📸 HÌNH 4.16a: ADMIN DASHBOARD (TỔNG QUAN HỆ THỐNG)
+**URL**: http://localhost:5173/admin/dashboard
 
 **Các bước**:
-1. Navigate đến Admin Portal → Reports
+1. Đăng nhập quyền Admin (`admin@test.com` / `Test@123`)
+2. Navigate đến Admin Portal → Tổng quan (`/admin/dashboard`)
+3. **BẮT BUỘC** hiển thị:
+   - Tiêu đề "Tổng quan hệ thống"
+   - 4 thẻ KPI chỉ số:
+     - 🧾 Tổng số đơn hàng (`totalOrders`)
+     - ⏳ Đơn cần xử lý (`pendingOrders`)
+     - 💰 Tổng doanh thu đơn hoàn tất (`completedRevenue`)
+     - ⚠️ Hàng tồn thấp (`lowStockItems`)
+   - Bảng danh sách đơn hàng gần đây: Mã đơn (click chuyển sang chi tiết đơn), Thời gian, Số món, Hình thức (Nhận tại kho / Giao hàng), Tổng tiền, Trạng thái đơn
+
+---
+
+### 📸 HÌNH 4.16b: ADMIN SALES REPORT (BÁO CÁO DOANH SỐ)
+**URL**: http://localhost:5173/admin/reports/sales
+
+**Các bước**:
+1. Navigate đến Admin Portal → Báo cáo doanh số (`/admin/reports/sales`)
 2. **BẮT BUỘC** hiển thị:
-   - Date range selector
-   - Branch filter
-   - KPIs:
-     - Total Revenue
-     - Orders Fulfilled
-     - Average Order Value
-   - Sales charts/graphs
-   - Replenishment alerts table
+   - Chú thích "Nhóm theo ngày tạo đơn (UTC)"
+   - Các nút preset chọn nhanh: 7 ngày, 30 ngày, Tháng này
+   - Bộ chọn ngày tùy chỉnh: Từ ngày (`sales-from`), Đến ngày (`sales-to`) và nút "Xem báo cáo"
+   - 3 thẻ KPI:
+     - Tổng doanh thu
+     - Số đơn hoàn tất
+     - Giá trị đơn trung bình
+   - Bảng thống kê chi tiết "Doanh thu theo ngày" (Ngày, Số đơn hoàn tất, Doanh thu)
+
+---
+
+### 📸 HÌNH 4.17: TRANG BÁO LỖI 404 NOT FOUND
+**URL**: http://localhost:5173/not-found (hoặc bất kỳ đường dẫn không tồn tại nào)
+
+**Các bước**:
+1. Nhập một đường dẫn không tồn tại vào thanh địa chỉ trình duyệt
+2. **BẮT BUỘC** hiển thị:
+   - Mã lỗi nổi bật "404"
+   - Tiêu đề "Không tìm thấy trang"
+   - Đoạn văn mô tả hướng dẫn người dùng
+   - Các nút điều hướng nhanh: "Về trang chủ" và "Xem sản phẩm"
 
 ---
 
@@ -364,6 +407,7 @@ II_eProject_Report/
 ├── images/
 │   ├── Figure_4.1_Homepage_BranchSelector.png
 │   ├── Figure_4.2_Login_Form.png
+│   ├── Figure_4.2b_Reset_Password.png
 │   ├── Figure_4.3_Authenticated_State.png
 │   ├── Figure_4.4_Catalog_Filtering.png
 │   ├── Figure_4.5_Product_Detail.png
@@ -377,7 +421,9 @@ II_eProject_Report/
 │   ├── Figure_4.13_Admin_Inventory.png
 │   ├── Figure_4.14_Admin_Orders.png
 │   ├── Figure_4.15_Admin_Users.png
-│   ├── Figure_4.16_Admin_Reports.png
+│   ├── Figure_4.16a_Admin_Dashboard.png
+│   ├── Figure_4.16b_Admin_Sales_Report.png
+│   ├── Figure_4.17_Not_Found_404.png
 │   ├── Diagram_Architecture.png
 │   ├── Diagram_ERD.png
 │   ├── Diagram_ContextDFD.png
@@ -393,7 +439,7 @@ II_eProject_Report/
 
 ## 7. CHECKLIST TRƯỚC KHI NỘP
 
-- [ ] Tất cả 16 hình (4.1-4.16) đã chụp
+- [ ] Tất cả các hình (4.1-4.17) đã chụp
 - [ ] Viewport: 1920x1080 (hoặc full page)
 - [ ] Hiển thị đúng Branch đã chọn
 - [ ] Thấy **localized prices** trên product cards
@@ -412,6 +458,7 @@ II_eProject_Report/
 |:----:|:----|:------------|
 | 4.1 | `/` | Homepage + Branch Selector |
 | 4.2 | `/login` | Login form |
+| 4.2b | `/reset-password` | Password reset form |
 | 4.3 | Sau login | User badge, menu |
 | 4.4 | `/products` | Filter sidebar + Product grid |
 | 4.5 | `/products/:id` | Detail + Specs + Stock |
@@ -425,7 +472,9 @@ II_eProject_Report/
 | 4.13 | `/admin/inventory` | Branch stock + prices |
 | 4.14 | `/admin/orders` | Order management |
 | 4.15 | `/admin/users` | User lock/unlock |
-| 4.16 | `/admin/reports` | Sales charts |
+| 4.16a | `/admin/dashboard` | Dashboard metrics + Recent orders |
+| 4.16b | `/admin/reports/sales` | Sales report UTC + Daily table |
+| 4.17 | `/not-found` | 404 error page |
 
 ---
 
