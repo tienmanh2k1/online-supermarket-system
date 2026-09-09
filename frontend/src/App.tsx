@@ -7,6 +7,7 @@ import { CompareModal } from './features/compare/CompareModal'
 import { ProductBrowsePage } from './features/products/ProductBrowsePage'
 import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { BranchesPage } from './features/products/BranchesPage'
+import { ResetPasswordPage } from './features/auth/ResetPasswordPage'
 import { ProfilePage } from './features/account/ProfilePage'
 import { AddressListPage } from './features/account/AddressListPage'
 import { CartPage } from './features/cart/CartPage'
@@ -38,6 +39,7 @@ function CompareAppShell() {
           <Route path="/products" element={<ProductBrowsePage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/branches" element={<BranchesPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/account/profile" element={<ProfilePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/account/addresses" element={<AddressListPage />} />

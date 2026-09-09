@@ -16,6 +16,9 @@ vi.mock('./features/products/ProductBrowsePage', () => ({ ProductBrowsePage: () 
 vi.mock('./features/products/ProductDetailPage', () => ({ ProductDetailPage: () => <div /> }))
 vi.mock('./features/account/ProfilePage', () => ({ ProfilePage: () => <div /> }))
 vi.mock('./features/account/AddressListPage', () => ({ AddressListPage: () => <div /> }))
+vi.mock('./features/auth/ResetPasswordPage', () => ({
+  ResetPasswordPage: () => <h1>Reset Password Route</h1>,
+}))
 vi.mock('./features/cart/CartPage', () => ({ CartPage: () => <div /> }))
 vi.mock('./features/checkout/CheckoutPage', () => ({ CheckoutPage: () => <div>Checkout Page Route</div> }))
 vi.mock('./features/checkout/CheckoutSuccessPage', () => ({
@@ -125,3 +128,10 @@ it('wires the order detail route', () => {
   render(<App />)
   expect(screen.getByText('Order detail route')).toBeInTheDocument()
 })
+
+it('wires the reset password route', () => {
+  window.history.pushState({}, '', '/reset-password?token=sample-token')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Reset Password Route' })).toBeInTheDocument()
+})
+

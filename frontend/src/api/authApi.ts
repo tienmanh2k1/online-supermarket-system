@@ -67,3 +67,8 @@ export function requestPasswordResetApi(email: string, signal?: AbortSignal): Pr
   return postJson<{ message: string }>('/auth/password-reset', { email }, { signal })
 }
 
+export function confirmPasswordResetApi(token: string, newPassword: string, signal?: AbortSignal): Promise<{ message: string }> {
+  return postJson<{ message: string }>('/auth/password-reset/confirm', { token, newPassword }, { signal })
+}
+
+
