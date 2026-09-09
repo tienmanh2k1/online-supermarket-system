@@ -10,7 +10,7 @@ import { useCompare } from '../compare/CompareContext'
 import type { CartDto, CartItemDto } from '../../api/cartApi'
 import { ProductDetailPage } from './ProductDetailPage'
 
-vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }))
+vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn(), useOptionalAuth: vi.fn() }))
 vi.mock('../cart/CartContext', () => ({ useCart: vi.fn() }))
 vi.mock('../compare/CompareContext', () => ({ useCompare: vi.fn() }))
 vi.mock('../../api/reviewApi', () => ({

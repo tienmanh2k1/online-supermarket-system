@@ -10,7 +10,7 @@ import { useCart } from '../cart/CartContext'
 import { useCompare } from '../compare/CompareContext'
 import { ProductDetailPage } from './ProductDetailPage'
 
-vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn() }))
+vi.mock('../auth/AuthContext', () => ({ useAuth: vi.fn(), useOptionalAuth: vi.fn() }))
 vi.mock('../cart/CartContext', () => ({ useCart: vi.fn() }))
 vi.mock('../compare/CompareContext', () => ({ useCompare: vi.fn() }))
 vi.mock('../auth/AuthModal', () => ({ AuthModal: () => null }))
