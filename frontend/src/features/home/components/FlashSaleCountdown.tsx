@@ -92,14 +92,14 @@ export function FlashSaleCountdown({
       data-testid="home-bestsellers"
       aria-label="Sản phẩm bán chạy"
     >
-      <div className="flash-sale-header kg-bestseller-header">
+      <div className="flash-sale-header">
         <div className="flash-sale-header__left">
-          <div className="flash-sale-header__badge kg-bestseller-badge">
+          <div className="flash-sale-header__badge">
             <span aria-hidden="true">⚡</span>
             <span>SẢN PHẨM BÁN CHẠY</span>
           </div>
-          <h2 className="flash-sale-header__title kg-bestseller-title">Top Thiết Bị Điện Máy Bán Chạy Nhất</h2>
-          <p className="kg-bestseller-subtitle">
+          <h2 className="flash-sale-header__title">Top Thiết Bị Điện Máy Bán Chạy Nhất</h2>
+          <p className="flash-sale-header__subtitle">
             Cam kết 100% chính hãng AptechMart • Giao siêu tốc 2h • Lắp đặt &amp; Bảo hành tận nhà
           </p>
         </div>
