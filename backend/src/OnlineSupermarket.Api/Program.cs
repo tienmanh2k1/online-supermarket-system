@@ -58,6 +58,7 @@ if (app.Environment.IsDevelopment())
     await DataSeeder.SeedAllAsync(context, hasher);
 
     app.MapOpenApi();
+    app.MapDevEmailEndpoints();
 }
 
 app.UseMiddleware<RequestCancellationMiddleware>();
