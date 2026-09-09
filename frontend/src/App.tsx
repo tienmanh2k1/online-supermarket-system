@@ -18,6 +18,7 @@ import { OrderHistoryPage } from './features/orders/OrderHistoryPage'
 import { OrderDetailPage } from './features/orders/OrderDetailPage'
 import { AdminRoute } from './features/admin/AdminRoute'
 import { AdminLayout } from './features/admin/AdminLayout'
+import { AdminDashboardPage } from './features/admin/AdminDashboardPage'
 import { AdminOrdersPage } from './features/admin/AdminOrdersPage'
 import { AdminOrderDetailPage } from './features/admin/AdminOrderDetailPage'
 import { AdminInventoryPage } from './features/admin/AdminInventoryPage'
@@ -53,7 +54,8 @@ function CompareAppShell() {
 
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="catalog/categories" replace />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboardPage />} />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="orders/:id" element={<AdminOrderDetailPage />} />
               <Route path="branches" element={<AdminBranchesPage />} />

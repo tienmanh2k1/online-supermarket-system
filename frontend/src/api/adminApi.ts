@@ -58,6 +58,21 @@ export interface InventoryAdjustmentBody {
   reason?: string
 }
 
+export interface DashboardSummaryDto {
+  totalOrders: number
+  pendingOrders: number
+  completedRevenue: number
+  lowStockItems: number
+  recentOrders: Array<{
+    id: string
+    createdAtUtc: string
+    totalAmount: number
+    status: string
+    fulfillmentType: string
+    itemCount: number
+  }>
+}
+
 export interface UserSummaryDto {
   id: string
   email: string
@@ -95,6 +110,10 @@ function buildAdminOrdersQuery(params: GetAllOrdersParams) {
 }
 
 export const adminApi = {
+  // Dashboard summary
+  getDashboardSummary: (token: string, signal?: AbortSignal) =>
+    getJson<DashboardSummaryDto>('/admin/dashboard/summary', { token, signal }),
+
   // Users
   listUsers: (page: number, pageSize: number, token: string, signal?: AbortSignal) =>
     getJson<PaginatedUsersDto>(`/admin/users?page=${page}&pageSize=${pageSize}`, { token, signal }),
