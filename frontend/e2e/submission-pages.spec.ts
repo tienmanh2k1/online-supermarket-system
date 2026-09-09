@@ -283,3 +283,54 @@ test.describe('Submission Pages Integration Suite', () => {
     await mobileContext.close();
   });
 });
+
+test.describe('Storefront Homepage Responsive Suite', () => {
+  test('Storefront homepage renders hero, quick categories, trust badges and roadmap anchor', async ({ page }) => {
+    await page.goto('/');
+
+    // Verify Hero content and campaign board
+    await expect(page.locator('[data-testid="home-hero"]')).toBeVisible();
+    await expect(page.locator('[data-testid="home-trust-strip"]')).toBeVisible();
+
+    // Verify Quick Category navigation to /browse?search=...
+    const categoryLink = page.locator('[data-testid="home-quick-categories"] a').first();
+    await expect(categoryLink).toBeVisible();
+    await categoryLink.click();
+    await expect(page).toHaveURL(/.*\/browse\?search=.*/);
+
+    // Navigate to /browse and click roadmap link from nav
+    await page.goto('/browse');
+    const roadmapLink = page.locator('.site-nav a[href="/#roadmap"]');
+    await expect(roadmapLink).toBeVisible();
+    await roadmapLink.click();
+    await expect(page).toHaveURL(/.*\/#roadmap/);
+    await expect(page.locator('#roadmap')).toBeVisible();
+  });
+
+  test('Homepage renders responsive layouts cleanly without horizontal page overflow', async ({ page }) => {
+    // 1. Desktop viewport 1440x900
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await expect(page.locator('[data-testid="home-hero"]')).toBeVisible();
+    await expect(page.locator('[data-testid="home-bestsellers"]')).toBeVisible();
+    await expect(page.locator('[data-testid="home-roadmap"]')).toBeVisible();
+
+    const desktopOverflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth <= window.innerWidth;
+    });
+    expect(desktopOverflow, 'Desktop page should not have horizontal overflow').toBeTruthy();
+
+    // 2. Mobile viewport 390x844
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+    await expect(page.locator('[data-testid="home-hero"]')).toBeVisible();
+    await expect(page.locator('[data-testid="home-quick-categories"]')).toBeVisible();
+    await expect(page.locator('[data-testid="home-bestsellers"]')).toBeVisible();
+
+    const mobileOverflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth <= window.innerWidth;
+    });
+    expect(mobileOverflow, 'Mobile page should not have horizontal overflow').toBeTruthy();
+  });
+});
+

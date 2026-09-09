@@ -40,6 +40,8 @@
   flex-direction: column;
   gap: 36px;
   padding-bottom: 60px;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* ==========================================================================
@@ -1905,3 +1907,23 @@
     align-items: flex-start;
   }
 }
+
+/* ==========================================================================
+   8. ACCESSIBILITY & REDUCED MOTION
+   ========================================================================== */
+.appliance-home-page :where(a, button, input):focus-visible {
+  outline: 3px solid #ff7a1a;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appliance-home-page *,
+  .appliance-home-page *::before,
+  .appliance-home-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

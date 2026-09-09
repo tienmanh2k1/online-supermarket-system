@@ -90,6 +90,13 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     expect(screen.getByTestId('home-category-showcase')).toHaveAccessibleName('Sản phẩm theo ngành hàng')
   })
 
+  it('keeps recommendations, branch discovery and the compact roadmap', () => {
+    renderHomePage()
+    expect(screen.getByTestId('home-recommendations')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Tìm siêu thị gần bạn' })).toHaveAttribute('href', '/branches')
+    expect(within(screen.getByTestId('home-roadmap')).getAllByRole('heading', { level: 3 })).toHaveLength(3)
+  })
+
   it('renders hero banner container with correct aspect-ratio structure and sub-banners', () => {
     renderHomePage()
 
