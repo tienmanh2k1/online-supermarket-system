@@ -84,6 +84,12 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     expect(within(card).getByRole('link', { name: /xem chi tiết/i })).toBeInTheDocument()
   })
 
+  it('labels the bestsellers and category shelves as distinct sections', () => {
+    renderHomePage()
+    expect(screen.getByTestId('home-bestsellers')).toHaveAccessibleName('Sản phẩm bán chạy')
+    expect(screen.getByTestId('home-category-showcase')).toHaveAccessibleName('Sản phẩm theo ngành hàng')
+  })
+
   it('renders hero banner container with correct aspect-ratio structure and sub-banners', () => {
     renderHomePage()
 

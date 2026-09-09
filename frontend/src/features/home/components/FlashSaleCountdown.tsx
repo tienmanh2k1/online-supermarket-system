@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import gsap from 'gsap'
-import { useGSAP } from '@gsap/react'
 import type { ApplianceProduct } from '../types'
 import { ApplianceProductCard } from './ApplianceProductCard'
-
-gsap.registerPlugin(useGSAP)
 
 export interface FlashSaleCountdownProps {
   products: ApplianceProduct[]
@@ -66,39 +63,20 @@ export function FlashSaleCountdown({
     return () => clearInterval(interval)
   }, [])
 
-  // 1. GSAP Badge Pulse & Flame Flicker (FOMO effect)
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({ repeat: -1, yoyo: true })
-      tl.to('.flash-sale-flame', {
-        scale: 1.25,
-        rotate: 8,
-        duration: 0.7,
-        ease: 'power1.inOut',
-      })
+  // Minimal GSAP subtle tick without infinite loop or flame flickering
+  const isTestEnv = import.meta.env.MODE === 'test'
+  const reduceMotion =
+    isTestEnv ||
+    (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 
-      gsap.to('.flash-sale-header__badge', {
-        boxShadow: '0 0 16px rgba(220, 38, 38, 0.65)',
-        repeat: -1,
-        yoyo: true,
-        duration: 1.2,
-        ease: 'sine.inOut',
-      })
-    },
-    { scope: sectionRef }
-  )
-
-  // 2. GSAP Micro-flip animation on second tick
   useEffect(() => {
-    if (prevSeconds.current !== timeLeft.seconds && secondsRef.current) {
+    if (!reduceMotion && prevSeconds.current !== timeLeft.seconds && secondsRef.current) {
       prevSeconds.current = timeLeft.seconds
-      gsap.fromTo(
-        secondsRef.current,
-        { scale: 1.18, color: '#fde047' },
-        { scale: 1, color: '#ffffff', duration: 0.35, ease: 'power2.out' }
-      )
+      gsap.fromTo(secondsRef.current, { y: -4 }, { y: 0, duration: 0.18, ease: 'power1.out' })
     }
-  }, [timeLeft.seconds])
+  }, [timeLeft.seconds, reduceMotion])
 
   const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -112,19 +90,17 @@ export function FlashSaleCountdown({
       ref={sectionRef}
       className="flash-sale-section"
       data-testid="home-bestsellers"
-      aria-label="Giờ vàng giá sốc điện máy"
+      aria-label="Sản phẩm bán chạy"
     >
       <div className="flash-sale-header kg-bestseller-header">
         <div className="flash-sale-header__left">
           <div className="flash-sale-header__badge kg-bestseller-badge">
-            <span className="flash-sale-flame" aria-hidden="true">
-              ⚡
-            </span>
+            <span aria-hidden="true">⚡</span>
             <span>SẢN PHẨM BÁN CHẠY</span>
           </div>
           <h2 className="flash-sale-header__title kg-bestseller-title">Top Thiết Bị Điện Máy Bán Chạy Nhất</h2>
           <p className="kg-bestseller-subtitle">
-            Cam kết 100% chính hãng Kangaroo, Samsung, LG, Electrolux • Giao siêu tốc 2h • Lắp đặt &amp; Bảo hành tận nhà
+            Cam kết 100% chính hãng AptechMart • Giao siêu tốc 2h • Lắp đặt &amp; Bảo hành tận nhà
           </p>
         </div>
 

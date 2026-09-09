@@ -10,10 +10,15 @@ export interface CategoryTabsProps {
   defaultTab?: CategoryTabSlug
 }
 
-const isTestEnv = import.meta.env.MODE === 'test'
-
 export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTabsProps) {
   const [activeTabSlug, setActiveTabSlug] = useState<CategoryTabSlug>(defaultTab)
+
+  const isTestEnv = import.meta.env.MODE === 'test'
+  const reduceMotion =
+    isTestEnv ||
+    (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 
   const filteredProducts = useMemo(() => {
     if (activeTabSlug === 'all') return products
@@ -24,7 +29,7 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
     <section
       className="category-showcase-section"
       data-testid="home-category-showcase"
-      aria-labelledby="category-showcase-heading"
+      aria-label="Sản phẩm theo ngành hàng"
     >
       <div className="home-section-header">
         <div>
@@ -59,7 +64,7 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
                 <motion.span
                   layoutId="categoryActiveIndicator"
                   className="category-tab-active-indicator"
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.2, ease: 'easeOut' }}
                 />
               )}
               <span className="category-tab-btn-text">{tab.name}</span>
@@ -68,7 +73,7 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
         })}
       </div>
 
-      {/* Products Grid with Smooth Reorder & AnimatePresence */}
+      {/* Products Grid with Smooth Transition */}
       <div
         id={`tabpanel-${activeTabSlug}`}
         role="tabpanel"
@@ -81,15 +86,11 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
             filteredProducts.map((product) => (
               <motion.div
                 key={product.id}
-                layout={!isTestEnv}
-                initial={isTestEnv ? false : { opacity: 0, scale: 0.92, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={isTestEnv ? undefined : { opacity: 0, scale: 0.92, y: -15 }}
-                transition={
-                  isTestEnv
-                    ? { duration: 0 }
-                    : { duration: 0.32, ease: [0.25, 1, 0.5, 1] }
-                }
+                layout={!reduceMotion}
+                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
                 className="category-card-wrapper"
               >
                 <ApplianceProductCard product={product} />
@@ -98,43 +99,27 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
           ) : (
             <motion.div
               key="empty-state"
-              initial={isTestEnv ? false : { opacity: 0, scale: 0.85, y: 25 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={isTestEnv ? undefined : { opacity: 0, scale: 0.9, y: -15 }}
-              transition={
-                isTestEnv
-                  ? { duration: 0 }
-                  : { type: 'spring', stiffness: 350, damping: 22 }
-              }
+              initial={reduceMotion ? false : { opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -15 }}
+              transition={{ duration: reduceMotion ? 0 : 0.2 }}
               className="category-products-empty"
               data-testid="category-empty-state"
             >
-              <motion.span
-                className="category-products-empty__icon"
-                aria-hidden="true"
-                animate={
-                  isTestEnv
-                    ? undefined
-                    : { rotate: [0, -10, 10, -5, 0], scale: [1, 1.1, 1] }
-                }
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-              >
+              <span className="category-products-empty__icon" aria-hidden="true">
                 📦
-              </motion.span>
+              </span>
               <p className="category-products-empty__text">
                 Hiện chưa có sản phẩm nào trong danh mục này.
               </p>
-              <motion.button
+              <button
                 type="button"
                 className="category-tab-btn active category-empty-reset-btn"
                 data-testid="category-empty-reset-btn"
                 onClick={() => setActiveTabSlug('all')}
-                whileHover={isTestEnv ? undefined : { scale: 1.05 }}
-                whileTap={isTestEnv ? undefined : { scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 Xem tất cả sản phẩm
-              </motion.button>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
