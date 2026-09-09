@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import type { CategoryMenuItem, HeroBanner, SubBanner } from '../types'
@@ -25,17 +25,15 @@ export function HeroSection({
   subBanners,
   autoPlayIntervalMs = 5000,
 }: HeroSectionProps) {
-  const navigate = useNavigate()
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0)
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
   const [isPaused, setIsPaused] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
   const [show3DMode, setShow3DMode] = useState(true)
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const textOverlayRef = useRef<HTMLDivElement>(null)
 
   const bannerCount = banners.length
+  const activeBanner = bannerCount > 0 ? (banners[currentBannerIndex] || banners[0]) : null
 
   const handleNext = useCallback(() => {
     if (bannerCount <= 1) return
@@ -55,7 +53,7 @@ export function HeroSection({
     [bannerCount]
   )
 
-  // Autoplay timer
+  // Autoplay timer with pause on hover/focus
   useEffect(() => {
     if (bannerCount <= 1 || isPaused) {
       if (timerRef.current) clearInterval(timerRef.current)
@@ -73,161 +71,73 @@ export function HeroSection({
     }
   }, [bannerCount, isPaused, currentBannerIndex, autoPlayIntervalMs])
 
-  // GSAP Timeline animation on slide text transitions
+  // GSAP animation for slide text transitions with reduced motion and test environment check
+  const isTestEnv = import.meta.env.MODE === 'test'
+  const reduceMotion =
+    isTestEnv ||
+    (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+
   useGSAP(
     () => {
-      if (!textOverlayRef.current) return
-
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-
-      tl.fromTo(
-        '.appliance-slider-tagline',
-        { opacity: 0, y: -12 },
-        { opacity: 1, y: 0, duration: 0.4 }
+      if (!textOverlayRef.current || reduceMotion) return
+      gsap.fromTo(
+        textOverlayRef.current.children,
+        { autoAlpha: 0, y: 14 },
+        { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.07, ease: 'power2.out' }
       )
-        .fromTo(
-          '.appliance-slider-title',
-          { opacity: 0, y: 16, filter: 'blur(4px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5 },
-          '-=0.2'
-        )
-        .fromTo(
-          '.appliance-slider-subtitle',
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.4 },
-          '-=0.25'
-        )
-        .fromTo(
-          '.appliance-slider-cta',
-          { opacity: 0, scale: 0.92, y: 8 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'back.out(1.7)' },
-          '-=0.15'
-        )
     },
     { dependencies: [currentBannerIndex], scope: textOverlayRef }
   )
 
-  function handleSearchSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const term = searchTerm.trim()
-    navigate(term ? `/browse?search=${encodeURIComponent(term)}` : '/browse')
-  }
-
-  const activeBanner = banners[currentBannerIndex] || banners[0]
-
   return (
     <section className="appliance-hero" data-testid="home-hero" aria-label="Khám phá siêu thị điện máy">
-      {/* Top Search & Highlights Bar */}
-      <div className="appliance-hero__top-bar">
-        <div className="appliance-hero__brand-tag">
-          <span className="appliance-hero__brand-dot" />
-          <span className="home-hero__title">Siêu Thị Điện Máy AptechMart — Chính Hãng &amp; Giá Kho</span>
-        </div>
+      {/* Category Navigation Bar (Compact) */}
+      <nav className="appliance-hero__categories" aria-label="Ngành hàng nổi bật">
+        {categories.slice(0, 6).map((category) => (
+          <Link
+            key={category.id}
+            to={`/browse?categoryId=${encodeURIComponent(category.slug)}`}
+            className="appliance-hero__category-link"
+          >
+            <span aria-hidden="true">{category.icon}</span>
+            <span>{category.name}</span>
+          </Link>
+        ))}
+      </nav>
 
-        <form className="home-hero__search-form appliance-search-form" onSubmit={handleSearchSubmit} role="search">
-          <div className="home-hero__search-input-wrap">
-            <span className="home-hero__search-icon" aria-hidden="true">
-              🔍
-            </span>
-            <input
-              type="text"
-              id="home-search-input"
-              className="home-hero__search-input"
-              placeholder="Tìm Tivi QLED, Tủ lạnh Side-by-side, Máy giặt Inverter..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label="Tìm kiếm sản phẩm điện máy"
-            />
-          </div>
-          <button type="submit" className="home-hero__search-submit">
-            Tìm kiếm
-          </button>
-        </form>
-      </div>
-
-      {/* 3-Column Standard Retail Grid */}
+      {/* 2-Column Campaign Board Grid: Main Promotion (2fr) | 2 Sub-Banners (0.72fr) */}
       <div className="appliance-hero__grid">
-        {/* Column 1: Mega-Menu (~22%) */}
-        <aside className="appliance-mega-menu" aria-label="Danh mục ngành hàng điện máy">
-          <div className="appliance-mega-menu__header">
-            <span className="appliance-mega-menu__icon">☰</span>
-            <span className="appliance-mega-menu__title">DANH MỤC ĐIỆN MÁY</span>
-          </div>
-
-          <ul className="appliance-mega-menu__list" role="menu">
-            {categories.map((cat) => (
-              <li
-                key={cat.id}
-                className={`appliance-mega-menu__item ${hoveredCategory === cat.id ? 'active' : ''}`}
-                onMouseEnter={() => setHoveredCategory(cat.id)}
-                onMouseLeave={() => setHoveredCategory(null)}
-                role="none"
-              >
-                <Link
-                  to={`/browse?categoryId=${encodeURIComponent(cat.slug)}`}
-                  className="appliance-mega-menu__link"
-                  role="menuitem"
-                >
-                  <span className="appliance-mega-menu__item-icon" aria-hidden="true">
-                    {cat.icon}
-                  </span>
-                  <span className="appliance-mega-menu__item-name">{cat.name}</span>
-                  {cat.badgeText && (
-                    <span className="appliance-mega-menu__item-badge">{cat.badgeText}</span>
-                  )}
-                  <span className="appliance-mega-menu__item-arrow" aria-hidden="true">
-                    ›
-                  </span>
-                </Link>
-
-                {/* Subcategory Flyout preview */}
-                {cat.subcategories && cat.subcategories.length > 0 && hoveredCategory === cat.id && (
-                  <div className="appliance-mega-menu__flyout" role="menu">
-                    <div className="appliance-mega-menu__flyout-title">{cat.name} nổi bật:</div>
-                    <div className="appliance-mega-menu__flyout-grid">
-                      {cat.subcategories.map((sub, idx) => (
-                        <Link
-                          key={idx}
-                          to={`/browse?search=${encodeURIComponent(sub)}`}
-                          className="appliance-mega-menu__flyout-item"
-                          role="menuitem"
-                        >
-                          {sub}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </aside>
-
-        {/* Column 2: Main Banner Slider (16:9 Aspect Ratio) with Interactive 3D Canvas Showcase */}
+        {/* Column 1: Main Promotion Slider */}
         <div
           className="appliance-slider-container"
           data-testid="hero-main-slider"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          onFocusCapture={() => setIsPaused(true)}
+          onBlurCapture={() => setIsPaused(false)}
         >
           {/* Mode Switcher Badge (3D Showroom vs 2D Banner) */}
-          <div className="hero-mode-toggle-bar">
-            <button
-              type="button"
-              className={`hero-mode-toggle-btn ${show3DMode ? 'active' : ''}`}
-              onClick={() => setShow3DMode(!show3DMode)}
-              aria-label="Bật tắt chế độ 3D showroom"
-              title="Chuyển đổi trải nghiệm 3D / 2D Banner"
-            >
-              <span className="hero-mode-dot" />
-              {show3DMode ? '3D Showroom Kéo Xoay' : 'Ảnh Banner Tiêu Chuẩn'}
-            </button>
-          </div>
+          {activeBanner && (
+            <div className="hero-mode-toggle-bar">
+              <button
+                type="button"
+                className={`hero-mode-toggle-btn ${show3DMode ? 'active' : ''}`}
+                onClick={() => setShow3DMode(!show3DMode)}
+                aria-label="Bật tắt chế độ 3d showroom"
+                title="Chuyển đổi trải nghiệm 3D / 2D Banner"
+              >
+                <span className="hero-mode-dot" />
+                {show3DMode ? '3D Showroom Kéo Xoay' : 'Ảnh Banner Tiêu Chuẩn'}
+              </button>
+            </div>
+          )}
 
-          <div className="appliance-slider-frame">
-            {activeBanner && (
+          <div className="appliance-slider-frame" aria-live="polite">
+            {activeBanner ? (
               <div className="appliance-slider-slide">
-                {/* 2D Backdrop image (Always in DOM for SEO, fallback, and existing tests) */}
+                {/* 2D Backdrop image */}
                 <img
                   src={activeBanner.imageUrl}
                   alt={activeBanner.alt}
@@ -268,10 +178,23 @@ export function HeroSection({
                   </Link>
                 </div>
               </div>
+            ) : (
+              <div className="appliance-slider-slide appliance-slider-slide--fallback">
+                <div className="appliance-slider-overlay appliance-slider-overlay--fallback">
+                  <span className="appliance-slider-tagline">AptechMart Siêu Thị Điện Máy</span>
+                  <h2 className="appliance-slider-title">Khám phá thiết bị cho ngôi nhà hiện đại</h2>
+                  <p className="appliance-slider-subtitle">
+                    Trải nghiệm mua sắm thiết bị điện máy chính hãng với ngàn ưu đãi hấp dẫn.
+                  </p>
+                  <Link to="/browse" className="appliance-slider-cta">
+                    Xem tất cả sản phẩm &rarr;
+                  </Link>
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Controls: Hidden if single banner */}
+          {/* Controls: Hidden if single banner or no banners */}
           {bannerCount > 1 && (
             <>
               <button
@@ -308,7 +231,7 @@ export function HeroSection({
           )}
         </div>
 
-        {/* Column 3: 2 Fixed Vertical Sub-Banners (4:3 Aspect Ratio) */}
+        {/* Column 2: 2 Fixed Vertical Sub-Banners (4:3 Aspect Ratio) */}
         <aside className="appliance-sub-banners" aria-label="Ưu đãi dịch vụ đặc quyền">
           {subBanners.map((sub) => (
             <Link

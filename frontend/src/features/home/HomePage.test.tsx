@@ -53,6 +53,24 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     })
   })
 
+  it('renders a campaign board with one main promotion and two supporting offers', () => {
+    renderHomePage()
+    expect(screen.getByTestId('home-hero')).toBeInTheDocument()
+    expect(screen.getByTestId('hero-main-slider')).toBeInTheDocument()
+    expect(screen.getAllByTestId('sub-banner-container')).toHaveLength(2)
+    expect(screen.getByRole('navigation', { name: 'Ngành hàng nổi bật' })).toBeInTheDocument()
+  })
+
+  it('keeps useful hero content when no banner is supplied', () => {
+    render(
+      <MemoryRouter>
+        <HeroSection categories={[]} banners={[]} subBanners={MOCK_SUB_BANNERS} />
+      </MemoryRouter>,
+    )
+    expect(screen.getByText('Khám phá thiết bị cho ngôi nhà hiện đại')).toBeInTheDocument()
+    expect(screen.queryByTestId('slider-btn-next')).not.toBeInTheDocument()
+  })
+
   it('renders hero banner container with correct aspect-ratio structure and sub-banners', () => {
     renderHomePage()
 
