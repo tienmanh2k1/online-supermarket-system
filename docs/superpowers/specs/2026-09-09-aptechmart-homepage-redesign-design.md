@@ -118,6 +118,24 @@ Các trạng thái cần hỗ trợ:
 - Ảnh có `alt` phù hợp và kích thước được giữ chỗ trước khi tải.
 - CTA dùng tên hành động cụ thể, nhất quán với trang đích.
 
+## Chiến lược chuyển động và 3D
+
+Ba công cụ hiện có được phân vai rõ để tạo một điểm nhấn cao cấp mà không phủ hiệu ứng lên toàn trang:
+
+- **Three.js** chỉ dùng trong hero cho mô hình TV tương tác. Scene khởi tạo một lần; góc xoay và animation loop dùng `ref` thay vì React state theo từng frame. Dừng render khi hero ngoài viewport hoặc tab trình duyệt bị ẩn, giới hạn pixel ratio và giải phóng toàn bộ geometry, material, renderer khi unmount.
+- **GSAP** điều phối một sequence ngắn khi hero xuất hiện và chuyển số countdown. Không dùng hiệu ứng phát sáng, rung hoặc timeline lặp vô hạn.
+- **Motion** xử lý chuyển tab sản phẩm, menu mobile và phản hồi hover/tap có ý nghĩa. Không dùng animation xuất hiện giống nhau cho mọi section hoặc mọi card.
+- **CSS native** đảm nhiệm hover, focus, responsive và các chuyển tiếp đơn giản.
+
+Khi `prefers-reduced-motion: reduce`, hero không tự xoay, GSAP bỏ sequence và Motion không dùng chuyển động dịch chuyển/phóng to. Nếu WebGL không khả dụng, hero dùng ảnh hoặc CSS fallback giữ nguyên nội dung, CTA và kích thước bố cục. Three.js không được nằm trên critical path của nội dung hoặc thao tác mua hàng.
+
+Ngân sách chuyển động:
+
+- Chỉ một animation loop liên tục và chỉ khi hero đang nhìn thấy.
+- Không cập nhật React state trên mỗi animation frame.
+- Không tải model 3D hoặc texture từ nguồn ngoài trong phạm vi redesign này.
+- Không thêm package mới; tái sử dụng GSAP, Motion và Three.js đã có trong dự án.
+
 ## Phạm vi thay đổi
 
 Phạm vi chính nằm trong `frontend/src/features/home/`, gồm `HomePage.tsx`, `HomePage.css`, các component trực tiếp và test liên quan. Chỉ chỉnh `AppShell` hoặc stylesheet dùng chung nếu cần để khớp header với homepage mới; mọi thay đổi dùng chung phải nhỏ và không làm đổi giao diện các route khác.
@@ -142,5 +160,6 @@ Không thực hiện:
 
 - CSS homepage hiện có lớn và có thể chồng selector: ưu tiên namespace hiện tại và xóa rule không còn dùng thay vì ghi đè nhiều lớp.
 - Component animation hiện dùng cả GSAP và Motion: tái sử dụng dependency đã cài, nhưng giảm animation liên tục; không bổ sung thư viện.
+- `Hero3DShowcase` hiện gắn vòng lặp nhàn rỗi với state góc xoay và effect khởi tạo renderer: tách state tương tác khỏi animation frame, giữ renderer ổn định và kiểm thử cleanup để tránh tạo lại WebGL context.
 - Thay đổi `AppShell` có blast radius lớn: chỉ thực hiện sau khi xác minh homepage không thể đạt thiết kế bằng style/component cục bộ.
 - Dữ liệu mock có chất lượng ảnh khác nhau: dùng `aspect-ratio`, `object-fit` và placeholder để giữ layout ổn định.
