@@ -6,11 +6,15 @@ export interface ApplianceSpec {
 export type CategoryTabSlug =
   | 'all'
   | 'tivi-loa'
+  | 'tv-man-hinh'
   | 'tu-lanh'
   | 'may-giat'
   | 'dieu-hoa'
+  | 'may-lanh'
   | 'gia-dung'
+  | 'thiet-bi-gia-dung'
   | 'dien-tu'
+  | 'dien-thoai-tablet'
 
 export type KnownCategorySlug = CategoryTabSlug
 

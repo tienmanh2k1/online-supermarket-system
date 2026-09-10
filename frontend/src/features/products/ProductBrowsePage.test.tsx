@@ -24,6 +24,7 @@ const mockProduct = {
 const mockCategories = [
   { id: 'cat-1', name: 'Rau củ quả', slug: 'rau-cu-qua', parentCategoryId: null, isActive: true },
   { id: 'cat-2', name: 'Sữa & Bơ sữa', slug: 'sua-bo-sua', parentCategoryId: null, isActive: true },
+  { id: 'cat-3', name: 'Máy giặt', slug: 'may-giat', parentCategoryId: 'cat-4', isActive: true },
 ]
 
 const mockBrands = [
@@ -134,5 +135,29 @@ describe('ProductBrowsePage Lifecycle & Error Handling', () => {
       expect(screen.getByText('123 Lê Lợi, Q1, TP.HCM')).toBeInTheDocument()
       expect(screen.getAllByText('Chi nhánh Quận 1').length).toBeGreaterThanOrEqual(1)
     })
+  })
+
+  it('resolves category slug from URL before loading products', async () => {
+    vi.spyOn(catalogApi, 'getCategories').mockResolvedValue(mockCategories)
+    vi.spyOn(catalogApi, 'getBrands').mockResolvedValue(mockBrands)
+    vi.spyOn(branchApi, 'getBranches').mockResolvedValue(mockBranches)
+
+    render(
+      <MemoryRouter initialEntries={['/browse?category=may-giat']}>
+        <CompareProvider>
+          <ProductBrowsePage />
+        </CompareProvider>
+      </MemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(catalogApi.getProducts).toHaveBeenLastCalledWith(
+        expect.objectContaining({ categoryId: 'cat-3' })
+      )
+    })
+
+    expect(catalogApi.getProducts).not.toHaveBeenCalledWith(
+      expect.objectContaining({ categoryId: 'may-giat' })
+    )
   })
 })

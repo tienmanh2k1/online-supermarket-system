@@ -13,7 +13,7 @@ export const APTECHMART_QUICK_CATEGORIES: QuickCategoryItem[] = [
     id: 'smart-tivi',
     name: 'Smart Tivi OLED & 4K',
     icon: '📺',
-    href: '/browse?category=tivi-loa',
+    href: '/browse?category=tv-man-hinh',
     highlight: 'Rạp phim tại gia',
   },
   {
@@ -41,14 +41,14 @@ export const APTECHMART_QUICK_CATEGORIES: QuickCategoryItem[] = [
     id: 'kitchen-appliance',
     name: 'Gia Dụng & Bếp Nướng',
     icon: '🍳',
-    href: '/browse?category=gia-dung',
+    href: '/browse?category=thiet-bi-gia-dung',
     highlight: 'Tiện nghi tổ ấm',
   },
   {
     id: 'air-conditioner',
     name: 'Điều Hòa & Quạt Lạnh',
     icon: '💨',
-    href: '/browse?category=dieu-hoa',
+    href: '/browse?category=may-lanh',
     highlight: 'Lọc khí ion âm',
   },
 ]

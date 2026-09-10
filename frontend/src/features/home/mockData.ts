@@ -11,7 +11,7 @@ export const MOCK_CATEGORY_MENU: CategoryMenuItem[] = [
   {
     id: 'cat-tv',
     name: 'Tivi - Âm Thanh',
-    slug: 'tivi-loa',
+    slug: 'tv-man-hinh',
     icon: '📺',
     badgeText: 'HOT',
     subcategories: ['Tivi OLED / QLED', 'Smart Tivi 4K', 'Loa Soundbar', 'Dàn Karaoke gia đình'],
@@ -33,14 +33,14 @@ export const MOCK_CATEGORY_MENU: CategoryMenuItem[] = [
   {
     id: 'cat-ac',
     name: 'Điều Hòa - Lọc Khí',
-    slug: 'dieu-hoa',
+    slug: 'may-lanh',
     icon: '💨',
     subcategories: ['Điều hòa 1 chiều Inverter', 'Điều hòa 2 chiều', 'Máy lọc không khí', 'Quạt điều hòa làm mát'],
   },
   {
     id: 'cat-kitchen',
     name: 'Gia Dụng - Bếp',
-    slug: 'gia-dung',
+    slug: 'thiet-bi-gia-dung',
     icon: '🍳',
     badgeText: '-40%',
     subcategories: ['Nồi chiên không dầu', 'Bếp từ đôi Inverter', 'Nồi cơm điện cao tần', 'Lò vi sóng nướng'],
@@ -48,7 +48,7 @@ export const MOCK_CATEGORY_MENU: CategoryMenuItem[] = [
   {
     id: 'cat-digital',
     name: 'Điện Thoại - Laptop',
-    slug: 'dien-tu',
+    slug: 'dien-thoai-tablet',
     icon: '📱',
     subcategories: ['Điện thoại thông minh', 'Laptop văn phòng & Gaming', 'Máy tính bảng', 'Phụ kiện cáp sạc'],
   },
@@ -61,7 +61,7 @@ export const MOCK_HERO_BANNERS: HeroBanner[] = [
     subtitle: 'Đỉnh cao hình ảnh rực rỡ, tích hợp AI Upscaling và âm thanh vòm Dolby Atmos',
     tagline: 'SIÊU PHẨM CÔNG NGHỆ 2026',
     imageUrl: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=1200&auto=format&fit=crop&q=80',
-    linkUrl: '/browse?categoryId=tivi-loa',
+    linkUrl: '/browse?category=tv-man-hinh',
     alt: 'Banner Tivi Samsung QLED 4K ưu đãi mùa lễ hội',
   },
   {
@@ -70,7 +70,7 @@ export const MOCK_HERO_BANNERS: HeroBanner[] = [
     subtitle: 'Công nghệ bảo quản chân không ngăn mềm, cấp đông siêu tốc, Inverter 5 sao',
     tagline: 'TIỆN NGHI GIA ĐÌNH VIỆT',
     imageUrl: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=1200&auto=format&fit=crop&q=80',
-    linkUrl: '/browse?categoryId=tu-lanh',
+    linkUrl: '/browse?category=tu-lanh',
     alt: 'Banner Tủ Lạnh Inverter bảo hành 10 năm máy nén',
   },
   {
@@ -79,7 +79,7 @@ export const MOCK_HERO_BANNERS: HeroBanner[] = [
     subtitle: 'Giặt hơi nước thông minh Steam+, bảo vệ sợi vải tối ưu, vận hành êm ái',
     tagline: 'CHĂM SÓC TOÀN DIỆN',
     imageUrl: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=1200&auto=format&fit=crop&q=80',
-    linkUrl: '/browse?categoryId=may-giat',
+    linkUrl: '/browse?category=may-giat',
     alt: 'Banner Máy giặt thông minh AI EcoInverter',
   },
 ]
@@ -324,4 +324,3 @@ export const MOCK_APPLIANCE_PRODUCTS: ApplianceProduct[] = [
     sku: 'AT-JBL-001',
   },
 ]
-

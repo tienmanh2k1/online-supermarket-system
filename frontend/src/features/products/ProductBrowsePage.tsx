@@ -19,6 +19,10 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === 'AbortError'
 }
 
+function isGuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+}
+
 export function ProductBrowsePage() {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -68,6 +72,12 @@ export function ProductBrowsePage() {
     return isNaN(parsed) || parsed < 1 ? 1 : parsed
   }, [searchParams])
 
+  const resolvedCategoryId = useMemo(() => {
+    const category = currentFilters.categoryId
+    if (!category || isGuid(category)) return category
+    return categories.find((c) => c.slug === category)?.id
+  }, [categories, currentFilters.categoryId])
+
   // Load initial dropdown options (Categories, Brands, Branches)
   useEffect(() => {
     let active = true
@@ -103,9 +113,20 @@ export function ProductBrowsePage() {
     setLoading(true)
     setError(null)
 
+    if (currentFilters.categoryId && !isGuid(currentFilters.categoryId) && categories.length === 0) {
+      return
+    }
+
+    if (currentFilters.categoryId && !isGuid(currentFilters.categoryId) && !resolvedCategoryId) {
+      setProducts([])
+      setPaginationMeta({ totalCount: 0, page: currentPage, pageSize: 20, totalPages: 0 })
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await catalogApi.getProducts({
-        categoryId: currentFilters.categoryId,
+        categoryId: resolvedCategoryId,
         brandId: currentFilters.brandId,
         branchId: currentFilters.branchId,
         search: currentFilters.search,
@@ -122,7 +143,7 @@ export function ProductBrowsePage() {
     } finally {
       setLoading(false)
     }
-  }, [currentFilters, currentPage])
+  }, [categories.length, currentFilters, currentPage, resolvedCategoryId])
 
   useEffect(() => {
     fetchProducts()
@@ -158,9 +179,14 @@ export function ProductBrowsePage() {
   }
 
   // Active filter names for tags
-  const activeCategory = categories.find((c) => c.id === currentFilters.categoryId)
+  const activeCategory = categories.find((c) => c.id === resolvedCategoryId || c.slug === currentFilters.categoryId)
   const activeBrand = brands.find((b) => b.id === currentFilters.brandId)
   const activeBranch = branches.find((b) => b.id === currentFilters.branchId)
+
+  const sidebarFilters = {
+    ...currentFilters,
+    categoryId: resolvedCategoryId ?? currentFilters.categoryId,
+  }
 
   const removeSingleFilter = (key: keyof FilterState) => {
     const updated = { ...currentFilters, [key]: undefined }
@@ -262,7 +288,7 @@ export function ProductBrowsePage() {
             categories={categories}
             brands={brands}
             branches={branches}
-            filters={currentFilters}
+            filters={sidebarFilters}
             onFilterChange={handleFilterChange}
             onReset={handleResetFilters}
             isMobileOpen={isMobileFilterOpen}
