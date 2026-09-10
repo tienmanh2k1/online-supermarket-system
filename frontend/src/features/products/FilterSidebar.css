@@ -142,6 +142,13 @@
   font-weight: 700;
 }
 
+.filter-price-error {
+  color: #d14e3b;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 0;
+}
+
 .filter-price-btn {
   padding: 8px 12px;
   align-self: flex-end;

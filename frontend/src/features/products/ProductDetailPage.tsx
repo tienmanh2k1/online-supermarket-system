@@ -173,8 +173,21 @@ export function ProductDetailPage() {
   }, [branchId, branchState, searchParams, setSearchParams])
 
   function handleBranchChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const next = new URLSearchParams(searchParams)
     const nextBranchId = e.target.value
+    const nextBranch = nextBranchId || undefined
+
+    // Check if changing branch would affect cart
+    if (cart && cart.items.length > 0 && nextBranch && nextBranch !== branchId && nextBranch !== cart.branchId) {
+      // Warn user if cart has items from different branch
+      const confirmed = window.confirm(
+        'Giỏ hàng hiện tại có sản phẩm từ chi nhánh khác. Đổi kho sẽ làm giỏ hàng không còn hợp lệ và cần xóa trước khi thêm sản phẩm mới. Bạn có muốn tiếp tục?'
+      )
+      if (!confirmed) {
+        return
+      }
+    }
+
+    const next = new URLSearchParams(searchParams)
     if (nextBranchId) next.set('branchId', nextBranchId)
     else next.delete('branchId')
     setSearchParams(next)

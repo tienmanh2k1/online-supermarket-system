@@ -9,6 +9,10 @@ using User = OnlineSupermarket.Domain.Identity.User;
 using UserRole = OnlineSupermarket.Domain.Identity.UserRole;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All);
+});
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddOpenApi(options =>
 {

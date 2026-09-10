@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineSupermarket.Api.Contracts.Order;
 using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Orders;
+using OnlineSupermarket.Domain.Payments;
 using OnlineSupermarket.Infrastructure.Inventory;
 using OnlineSupermarket.Infrastructure.Persistence;
 
@@ -201,9 +202,28 @@ public static class OrderEndpoints
             var saleCommands = await OrderItemCommandsAsync(
                 order, dbContext, (id, quantity, orderId) => InventoryMutationCommand.Sale(id, quantity, orderId), cancellationToken);
             await mutationService.ApplyBatchAsync(saleCommands, cancellationToken);
+
+            // Mark COD payment as completed (money collected when order delivered)
+            var codPayment = dbContext.Payments
+                .FirstOrDefault(p => p.OrderId == order.Id && p.Method == PaymentMethod.COD && p.Status == PaymentStatus.PendingCollection);
+
+            if (codPayment != null)
+            {
+                codPayment.MarkCompleted($"COD-{order.Id}", "Order completed - payment collected");
+                dbContext.Entry(codPayment).State = EntityState.Modified;
+            }
         }
 
         order.SetStatus(newStatus, request.Note);
+
+        // Force EF Core to track the new history entry added by SetStatus
+        var historyEntries = order.StatusHistory;
+        if (historyEntries.Count > 0)
+        {
+            var latestHistory = historyEntries[^1];
+            dbContext.Entry(latestHistory).State = EntityState.Added;
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 

@@ -74,7 +74,7 @@ export function HomePage() {
             Trải Nghiệm Trực Tiếp Tại Trung Tâm Điện Máy AptechMart
           </h2>
           <p className="home-branch-teaser__desc">
-            Hơn 15 chi nhánh phủ sóng toàn quốc. Đến trải nghiệm tận mắt công nghệ màn hình OLED, 
+            3 chi nhánh phủ sóng toàn quốc. Đến trải nghiệm tận mắt công nghệ màn hình OLED,
             nghe thử âm thanh Dolby Atmos và nhận tư vấn kỹ thuật chuyên sâu từ các chuyên gia.
           </p>
           <div className="home-branch-teaser__actions">

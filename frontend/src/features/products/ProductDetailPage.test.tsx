@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { recommendationApi } from '../../api/recommendationApi'
@@ -178,5 +178,49 @@ describe('ProductDetailPage view capture', () => {
     renderDetail('/product/prod-repeat-1')
 
     expect(recordView).toHaveBeenCalledTimes(1)
+  })
+
+  it('warns with confirm dialog when switching to a different branch and cart has items', async () => {
+    vi.spyOn(branchApi, 'getBranches').mockResolvedValue([
+      { id: 'branch-1', name: 'Cửa hàng 1', address: '1 Test Street', phone: null, latitude: null, longitude: null, isActive: true },
+      { id: 'branch-2', name: 'Cửa hàng 2', address: '2 Test Street', phone: null, latitude: null, longitude: null, isActive: true },
+    ])
+
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    useCartMock.mockReturnValue({
+      status: 'ready',
+      cart: {
+        id: 'cart-1',
+        branchId: 'branch-1',
+        branchName: 'Cửa hàng 1',
+        items: [{ id: 'item-1', productId: 'p1', productName: 'P1', quantity: 1, unitPrice: 1000, lineTotal: 1000 }],
+        subtotal: 1000,
+        totalItems: 1,
+      } as any,
+      errorMessage: null,
+      mutatingItemIds: new Set(),
+      isAddingItem: false,
+      isChangingBranch: false,
+      isClearing: false,
+      reloadCart: vi.fn(),
+      addItem: vi.fn(),
+      updateItemQuantity: vi.fn(),
+      removeItem: vi.fn(),
+      changeBranch: vi.fn(),
+      clearCart: vi.fn(),
+    })
+
+    renderDetail('/product/prod-view?branchId=branch-1')
+    await screen.findByRole('heading', { name: product.name })
+
+    // Wait for branch-2 option to be loaded into the select
+    await screen.findByRole('option', { name: 'Cửa hàng 2' })
+
+    const branchSelect = screen.getByLabelText('Kho hàng')
+    fireEvent.change(branchSelect, { target: { value: 'branch-2' } })
+
+    expect(confirmSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Giỏ hàng hiện tại có sản phẩm từ chi nhánh khác')
+    )
   })
 })

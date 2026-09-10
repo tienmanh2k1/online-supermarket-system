@@ -34,6 +34,8 @@ export interface ApplianceProduct {
   }
   categorySlug: CategoryTabSlug
   isHotDeal?: boolean
+  searchTerm?: string
+  sku?: string
 }
 
 export interface CategoryMenuItem {

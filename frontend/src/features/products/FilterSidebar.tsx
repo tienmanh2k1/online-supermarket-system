@@ -47,17 +47,27 @@ export function FilterSidebar({
   const [localMaxPrice, setLocalMaxPrice] = useState<string>(
     filters.maxPrice !== undefined ? String(filters.maxPrice) : ''
   )
+  const [priceError, setPriceError] = useState<string>('')
 
   useEffect(() => {
     setLocalSearch(filters.search ?? '')
     setLocalMinPrice(filters.minPrice !== undefined ? String(filters.minPrice) : '')
     setLocalMaxPrice(filters.maxPrice !== undefined ? String(filters.maxPrice) : '')
+    setPriceError('')
   }, [filters])
 
   const handleApplyPrice = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
+    setPriceError('')
+
     const parsedMin = localMinPrice ? parseFloat(localMinPrice) : undefined
     const parsedMax = localMaxPrice ? parseFloat(localMaxPrice) : undefined
+
+    // Validate: min should not exceed max
+    if (parsedMin !== undefined && parsedMax !== undefined && parsedMin > parsedMax) {
+      setPriceError('Giá tối thiểu không được lớn hơn giá tối đa.')
+      return
+    }
 
     onFilterChange({
       ...filters,
@@ -96,6 +106,7 @@ export function FilterSidebar({
   }
 
   const handlePresetClick = (min?: number, max?: number) => {
+    setPriceError('')
     setLocalMinPrice(min !== undefined ? String(min) : '')
     setLocalMaxPrice(max !== undefined ? String(max) : '')
     onFilterChange({
@@ -103,6 +114,14 @@ export function FilterSidebar({
       minPrice: min,
       maxPrice: max,
     })
+  }
+
+  const handleReset = () => {
+    setPriceError('')
+    setLocalSearch('')
+    setLocalMinPrice('')
+    setLocalMaxPrice('')
+    onReset()
   }
 
   const compareCategoryName = (a: CategoryDto, b: CategoryDto) => {
@@ -276,7 +295,10 @@ export function FilterSidebar({
                 className="filter-input filter-input--price"
                 placeholder="Từ"
                 value={localMinPrice}
-                onChange={(e) => setLocalMinPrice(e.target.value)}
+                onChange={(e) => {
+                  setLocalMinPrice(e.target.value)
+                  setPriceError('')
+                }}
                 aria-label="Giá tối thiểu"
               />
               <span className="filter-price-separator">-</span>
@@ -287,10 +309,18 @@ export function FilterSidebar({
                 className="filter-input filter-input--price"
                 placeholder="Đến"
                 value={localMaxPrice}
-                onChange={(e) => setLocalMaxPrice(e.target.value)}
+                onChange={(e) => {
+                  setLocalMaxPrice(e.target.value)
+                  setPriceError('')
+                }}
                 aria-label="Giá tối đa"
               />
             </div>
+            {priceError && (
+              <div className="filter-price-error" role="alert">
+                {priceError}
+              </div>
+            )}
             <button type="submit" className="filter-price-btn">
               Áp dụng giá
             </button>
@@ -320,7 +350,7 @@ export function FilterSidebar({
           <button
             type="button"
             className="filter-reset-btn"
-            onClick={onReset}
+            onClick={handleReset}
             disabled={!hasActiveFilters}
           >
             <svg

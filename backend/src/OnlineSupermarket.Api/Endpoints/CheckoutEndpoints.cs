@@ -216,9 +216,31 @@ public static class CheckoutEndpoints
                 var shippingFee = request.FulfillmentType == "Delivery" ? 15000m : 0m;
                 var totalAmount = subtotal - discountAmount + shippingFee;
 
-                var deliveryAddressSnapshot = request.FulfillmentType == "Delivery"
-                    ? $"{request.RecipientName}, {request.RecipientPhone}, {request.DeliveryAddress ?? "N/A"}"
-                    : "Pickup at branch";
+                string deliveryAddressSnapshot;
+                string recipientName;
+                string recipientPhone;
+
+                if (request.FulfillmentType == "Delivery")
+                {
+                    deliveryAddressSnapshot = $"{request.RecipientName}, {request.RecipientPhone}, {request.DeliveryAddress ?? "N/A"}";
+                    recipientName = request.RecipientName ?? "N/A";
+                    recipientPhone = request.RecipientPhone ?? "N/A";
+                }
+                else
+                {
+                    var branch = await dbContext.Branches.FindAsync(new object[] { cart.BranchId }, cancellationToken);
+                    deliveryAddressSnapshot = branch != null
+                        ? $"Nhận tại chi nhánh {branch.Name} ({branch.Address})"
+                        : "Nhận tại chi nhánh";
+
+                    var customer = await dbContext.Users.FindAsync(new object[] { userId }, cancellationToken);
+                    recipientName = !string.IsNullOrWhiteSpace(request.RecipientName) && request.RecipientName != "N/A"
+                        ? request.RecipientName
+                        : (customer?.FullName ?? "Khách nhận tại quầy");
+                    recipientPhone = !string.IsNullOrWhiteSpace(request.RecipientPhone) && request.RecipientPhone != "N/A"
+                        ? request.RecipientPhone
+                        : (customer?.Phone ?? "N/A");
+                }
 
                 var orderItems = cart.Items.Select(item =>
                 {
@@ -230,8 +252,8 @@ public static class CheckoutEndpoints
                     userId: userId,
                     branchId: cart.BranchId,
                     fulfillmentType: request.FulfillmentType,
-                    recipientName: request.RecipientName ?? "N/A",
-                    recipientPhone: request.RecipientPhone ?? "N/A",
+                    recipientName: recipientName,
+                    recipientPhone: recipientPhone,
                     deliveryAddressSnapshot: deliveryAddressSnapshot,
                     deliveryAddressId: request.DeliveryAddressId,
                     items: orderItems,
@@ -300,6 +322,15 @@ public static class CheckoutEndpoints
         dbContext.Payments.Add(payment);
 
         order.SetStatus(OrderStatus.Confirmed, $"Payment initiated: {method}");
+
+        // Force EF Core to track the new history entry added by SetStatus
+        var historyEntries = order.StatusHistory;
+        if (historyEntries.Count > 0)
+        {
+            var latestHistory = historyEntries[historyEntries.Count - 1];
+            dbContext.Entry(latestHistory).State = EntityState.Added;
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         string? checkoutUrl = null;

@@ -20,6 +20,18 @@ const phoneC: CompareProduct = {
   categoryName: 'Điện thoại',
   categorySlug: 'dien-thoai',
 }
+const phoneD: CompareProduct = {
+  id: 'phone-d',
+  categoryId: 'phone-leaf',
+  categoryName: 'Điện thoại',
+  categorySlug: 'dien-thoai',
+}
+const phoneE: CompareProduct = {
+  id: 'phone-e',
+  categoryId: 'phone-leaf',
+  categoryName: 'Điện thoại',
+  categorySlug: 'dien-thoai',
+}
 const tablet: CompareProduct = {
   id: 'tablet-a',
   categoryId: 'tablet-leaf',
@@ -44,6 +56,8 @@ function Harness() {
       <button onClick={() => ctx.addToCompare(phoneA)}>add-phone-a</button>
       <button onClick={() => ctx.addToCompare(phoneB)}>add-phone-b</button>
       <button onClick={() => ctx.addToCompare(phoneC)}>add-phone-c</button>
+      <button onClick={() => ctx.addToCompare(phoneD)}>add-phone-d</button>
+      <button onClick={() => ctx.addToCompare(phoneE)}>add-phone-e</button>
       <button onClick={() => ctx.addToCompare(tablet)}>add-tablet</button>
       <button onClick={() => ctx.addToCompare(unknown)}>add-unknown</button>
       <button onClick={() => ctx.removeFromCompare(phoneA.id)}>remove-phone-a</button>
@@ -66,30 +80,47 @@ function renderHarness() {
 
 describe('CompareContext', () => {
   beforeEach(() => {
+    localStorage.clear()
     vi.restoreAllMocks()
   })
 
-  it('allows adding up to 2 products of the same leaf category', () => {
+  it('allows adding up to 4 products of the same leaf category', () => {
     renderHarness()
     act(() => {
       screen.getByRole('button', { name: 'add-phone-a' }).click()
       screen.getByRole('button', { name: 'add-phone-b' }).click()
+      screen.getByRole('button', { name: 'add-phone-c' }).click()
+      screen.getByRole('button', { name: 'add-phone-d' }).click()
     })
-    expect(screen.getByTestId('count')).toHaveTextContent('2')
+    expect(screen.getByTestId('count')).toHaveTextContent('4')
     expect(screen.getByTestId('canAddMore')).toHaveTextContent('false')
     expect(screen.getByTestId('hasProduct')).toHaveTextContent('true')
   })
 
-  it('rejects a third product when the list is full', () => {
+  it('supports adding 3 products fulfilling FR-104 requirement', () => {
     renderHarness()
     act(() => {
       screen.getByRole('button', { name: 'add-phone-a' }).click()
       screen.getByRole('button', { name: 'add-phone-b' }).click()
+      screen.getByRole('button', { name: 'add-phone-c' }).click()
+    })
+    expect(screen.getByTestId('count')).toHaveTextContent('3')
+    expect(screen.getByTestId('canAddMore')).toHaveTextContent('true')
+    expect(screen.getByTestId('hasProduct')).toHaveTextContent('true')
+  })
+
+  it('rejects a fifth product when the list is full', () => {
+    renderHarness()
+    act(() => {
+      screen.getByRole('button', { name: 'add-phone-a' }).click()
+      screen.getByRole('button', { name: 'add-phone-b' }).click()
+      screen.getByRole('button', { name: 'add-phone-c' }).click()
+      screen.getByRole('button', { name: 'add-phone-d' }).click()
     })
     act(() => {
-      screen.getByRole('button', { name: 'add-tablet' }).click()
+      screen.getByRole('button', { name: 'add-phone-e' }).click()
     })
-    expect(screen.getByTestId('count')).toHaveTextContent('2')
+    expect(screen.getByTestId('count')).toHaveTextContent('4')
   })
 
   it('rejects products from different leaf categories', () => {
@@ -129,14 +160,16 @@ describe('CompareContext', () => {
     )
   })
 
-  it('never exceeds two products across adds in a single batch', () => {
+  it('never exceeds four products across adds in a single batch', () => {
     renderHarness()
     act(() => {
       screen.getByRole('button', { name: 'add-phone-a' }).click()
       screen.getByRole('button', { name: 'add-phone-b' }).click()
       screen.getByRole('button', { name: 'add-phone-c' }).click()
+      screen.getByRole('button', { name: 'add-phone-d' }).click()
+      screen.getByRole('button', { name: 'add-phone-e' }).click()
     })
-    expect(screen.getByTestId('count')).toHaveTextContent('2')
+    expect(screen.getByTestId('count')).toHaveTextContent('4')
     expect(screen.getByTestId('canAddMore')).toHaveTextContent('false')
   })
 

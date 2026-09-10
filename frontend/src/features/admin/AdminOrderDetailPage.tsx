@@ -137,11 +137,11 @@ function AdminOrderContent({
       <div className="admin-detail-grid">
         <div className="admin-detail-main">
           <section aria-label="Thông tin giao hàng" className="admin-card">
-            <h2>Thông tin giao hàng</h2>
-            <p><strong>Hình thức:</strong> {order.fulfillmentType}</p>
-            <p><strong>Người nhận:</strong> {order.recipientName}</p>
-            <p><strong>Số điện thoại:</strong> {order.recipientPhone}</p>
-            <p><strong>Địa chỉ:</strong> {order.deliveryAddressSnapshot || '—'}</p>
+            <h2>{order.fulfillmentType === 'Pickup' ? 'Thông tin nhận hàng' : 'Thông tin giao hàng'}</h2>
+            <p><strong>Hình thức:</strong> {order.fulfillmentType === 'Pickup' ? 'Nhận tại chi nhánh' : 'Giao hàng tận nơi'}</p>
+            <p><strong>Người nhận:</strong> {order.recipientName && order.recipientName !== 'N/A' ? order.recipientName : (order.fulfillmentType === 'Pickup' ? 'Khách nhận tại quầy' : '—')}</p>
+            <p><strong>Số điện thoại:</strong> {order.recipientPhone && order.recipientPhone !== 'N/A' ? order.recipientPhone : '—'}</p>
+            <p><strong>Địa chỉ:</strong> {order.deliveryAddressSnapshot === 'Pickup at branch' ? 'Nhận hàng trực tiếp tại quầy chi nhánh' : (order.deliveryAddressSnapshot || '—')}</p>
           </section>
 
           <section aria-label="Sản phẩm trong đơn" className="admin-card">

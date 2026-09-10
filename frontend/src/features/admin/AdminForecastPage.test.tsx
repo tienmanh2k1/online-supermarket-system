@@ -218,8 +218,29 @@ it('polls the run until terminal status and then stops', async () => {
       expect(getRun).toHaveBeenCalledTimes(2)
     }, { timeout: 5000 })
 
-const callsAfterTerminal = getRun.mock.calls.length
+    const callsAfterTerminal = getRun.mock.calls.length
     await new Promise((resolve) => setTimeout(resolve, 700))
     expect(getRun).toHaveBeenCalledTimes(callsAfterTerminal)
+  })
+
+  it('retains error alert even when job run status is Succeeded until forecast data succeeds', async () => {
+    vi.spyOn(branchApi, 'getBranches').mockResolvedValue(branches)
+    vi.spyOn(inventoryIntelligenceApi, 'getForecastRuns').mockResolvedValue(runHistoryResponse)
+    const getForecastMock = vi.spyOn(inventoryIntelligenceApi, 'getForecast')
+      .mockRejectedValueOnce(new ApiError(500, { message: 'Fetch failed' }))
+      .mockResolvedValueOnce(forecastRows)
+
+    renderPage()
+
+    // 1. Job history is Succeeded, but forecast fetch failed -> shows error alert with retry
+    await screen.findByText('Không thể tải dự báo. Vui lòng thử lại.')
+    const retryBtn = screen.getByRole('button', { name: 'Thử lại' })
+    expect(retryBtn).toBeInTheDocument()
+
+    // 2. Click retry -> next forecast fetch succeeds -> error alert disappears and table renders
+    await userEvent.click(retryBtn)
+    await screen.findByRole('table', { name: 'Dự báo nhu cầu' })
+    expect(screen.queryByText('Không thể tải dự báo. Vui lòng thử lại.')).not.toBeInTheDocument()
+    expect(getForecastMock).toHaveBeenCalledTimes(2)
   })
 })

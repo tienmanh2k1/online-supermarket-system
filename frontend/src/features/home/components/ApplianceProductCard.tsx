@@ -31,7 +31,8 @@ export const ApplianceProductCard = React.memo(function ApplianceProductCard({
 
   const remainingSlots = Math.max(0, product.stockProgress.total - product.stockProgress.sold)
   const savingAmount = Math.max(0, product.originalPrice - product.salePrice)
-  const href = `/browse?search=${encodeURIComponent(product.name)}`
+  const searchParam = product.sku || product.searchTerm || product.name
+  const href = `/browse?search=${encodeURIComponent(searchParam)}`
 
   return (
     <motion.article

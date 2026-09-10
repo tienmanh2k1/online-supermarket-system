@@ -110,11 +110,13 @@ function renderCompare(products: CompareProduct[] = [phoneA]) {
 
 describe('CompareModal', () => {
   beforeEach(() => {
+    localStorage.clear()
     vi.spyOn(branchApi, 'getBranches').mockResolvedValue(branches)
     vi.spyOn(catalogApi, 'getProductById').mockResolvedValue(detailNoBranch)
   })
 
   afterEach(() => {
+    localStorage.clear()
     vi.restoreAllMocks()
   })
 

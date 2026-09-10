@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { adminApi } from '../../api/adminApi'
 import { ApiError } from '../../api/httpClient'
 import type { BranchDto } from '../../api/branchApi'
@@ -20,6 +20,14 @@ export function AdminBranchModal({ mode, branch, onClose, onSaved }: Props) {
   const [isActive, setIsActive] = useState(branch?.isActive ?? true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Sync form state when branch changes (handles React StrictMode double-render)
+  useEffect(() => {
+    setName(branch?.name ?? '')
+    setAddress(branch?.address ?? '')
+    setPhone(branch?.phone ?? '')
+    setIsActive(branch?.isActive ?? true)
+  }, [branch?.id])
 
   function validate(): string | null {
     if (!name.trim()) return 'Vui lòng nhập tên chi nhánh.'

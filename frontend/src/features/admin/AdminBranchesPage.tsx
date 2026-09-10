@@ -112,8 +112,9 @@ export function AdminBranchesPage() {
       {modal?.mode === 'create' && (
         <AdminBranchModal mode="create" onClose={() => setModal(null)} onSaved={handleSaved} />
       )}
-      {modal?.mode === 'edit' && (
+      {modal?.mode === 'edit' && modal.branch && (
         <AdminBranchModal
+          key={modal.branch.id}
           mode="edit"
           branch={modal.branch}
           onClose={() => setModal(null)}

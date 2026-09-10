@@ -178,6 +178,7 @@ export function AdminSalesReportPage() {
                 onChange={(e) => {
                   setFromInput(e.target.value)
                   setActivePreset('custom')
+                  setValidationError(null)
                 }}
               />
             </div>
@@ -192,6 +193,7 @@ export function AdminSalesReportPage() {
                 onChange={(e) => {
                   setToInput(e.target.value)
                   setActivePreset('custom')
+                  setValidationError(null)
                 }}
               />
             </div>

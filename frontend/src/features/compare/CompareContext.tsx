@@ -31,7 +31,8 @@ export interface CompareContextValue {
 
 const CompareContext = createContext<CompareContextValue | null>(null)
 
-const MAX_COMPARE_PRODUCTS = 2
+const MAX_COMPARE_PRODUCTS = 4
+const COMPARE_STORAGE_KEY = 'aptechmart_compare_products'
 
 const UNCATEGORIZED_SLUG = 'uncategorized'
 
@@ -49,14 +50,50 @@ function getCompareBlockReason(
   return null
 }
 
+function loadFromStorage(): CompareProduct[] {
+  try {
+    const stored = localStorage.getItem(COMPARE_STORAGE_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      if (Array.isArray(parsed)) {
+        return parsed.filter(
+          (p): p is CompareProduct =>
+            typeof p === 'object' &&
+            typeof p.id === 'string' &&
+            typeof p.categoryId === 'string' &&
+            typeof p.categoryName === 'string' &&
+            typeof p.categorySlug === 'string'
+        )
+      }
+    }
+  } catch {
+    // Invalid data, ignore
+  }
+  return []
+}
+
+function saveToStorage(products: CompareProduct[]) {
+  try {
+    if (products.length === 0) {
+      localStorage.removeItem(COMPARE_STORAGE_KEY)
+    } else {
+      localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(products))
+    }
+  } catch {
+    // Storage full or unavailable, ignore
+  }
+}
+
 export function CompareProvider({ children }: PropsWithChildren) {
-  const [compareProducts, setCompareProducts] = useState<CompareProduct[]>([])
+  const initialProducts = loadFromStorage()
+  const [compareProducts, setCompareProducts] = useState<CompareProduct[]>(initialProducts)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const compareRef = useRef<CompareProduct[]>([])
+  const compareRef = useRef<CompareProduct[]>(initialProducts)
 
   const updateCompare = useCallback((next: CompareProduct[]) => {
     compareRef.current = next
     setCompareProducts(next)
+    saveToStorage(next)
   }, [])
 
   // Listen for global open event
@@ -109,8 +146,8 @@ export function CompareProvider({ children }: PropsWithChildren) {
     addToCompare,
     removeFromCompare,
     clearCompare,
-    canAddMore: compareProducts.length < MAX_COMPARE_PRODUCTS,
-    hasProduct: compareProducts.length > 0,
+    canAddMore: compareRef.current.length < MAX_COMPARE_PRODUCTS,
+    hasProduct: compareRef.current.length > 0,
     getDifferentCategoryWarning,
     openModal,
     closeModal,

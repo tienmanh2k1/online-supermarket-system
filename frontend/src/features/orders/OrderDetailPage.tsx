@@ -120,10 +120,21 @@ function OrderDetailContent({ order }: { order: OrderDetailDto }) {
       <div className="order-detail-layout">
         <div className="order-detail-main">
           <section aria-label="Thông tin giao hàng">
-            <h2>Thông tin giao hàng</h2>
-            <p>{order.recipientName}</p>
-            <p>{order.recipientPhone}</p>
-            <p>{order.deliveryAddressSnapshot}</p>
+            <h2>{order.fulfillmentType === 'Pickup' ? 'Thông tin nhận hàng' : 'Thông tin giao hàng'}</h2>
+            {order.fulfillmentType === 'Pickup' ? (
+              <>
+                <p><strong>Hình thức:</strong> Nhận tại chi nhánh</p>
+                {order.recipientName && order.recipientName !== 'N/A' && <p>Người nhận: {order.recipientName}</p>}
+                {order.recipientPhone && order.recipientPhone !== 'N/A' && <p>Số điện thoại: {order.recipientPhone}</p>}
+                <p>{order.deliveryAddressSnapshot === 'Pickup at branch' ? 'Nhận hàng trực tiếp tại quầy chi nhánh' : order.deliveryAddressSnapshot}</p>
+              </>
+            ) : (
+              <>
+                <p>{order.recipientName}</p>
+                <p>{order.recipientPhone}</p>
+                <p>{order.deliveryAddressSnapshot}</p>
+              </>
+            )}
           </section>
           <section aria-label="Sản phẩm trong đơn">
             <h2>Sản phẩm</h2>

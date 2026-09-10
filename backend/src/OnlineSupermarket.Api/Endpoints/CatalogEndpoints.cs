@@ -85,7 +85,15 @@ public static class CatalogEndpoints
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = search.Trim().ToLower();
-            query = query.Where(p => p.Name.ToLower().Contains(term) || p.Sku.ToLower().Contains(term));
+            var hasExactSku = await query.AnyAsync(p => p.Sku.ToLower() == term, cancellationToken);
+            if (hasExactSku)
+            {
+                query = query.Where(p => p.Sku.ToLower() == term);
+            }
+            else
+            {
+                query = query.Where(p => p.Name.ToLower().Contains(term) || p.Sku.ToLower().Contains(term));
+            }
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

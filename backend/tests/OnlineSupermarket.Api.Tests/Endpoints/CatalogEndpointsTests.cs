@@ -203,4 +203,44 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.Contains(response.Data, p => p.Sku == "MULTI-P2");
         Assert.Contains(response.Data, p => p.Sku == "MULTI-P3");
     }
+
+    [Fact]
+    public async Task GetProducts_WithExactSkuSearch_ReturnsOnlyMatchingProduct()
+    {
+        var client = _factory.CreateClient();
+
+        // Search with exact SKU 'TV-SAM-001'
+        var response = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
+            "/api/products?search=TV-SAM-001&pageSize=10");
+
+        Assert.NotNull(response);
+        Assert.Single(response.Data);
+        Assert.Equal("TV-SAM-001", response.Data[0].Sku);
+        Assert.Equal(1, response.TotalCount);
+
+        // Case-insensitive exact match
+        var responseLower = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
+            "/api/products?search=tv-sam-001&pageSize=10");
+
+        Assert.NotNull(responseLower);
+        Assert.Single(responseLower.Data);
+        Assert.Equal("TV-SAM-001", responseLower.Data[0].Sku);
+        Assert.Equal(1, responseLower.TotalCount);
+    }
+
+    [Fact]
+    public async Task GetProducts_WithFuzzySearch_ReturnsMatchingNamesAndSkus()
+    {
+        var client = _factory.CreateClient();
+
+        // Search term that is not an exact SKU (e.g. 'Samsung')
+        var response = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
+            "/api/products?search=Samsung&pageSize=100");
+
+        Assert.NotNull(response);
+        Assert.NotEmpty(response.Data);
+        Assert.All(response.Data, p =>
+            Assert.True(p.Name.Contains("Samsung", StringComparison.OrdinalIgnoreCase) ||
+                        p.Sku.Contains("Samsung", StringComparison.OrdinalIgnoreCase)));
+    }
 }

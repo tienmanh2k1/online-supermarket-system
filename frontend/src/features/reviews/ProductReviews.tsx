@@ -33,6 +33,7 @@ export function ProductReviews({
   const [isEditing, setIsEditing] = useState(Boolean(targetReviewId))
   const [retryTrigger, setRetryTrigger] = useState(0)
   const [retryTargetReviewTrigger, setRetryTargetReviewTrigger] = useState(0)
+  const [justSubmitted, setJustSubmitted] = useState(false)
 
   const fetchReviews = useCallback(
     (page: number, signal?: AbortSignal) => {
@@ -65,6 +66,7 @@ export function ProductReviews({
         .getEligibility(productId, accessToken, signal, targetOrderItemId)
         .then((data) => {
           setEligibility(data)
+          setJustSubmitted(false)
           if (targetReviewId && data.reviewId === targetReviewId) {
             setIsEditing(true)
           }
@@ -122,6 +124,7 @@ export function ProductReviews({
 
   const handleReviewSuccess = () => {
     setIsEditing(false)
+    setJustSubmitted(true)
     fetchReviews(1)
     fetchEligibility()
     setCurrentPage(1)
@@ -196,7 +199,7 @@ export function ProductReviews({
             orderItemId={eligibility.orderItemId}
             onSuccess={handleReviewSuccess}
           />
-        ) : targetOrderItemId && !eligibility?.canReview && !eligibility?.reviewId ? (
+        ) : targetOrderItemId && !eligibility?.canReview && !eligibility?.reviewId && !justSubmitted ? (
           <div className="product-reviews__invalid-link" role="alert">
             <p>Liên kết đánh giá không còn hợp lệ.</p>
           </div>

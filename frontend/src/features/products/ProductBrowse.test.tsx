@@ -183,6 +183,91 @@ describe('Product Browse Feature', () => {
       )
     })
 
+    it('validates minPrice > maxPrice and prevents applying invalid price filter', () => {
+      const onFilterChange = vi.fn()
+      render(
+        <FilterSidebar
+          categories={mockCategories}
+          brands={mockBrands}
+          branches={mockBranches}
+          filters={{}}
+          onFilterChange={onFilterChange}
+          onReset={vi.fn()}
+        />
+      )
+
+      const minPriceInput = screen.getByPlaceholderText('Từ')
+      const maxPriceInput = screen.getByPlaceholderText('Đến')
+      const applyBtn = screen.getByRole('button', { name: 'Áp dụng giá' })
+
+      fireEvent.change(minPriceInput, { target: { value: '5000000' } })
+      fireEvent.change(maxPriceInput, { target: { value: '1000000' } })
+      fireEvent.click(applyBtn)
+
+      expect(screen.getByText('Giá tối thiểu không được lớn hơn giá tối đa.')).toBeInTheDocument()
+      expect(onFilterChange).not.toHaveBeenCalled()
+    })
+
+    it('clears price error when a preset chip is selected', () => {
+      const onFilterChange = vi.fn()
+      render(
+        <FilterSidebar
+          categories={mockCategories}
+          brands={mockBrands}
+          branches={mockBranches}
+          filters={{}}
+          onFilterChange={onFilterChange}
+          onReset={vi.fn()}
+        />
+      )
+
+      const minPriceInput = screen.getByPlaceholderText('Từ')
+      const maxPriceInput = screen.getByPlaceholderText('Đến')
+      const applyBtn = screen.getByRole('button', { name: 'Áp dụng giá' })
+
+      fireEvent.change(minPriceInput, { target: { value: '5000000' } })
+      fireEvent.change(maxPriceInput, { target: { value: '1000000' } })
+      fireEvent.click(applyBtn)
+
+      expect(screen.getByText('Giá tối thiểu không được lớn hơn giá tối đa.')).toBeInTheDocument()
+
+      const presetBtn = screen.getByRole('button', { name: 'Dưới 50.000đ' })
+      fireEvent.click(presetBtn)
+
+      expect(screen.queryByText('Giá tối thiểu không được lớn hơn giá tối đa.')).not.toBeInTheDocument()
+      expect(onFilterChange).toHaveBeenCalledWith(expect.objectContaining({ maxPrice: 50000 }))
+    })
+
+    it('clears price error when reset button is clicked', () => {
+      const onReset = vi.fn()
+      render(
+        <FilterSidebar
+          categories={mockCategories}
+          brands={mockBrands}
+          branches={mockBranches}
+          filters={{ search: 'phone' }}
+          onFilterChange={vi.fn()}
+          onReset={onReset}
+        />
+      )
+
+      const minPriceInput = screen.getByPlaceholderText('Từ')
+      const maxPriceInput = screen.getByPlaceholderText('Đến')
+      const applyBtn = screen.getByRole('button', { name: 'Áp dụng giá' })
+
+      fireEvent.change(minPriceInput, { target: { value: '9000000' } })
+      fireEvent.change(maxPriceInput, { target: { value: '1000000' } })
+      fireEvent.click(applyBtn)
+
+      expect(screen.getByText('Giá tối thiểu không được lớn hơn giá tối đa.')).toBeInTheDocument()
+
+      const resetBtn = screen.getByRole('button', { name: /Xóa toàn bộ bộ lọc/i })
+      fireEvent.click(resetBtn)
+
+      expect(screen.queryByText('Giá tối thiểu không được lớn hơn giá tối đa.')).not.toBeInTheDocument()
+      expect(onReset).toHaveBeenCalled()
+    })
+
     it('handles reset button when filters are active', () => {
       const onReset = vi.fn()
       render(

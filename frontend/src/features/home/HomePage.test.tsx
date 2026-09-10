@@ -145,8 +145,8 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     const grid = screen.getByTestId('category-products-grid')
 
     // Initial grid shows products across categories
-    expect(within(grid).getByText('Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D')).toBeInTheDocument()
-    expect(within(grid).getByText('Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS')).toBeInTheDocument()
+    expect(within(grid).getByText('Samsung Neo QLED 4K 65 inch QA65QN90C')).toBeInTheDocument()
+    expect(within(grid).getByText('LG Door-in-Door 601L InstaView')).toBeInTheDocument()
 
     // Switch to "Tủ Lạnh" tab
     const fridgeTab = screen.getByRole('tab', { name: 'Tủ Lạnh' })
@@ -156,9 +156,9 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     expect(allTab).not.toHaveClass('active')
 
     // Grid now only displays refrigerators
-    expect(within(grid).getByText('Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS')).toBeInTheDocument()
-    expect(within(grid).queryByText('Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D')).not.toBeInTheDocument()
-    expect(within(grid).queryByText('Máy giặt lồng ngang Electrolux UltimateCare 900 10kg')).not.toBeInTheDocument()
+    expect(within(grid).getByText('LG Door-in-Door 601L InstaView')).toBeInTheDocument()
+    expect(within(grid).queryByText('Samsung Neo QLED 4K 65 inch QA65QN90C')).not.toBeInTheDocument()
+    expect(within(grid).queryByText('Panasonic Giant 8.5kg NA-F85V1')).not.toBeInTheDocument()
   })
 
   it('renders all visual badges, pricing hierarchy, and specs on appliance product cards', () => {
@@ -255,7 +255,7 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
     )
 
     // Initial state: shows all products
-    expect(screen.getByText('Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D')).toBeInTheDocument()
+    expect(screen.getByText('Samsung Neo QLED 4K 65 inch QA65QN90C')).toBeInTheDocument()
     expect(screen.queryByTestId('category-empty-state')).not.toBeInTheDocument()
 
     // Switch to empty category tab
@@ -274,7 +274,7 @@ describe('HomePage Component — Siêu Thị Điện Máy Spec', () => {
 
     // Should return to 'all' and display products again
     expect(screen.queryByTestId('category-empty-state')).not.toBeInTheDocument()
-    expect(screen.getByText('Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D')).toBeInTheDocument()
+    expect(screen.getByText('Samsung Neo QLED 4K 65 inch QA65QN90C')).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Tất Cả Sản Phẩm' })).toHaveClass('active')
   })
 
