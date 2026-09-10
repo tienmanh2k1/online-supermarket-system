@@ -4,6 +4,7 @@ import { AuthProvider } from './features/auth/AuthContext'
 import { CartProvider } from './features/cart/CartContext'
 import { CompareProvider } from './features/compare/CompareContext'
 import { CompareModal } from './features/compare/CompareModal'
+import { HomePage } from './features/home/HomePage'
 import { ProductBrowsePage } from './features/products/ProductBrowsePage'
 import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { BranchesPage } from './features/products/BranchesPage'
@@ -39,7 +40,7 @@ function CompareAppShell() {
     <>
       <AppShell>
         <Routes>
-          <Route path="/" element={<ProductBrowsePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/browse" element={<ProductBrowsePage />} />
           <Route path="/products" element={<ProductBrowsePage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />

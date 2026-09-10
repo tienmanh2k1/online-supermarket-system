@@ -1,0 +1,332 @@
+## dashboard
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## users
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## branches
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## categories
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## brands
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## products
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## promotions
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## forecast
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+
+## recommendations
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:

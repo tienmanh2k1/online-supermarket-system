@@ -1,0 +1,242 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - heading "Quản lý sản phẩm" [level=1]
+    - heading "Thêm sản phẩm mới" [level=2]
+    - generic: "Tên sản phẩm *:"
+    - textbox "Tên sản phẩm *:":
+      - /placeholder: "VD: Smart Tivi Samsung 55 inch..."
+    - generic: "Mã SKU *:"
+    - textbox "Mã SKU *:":
+      - /placeholder: "VD: TV-SAM-55-01"
+    - generic: "Slug *:"
+    - textbox "Slug *:":
+      - /placeholder: "VD: smart-tivi-samsung-55-inch"
+    - generic: "Danh mục *:"
+    - combobox "Danh mục *:":
+      - option "-- Chọn danh mục --" [selected]
+      - option "??i???n tho???i"
+      - option "??i???n tho???i & Tablet"
+      - option "??m thanh & Loa"
+      - option "Camera & An ninh"
+      - option "Camera an ninh"
+      - option "Ch??a ph??n lo???i"
+      - option "Chu???t"
+      - option "Game & Gaming"
+      - option "Laptop"
+      - option "Laptop & M??y t??nh"
+      - option "Loa"
+      - option "M??n h??nh m??y t??nh"
+      - option "M??y ???nh"
+      - option "M??y ch??i game"
+      - option "M??y gi???t"
+      - option "M??y l???nh"
+      - option "M??y t??nh b???ng"
+      - option "Ph??? ki???n"
+      - option "QA UI Category 27789"
+      - option "T??? l???nh"
+      - option "Tai nghe"
+      - option "Thi???t b??? gia d???ng"
+      - option "TV"
+      - option "TV & M??n h??nh"
+    - generic: "Thương hiệu *:"
+    - combobox "Thương hiệu *:":
+      - option "-- Chọn thương hiệu --" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "QA UI Brand 15248"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: "Giá gốc (VNĐ) *:"
+    - spinbutton "Giá gốc (VNĐ) *:"
+    - generic: "Đơn vị tính *:"
+    - textbox "Đơn vị tính *:":
+      - /placeholder: "VD: cái, hộp, kg..."
+    - generic: "URL hình ảnh:"
+    - textbox "URL hình ảnh:":
+      - /placeholder: "VD: https://example.com/images/product.jpg"
+    - generic: "Mô tả sản phẩm:"
+    - textbox "Mô tả sản phẩm:":
+      - /placeholder: Mô tả thông số hoặc đặc điểm nổi bật...
+    - button "Thêm sản phẩm"
+    - heading "Danh sách sản phẩm (1)" [level=2]
+    - generic: "Tìm kiếm:"
+    - textbox "Tìm kiếm:":
+      - /placeholder: Tên sản phẩm hoặc SKU...
+      - text: QA-SKU-44762
+    - generic: "Danh mục:"
+    - combobox "Danh mục:":
+      - option "Tất cả danh mục" [selected]
+      - option "??i???n tho???i"
+      - option "??i???n tho???i & Tablet"
+      - option "??m thanh & Loa"
+      - option "Camera & An ninh"
+      - option "Camera an ninh"
+      - option "Ch??a ph??n lo???i"
+      - option "Chu???t"
+      - option "Game & Gaming"
+      - option "Laptop"
+      - option "Laptop & M??y t??nh"
+      - option "Loa"
+      - option "M??n h??nh m??y t??nh"
+      - option "M??y ???nh"
+      - option "M??y ch??i game"
+      - option "M??y gi???t"
+      - option "M??y l???nh"
+      - option "M??y t??nh b???ng"
+      - option "Ph??? ki???n"
+      - option "QA UI Category 27789"
+      - option "T??? l???nh"
+      - option "Tai nghe"
+      - option "Thi???t b??? gia d???ng"
+      - option "TV"
+      - option "TV & M??n h??nh"
+    - generic: "Thương hiệu:"
+    - combobox "Thương hiệu:":
+      - option "Tất cả thương hiệu" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "QA UI Brand 15248"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: "Trạng thái:"
+    - combobox "Trạng thái:":
+      - option "Tất cả" [selected]
+      - option "Hoạt động"
+      - option "Vô hiệu hóa"
+    - table:
+      - rowgroup:
+        - row "Ảnh SKU Tên sản phẩm Danh mục Thương hiệu Giá gốc Đơn vị Trạng thái Thao tác":
+          - columnheader "Ảnh"
+          - columnheader "SKU"
+          - columnheader "Tên sản phẩm"
+          - columnheader "Danh mục"
+          - columnheader "Thương hiệu"
+          - columnheader "Giá gốc"
+          - columnheader "Đơn vị"
+          - columnheader "Trạng thái"
+          - columnheader "Thao tác"
+      - rowgroup:
+        - row "— QA-SKU-44762 QA UI Product No Image 44762 QA UI Category 27789 QA UI Brand 15248 123.456 đ cái Hoạt động Sửa Vô hiệu hóa":
+          - cell "—"
+          - cell "QA-SKU-44762":
+            - code: QA-SKU-44762
+          - cell "QA UI Product No Image 44762":
+            - strong: QA UI Product No Image 44762
+          - cell "QA UI Category 27789"
+          - cell "QA UI Brand 15248"
+          - cell "123.456 đ"
+          - cell "cái"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+    - dialog "Vô hiệu hóa sản phẩm":
+      - heading "Vô hiệu hóa sản phẩm" [level=2]
+      - paragraph: "Bạn có chắc chắn muốn vô hiệu hóa sản phẩm \"QA UI Product No Image 44762\" (SKU: QA-SKU-44762)?"
+      - button "Hủy" [active]
+      - button "Vô hiệu hóa"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

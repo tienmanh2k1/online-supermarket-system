@@ -1,0 +1,51 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - generic: ✓
+  - heading "Đặt hàng thành công" [level=1]
+  - paragraph: Cảm ơn bạn đã mua sắm tại AptechMart. Đơn hàng của bạn đã được ghi nhận.
+  - generic: "Mã đơn hàng:"
+  - strong: 118c7d00-86a6-4969-a6df-1d07c1036ce8
+  - generic: "Trạng thái thanh toán:"
+  - strong: PendingCollection
+  - link "Tiếp tục mua sắm":
+    - /url: /browse
+  - link "Xem đơn hàng":
+    - /url: /orders/history
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

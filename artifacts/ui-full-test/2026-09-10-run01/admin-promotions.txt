@@ -1,0 +1,136 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Quản lý khuyến mãi":
+      - heading "Quản lý khuyến mãi" [level=1]
+      - paragraph: Tạo, chỉnh sửa và bật/tắt mã giảm giá.
+      - button "+ Tạo mã mới"
+      - table "Danh sách khuyến mãi":
+        - rowgroup:
+          - row "Mã Loại Giá trị Đơn tối thiểu Đã dùng / Giới hạn Trạng thái Hành động":
+            - columnheader "Mã"
+            - columnheader "Loại"
+            - columnheader "Giá trị"
+            - columnheader "Đơn tối thiểu"
+            - columnheader "Đã dùng / Giới hạn"
+            - columnheader "Trạng thái"
+            - columnheader "Hành động":
+              - generic: Hành động
+        - rowgroup:
+          - row "SAVE50K Số tiền cố định 50.000 ₫ 500.000 ₫ 0/100 Đang áp dụng Sửa mã SAVE50K":
+            - cell "SAVE50K":
+              - code: SAVE50K
+            - cell "Số tiền cố định"
+            - cell "50.000 ₫"
+            - cell "500.000 ₫"
+            - cell "0/100"
+            - cell "Đang áp dụng":
+              - generic: Đang áp dụng
+            - cell "Sửa mã SAVE50K":
+              - button "Sửa mã SAVE50K": Sửa
+          - row "WELCOME10 Phần trăm 10% 0 ₫ 0/∞ Đang áp dụng Sửa mã WELCOME10":
+            - cell "WELCOME10":
+              - code: WELCOME10
+            - cell "Phần trăm"
+            - cell "10%"
+            - cell "0 ₫"
+            - cell "0/∞"
+            - cell "Đang áp dụng":
+              - generic: Đang áp dụng
+            - cell "Sửa mã WELCOME10":
+              - button "Sửa mã WELCOME10": Sửa
+      - navigation "Phân trang khuyến mãi":
+        - button "Trang trước" [disabled]
+        - generic: Trang 1
+        - button "Trang sau" [disabled]
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,78 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - main "Lịch sử đơn hàng":
+    - heading "Lịch sử đơn hàng" [level=1]
+    - generic: Lọc trạng thái
+    - combobox "Lọc trạng thái":
+      - option "Tất cả trạng thái" [selected]
+      - option "Chờ xác nhận"
+      - option "Đã xác nhận"
+      - option "Đang chuẩn bị"
+      - option "Sẵn sàng nhận hàng"
+      - option "Đang giao hàng"
+      - option "Đã giao hàng"
+      - option "Hoàn tất"
+      - option "Đã hủy"
+      - option "Thất bại"
+    - article:
+      - 'heading "Mã đơn: 118c7d00-86a6-4969-a6df-1d07c1036ce8" [level=2]'
+      - paragraph: 06:17 10 thg 9, 2026
+      - strong: 5.990.000 ₫
+      - status:
+        - text: Đã xác nhận
+        - generic: Confirmed
+      - paragraph: Pickup - 1 sản phẩm
+      - link "Xem chi tiết 118c7d00-86a6-4969-a6df-1d07c1036ce8":
+        - /url: /orders/history/118c7d00-86a6-4969-a6df-1d07c1036ce8
+    - article:
+      - 'heading "Mã đơn: 93fdd938-52bf-4c63-8afd-3fef94cd7070" [level=2]'
+      - paragraph: 06:09 10 thg 9, 2026
+      - strong: 11.995.000 ₫
+      - status:
+        - text: Hoàn tất
+        - generic: Completed
+      - paragraph: Delivery - 1 sản phẩm
+      - link "Xem chi tiết 93fdd938-52bf-4c63-8afd-3fef94cd7070":
+        - /url: /orders/history/93fdd938-52bf-4c63-8afd-3fef94cd7070
+    - navigation "Phân trang đơn hàng":
+      - button "Trang trước" [disabled]
+      - generic: Trang 1
+      - button "Trang sau" [disabled]
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

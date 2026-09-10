@@ -1,0 +1,160 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Chi tiết đơn hàng":
+      - navigation "Breadcrumb":
+        - link "← Danh sách đơn hàng":
+          - /url: /admin/orders
+      - heading "Chi tiết đơn hàng" [level=1]
+      - paragraph:
+        - code: 118c7d00-86a6-4969-a6df-1d07c1036ce8
+      - status:
+        - text: Đã hủy
+        - generic: Cancelled
+      - region "Thông tin giao hàng":
+        - heading "Thông tin giao hàng" [level=2]
+        - paragraph:
+          - strong: "Hình thức:"
+          - text: Pickup
+        - paragraph:
+          - strong: "Người nhận:"
+          - text: N/A
+        - paragraph:
+          - strong: "Số điện thoại:"
+          - text: N/A
+        - paragraph:
+          - strong: "Địa chỉ:"
+          - text: Pickup at branch
+      - region "Sản phẩm trong đơn":
+        - heading "Sản phẩm" [level=2]
+        - table "Sản phẩm trong đơn":
+          - rowgroup:
+            - row "Sản phẩm SKU Đơn giá SL Thành tiền":
+              - columnheader "Sản phẩm"
+              - columnheader "SKU"
+              - columnheader "Đơn giá"
+              - columnheader "SL"
+              - columnheader "Thành tiền"
+          - rowgroup:
+            - row "AirPods Pro 2 PK-APP-001 5.990.000 ₫ 1 5.990.000 ₫":
+              - cell "AirPods Pro 2"
+              - cell "PK-APP-001":
+                - code: PK-APP-001
+              - cell "5.990.000 ₫"
+              - cell "1"
+              - cell "5.990.000 ₫"
+      - region "Lịch sử trạng thái":
+        - heading "Lịch sử trạng thái" [level=2]
+        - list:
+          - generic: Chờ xác nhận → Chờ xác nhận
+          - generic: Order created
+          - generic: 06:17 10 thg 9, 2026
+          - generic: Đã xác nhận → Đã hủy
+          - generic: QA UI hủy đơn pickup để kiểm hoàn reserved
+          - generic: 13:18 10 thg 9, 2026
+      - complementary:
+        - region "Tóm tắt đơn hàng":
+          - heading "Tóm tắt" [level=2]
+          - paragraph: "Tạm tính: 5.990.000 ₫"
+          - paragraph: "Phí giao hàng: 0 ₫"
+          - paragraph:
+            - strong: "Tổng cộng: 5.990.000 ₫"
+        - region "Thanh toán":
+          - heading "Thanh toán" [level=2]
+          - paragraph: "Phương thức: COD"
+          - paragraph: "Trạng thái: PendingCollection"
+          - paragraph: "Số tiền: 5.990.000 ₫"
+        - region "Cập nhật trạng thái":
+          - heading "Cập nhật trạng thái" [level=2]
+          - paragraph: Đơn đang ở trạng thái cuối, không thể chuyển tiếp.
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

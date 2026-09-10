@@ -7,6 +7,24 @@ namespace OnlineSupermarket.Api.Tests;
 public sealed class OpenApiContractTests(TestApiFactory factory)
     : IClassFixture<TestApiFactory>
 {
+    [Theory]
+    [InlineData("/api/admin/dashboard/summary")]
+    [InlineData("/api/admin/reports/sales")]
+    [InlineData("/api/dev/password-reset-emails")]
+    [InlineData("/api/auth/me")]
+    public async Task GetOpenApi_ProtectedOperationRequiresBearer(string path)
+    {
+        using var client = factory.CreateClient();
+        var response = await client.GetAsync("/openapi/v1.json");
+        response.EnsureSuccessStatusCode();
+        var document = System.Text.Json.Nodes.JsonNode.Parse(await response.Content.ReadAsStringAsync());
+        var security = document!["paths"]![path]!["get"]!["security"]!.AsArray();
+        var requirement = Assert.Single(security)!.AsObject();
+        Assert.Single(requirement);
+        Assert.True(requirement.ContainsKey("Bearer"));
+        Assert.Empty(requirement["Bearer"]!.AsArray());
+    }
+
     [Fact]
     public async Task GetOpenApi_ContainsHealthOperation()
     {

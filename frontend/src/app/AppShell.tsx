@@ -20,7 +20,7 @@ export function AppShell({ children }: PropsWithChildren) {
         <nav className="site-nav" aria-label="Điều hướng chính">
           <Link to="/browse">Sản phẩm</Link>
           <BranchNavMenu />
-          <a href="#roadmap">Lộ trình</a>
+          <Link to="/#roadmap">Lộ trình</Link>
         </nav>
         <div className="header-actions">
           <CompareHeaderLink />

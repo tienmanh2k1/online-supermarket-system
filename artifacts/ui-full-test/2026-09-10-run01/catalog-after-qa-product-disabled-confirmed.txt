@@ -1,0 +1,199 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - text: Gian Hàng Trực Tuyến
+  - heading "Duyệt & Tìm Kiếm Sản Phẩm" [level=1]
+  - paragraph: Lựa chọn hàng hóa tươi sống, kiểm tra giá và tình trạng còn hàng theo từng chi nhánh siêu thị.
+  - generic: Kho hàng đang xem
+  - strong: Tất cả chi nhánh
+  - generic: Hiển thị giá gốc hệ thống
+  - region "Gợi ý dành cho bạn":
+    - heading "Gợi ý dành cho bạn" [level=2]
+    - list:
+      - article:
+        - img "MacBook Air 15\" M3"
+        - heading "MacBook Air 15\" M3" [level=3]:
+          - link "MacBook Air 15\" M3":
+            - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 32.990.000 ₫
+      - article:
+        - img "Samsung Galaxy S24 Ultra 256GB"
+        - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+          - link "Samsung Galaxy S24 Ultra 256GB":
+            - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 28.990.000 ₫
+      - article:
+        - img "LG Door-in-Door 601L InstaView"
+        - heading "LG Door-in-Door 601L InstaView" [level=3]:
+          - link "LG Door-in-Door 601L InstaView":
+            - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 42.990.000 ₫
+      - article:
+        - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+        - heading "Dell XPS 15 9530 (i7, 16GB, 512GB)" [level=3]:
+          - link "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 35.990.000 ₫
+      - article:
+        - img "AirPods Pro 2"
+        - heading "AirPods Pro 2" [level=3]:
+          - link "AirPods Pro 2":
+            - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 5.990.000 ₫
+      - article:
+        - img "MacBook Pro 14\" M3 Pro"
+        - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+          - link "MacBook Pro 14\" M3 Pro":
+            - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 45.990.000 ₫
+      - article:
+        - img "iPhone 15 128GB"
+        - heading "iPhone 15 128GB" [level=3]:
+          - link "iPhone 15 128GB":
+            - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 22.990.000 ₫
+      - article:
+        - img "Samsung Galaxy Tab S9 FE"
+        - heading "Samsung Galaxy Tab S9 FE" [level=3]:
+          - link "Samsung Galaxy Tab S9 FE":
+            - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Được nhiều người quan tâm
+        - generic: 12.990.000 ₫
+  - complementary "Bộ lọc tìm kiếm sản phẩm":
+    - heading "Bộ lọc tìm kiếm" [level=2]
+    - generic: Tìm kiếm từ khóa / SKU
+    - textbox "Tìm kiếm từ khóa / SKU":
+      - /placeholder: Nhập tên sản phẩm, SKU...
+      - text: QA-SKU-44762
+    - button "Xóa từ khóa": ✕
+    - button "Tìm" [active]
+    - generic: Chi nhánh siêu thị
+    - combobox "Chi nhánh siêu thị":
+      - option "-- Tất cả chi nhánh --" [selected]
+      - option "AptechMart B??nh Th???nh (789 Nguy???n X??, B??nh Th???nh, TP.HCM)"
+      - option "AptechMart Qu???n 1 (123 Nguy???n Hu???, Qu???n 1, TP.HCM)"
+      - option "AptechMart Qu???n 3 (456 ???????ng 3 Th??ng 2, Qu???n 10, TP.HCM)"
+    - generic: Danh mục sản phẩm
+    - combobox "Danh mục sản phẩm":
+      - option "-- Tất cả danh mục --" [selected]
+      - option "??i???n tho???i & Tablet"
+      - option "— ??i???n tho???i"
+      - option "— M??y t??nh b???ng"
+      - option "??m thanh & Loa"
+      - option "— Loa"
+      - option "— Tai nghe"
+      - option "Camera & An ninh"
+      - option "— Camera an ninh"
+      - option "— M??y ???nh"
+      - option "Game & Gaming"
+      - option "— M??y ch??i game"
+      - option "Laptop & M??y t??nh"
+      - option "— Laptop"
+      - option "Ph??? ki???n"
+      - option "— Chu???t"
+      - option "QA UI Category 27789"
+      - option "Thi???t b??? gia d???ng"
+      - option "— M??y gi???t"
+      - option "— M??y l???nh"
+      - option "— T??? l???nh"
+      - option "TV & M??n h??nh"
+      - option "— M??n h??nh m??y t??nh"
+      - option "— TV"
+      - option "Ch??a ph??n lo???i"
+    - generic: Thương hiệu
+    - combobox "Thương hiệu":
+      - option "-- Tất cả thương hiệu --" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "QA UI Brand 15248"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: Khoảng giá (VNĐ)
+    - spinbutton "Giá tối thiểu"
+    - generic: "-"
+    - spinbutton "Giá tối đa"
+    - button "Áp dụng giá"
+    - button "Dưới 50.000đ"
+    - button "50.000đ - 150.000đ"
+    - button "150.000đ - 300.000đ"
+    - button "Trên 300.000đ"
+    - button "Xóa toàn bộ bộ lọc":
+      - text: Xóa toàn bộ bộ lọc
+  - main:
+    - generic "Bộ lọc đang chọn":
+      - generic: "Đang lọc:"
+      - text: "Từ khóa: \""
+      - strong: QA-SKU-44762
+      - text: "\""
+      - button "Xóa lọc từ khóa": ✕
+      - button "Xóa tất cả"
+    - generic: 🛒
+    - heading "Không tìm thấy sản phẩm phù hợp" [level=3]
+    - paragraph: Thử điều chỉnh hoặc xóa các tiêu chí bộ lọc để tìm kiếm thêm sản phẩm.
+    - button "Xóa bộ lọc tìm kiếm"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,404 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - heading "Quản lý danh mục" [level=1]
+    - heading "Thêm danh mục mới" [level=2]
+    - generic: "Tên danh mục:"
+    - textbox "Tên danh mục:":
+      - /placeholder: "VD: Điện thoại, Rau củ..."
+    - generic: "Slug:"
+    - textbox "Slug:":
+      - /placeholder: "VD: dien-thoai, rau-cu..."
+    - generic: "Danh mục cha:"
+    - combobox "Danh mục cha:":
+      - option "-- Không có (Danh mục gốc) --" [selected]
+      - option "??i???n tho???i (dien-thoai)"
+      - option "??i???n tho???i & Tablet (dien-thoai-tablet)"
+      - option "??m thanh & Loa (am-thanh-loa)"
+      - option "Camera & An ninh (camera-an-ninh)"
+      - option "Camera an ninh (camera-giam-sat)"
+      - option "Ch??a ph??n lo???i (uncategorized)"
+      - option "Chu???t (chuot)"
+      - option "Game & Gaming (game-gaming)"
+      - option "Laptop (laptop)"
+      - option "Laptop & M??y t??nh (laptop-may-tinh)"
+      - option "Loa (loa)"
+      - option "M??n h??nh m??y t??nh (man-hinh-may-tinh)"
+      - option "M??y ???nh (may-anh)"
+      - option "M??y ch??i game (may-choi-game)"
+      - option "M??y gi???t (may-giat)"
+      - option "M??y l???nh (may-lanh)"
+      - option "M??y t??nh b???ng (may-tinh-bang)"
+      - option "Ph??? ki???n (phu-kien)"
+      - option "QA UI Category 27789 (qa-ui-category-27789)"
+      - option "T??? l???nh (tu-lanh)"
+      - option "Tai nghe (tai-nghe)"
+      - option "Thi???t b??? gia d???ng (thiet-bi-gia-dung)"
+      - option "TV (tivi)"
+      - option "TV & M??n h??nh (tv-man-hinh)"
+    - button "Thêm danh mục"
+    - heading "Danh sách danh mục" [level=2]
+    - table:
+      - rowgroup:
+        - row "Tên danh mục Slug Danh mục cha Trạng thái Thao tác":
+          - columnheader "Tên danh mục"
+          - columnheader "Slug"
+          - columnheader "Danh mục cha"
+          - columnheader "Trạng thái"
+          - columnheader "Thao tác"
+      - rowgroup:
+        - row "??i???n tho???i dien-thoai ??i???n tho???i & Tablet Hoạt động Sửa Vô hiệu hóa":
+          - cell "??i???n tho???i":
+            - strong: "??i???n tho???i"
+          - cell "dien-thoai":
+            - code: dien-thoai
+          - cell "??i???n tho???i & Tablet"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "??i???n tho???i & Tablet dien-thoai-tablet — Hoạt động Sửa Vô hiệu hóa":
+          - cell "??i???n tho???i & Tablet":
+            - strong: "??i???n tho???i & Tablet"
+          - cell "dien-thoai-tablet":
+            - code: dien-thoai-tablet
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "??m thanh & Loa am-thanh-loa — Hoạt động Sửa Vô hiệu hóa":
+          - cell "??m thanh & Loa":
+            - strong: "??m thanh & Loa"
+          - cell "am-thanh-loa":
+            - code: am-thanh-loa
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Camera & An ninh camera-an-ninh — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Camera & An ninh":
+            - strong: Camera & An ninh
+          - cell "camera-an-ninh":
+            - code: camera-an-ninh
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Camera an ninh camera-giam-sat Camera & An ninh Hoạt động Sửa Vô hiệu hóa":
+          - cell "Camera an ninh":
+            - strong: Camera an ninh
+          - cell "camera-giam-sat":
+            - code: camera-giam-sat
+          - cell "Camera & An ninh"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Ch??a ph??n lo???i uncategorized — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Ch??a ph??n lo???i":
+            - strong: Ch??a ph??n lo???i
+          - cell "uncategorized":
+            - code: uncategorized
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Chu???t chuot Ph??? ki???n Hoạt động Sửa Vô hiệu hóa":
+          - cell "Chu???t":
+            - strong: Chu???t
+          - cell "chuot":
+            - code: chuot
+          - cell "Ph??? ki???n"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Game & Gaming game-gaming — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Game & Gaming":
+            - strong: Game & Gaming
+          - cell "game-gaming":
+            - code: game-gaming
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Laptop laptop Laptop & M??y t??nh Hoạt động Sửa Vô hiệu hóa":
+          - cell "Laptop":
+            - strong: Laptop
+          - cell "laptop":
+            - code: laptop
+          - cell "Laptop & M??y t??nh"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Laptop & M??y t??nh laptop-may-tinh — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Laptop & M??y t??nh":
+            - strong: Laptop & M??y t??nh
+          - cell "laptop-may-tinh":
+            - code: laptop-may-tinh
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Loa loa ??m thanh & Loa Hoạt động Sửa Vô hiệu hóa":
+          - cell "Loa":
+            - strong: Loa
+          - cell "loa":
+            - code: loa
+          - cell "??m thanh & Loa"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??n h??nh m??y t??nh man-hinh-may-tinh TV & M??n h??nh Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??n h??nh m??y t??nh":
+            - strong: M??n h??nh m??y t??nh
+          - cell "man-hinh-may-tinh":
+            - code: man-hinh-may-tinh
+          - cell "TV & M??n h??nh"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??y ???nh may-anh Camera & An ninh Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??y ???nh":
+            - strong: M??y ???nh
+          - cell "may-anh":
+            - code: may-anh
+          - cell "Camera & An ninh"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??y ch??i game may-choi-game Game & Gaming Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??y ch??i game":
+            - strong: M??y ch??i game
+          - cell "may-choi-game":
+            - code: may-choi-game
+          - cell "Game & Gaming"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??y gi???t may-giat Thi???t b??? gia d???ng Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??y gi???t":
+            - strong: M??y gi???t
+          - cell "may-giat":
+            - code: may-giat
+          - cell "Thi???t b??? gia d???ng"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??y l???nh may-lanh Thi???t b??? gia d???ng Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??y l???nh":
+            - strong: M??y l???nh
+          - cell "may-lanh":
+            - code: may-lanh
+          - cell "Thi???t b??? gia d???ng"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "M??y t??nh b???ng may-tinh-bang ??i???n tho???i & Tablet Hoạt động Sửa Vô hiệu hóa":
+          - cell "M??y t??nh b???ng":
+            - strong: M??y t??nh b???ng
+          - cell "may-tinh-bang":
+            - code: may-tinh-bang
+          - cell "??i???n tho???i & Tablet"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Ph??? ki???n phu-kien — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Ph??? ki???n":
+            - strong: Ph??? ki???n
+          - cell "phu-kien":
+            - code: phu-kien
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "QA UI Category 27789 qa-ui-category-27789 — Hoạt động Sửa Vô hiệu hóa":
+          - cell "QA UI Category 27789":
+            - strong: QA UI Category 27789
+          - cell "qa-ui-category-27789":
+            - code: qa-ui-category-27789
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "T??? l???nh tu-lanh Thi???t b??? gia d???ng Hoạt động Sửa Vô hiệu hóa":
+          - cell "T??? l???nh":
+            - strong: T??? l???nh
+          - cell "tu-lanh":
+            - code: tu-lanh
+          - cell "Thi???t b??? gia d???ng"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Tai nghe tai-nghe ??m thanh & Loa Hoạt động Sửa Vô hiệu hóa":
+          - cell "Tai nghe":
+            - strong: Tai nghe
+          - cell "tai-nghe":
+            - code: tai-nghe
+          - cell "??m thanh & Loa"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Thi???t b??? gia d???ng thiet-bi-gia-dung — Hoạt động Sửa Vô hiệu hóa":
+          - cell "Thi???t b??? gia d???ng":
+            - strong: Thi???t b??? gia d???ng
+          - cell "thiet-bi-gia-dung":
+            - code: thiet-bi-gia-dung
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "TV tivi TV & M??n h??nh Hoạt động Sửa Vô hiệu hóa":
+          - cell "TV":
+            - strong: TV
+          - cell "tivi":
+            - code: tivi
+          - cell "TV & M??n h??nh"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "TV & M??n h??nh tv-man-hinh — Hoạt động Sửa Vô hiệu hóa":
+          - cell "TV & M??n h??nh":
+            - strong: TV & M??n h??nh
+          - cell "tv-man-hinh":
+            - code: tv-man-hinh
+          - cell "—"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

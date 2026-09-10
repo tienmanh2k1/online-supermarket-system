@@ -1,0 +1,412 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Quản lý người dùng":
+      - heading "Quản lý người dùng" [level=1]
+      - paragraph: Xem danh sách tài khoản và khóa / mở khóa / vô hiệu hóa.
+      - table "Danh sách người dùng":
+        - rowgroup:
+          - row "Email Họ tên SĐT Vai trò Trạng thái Ngày tạo Đổi trạng thái":
+            - columnheader "Email"
+            - columnheader "Họ tên"
+            - columnheader "SĐT"
+            - columnheader "Vai trò"
+            - columnheader "Trạng thái"
+            - columnheader "Ngày tạo"
+            - columnheader "Đổi trạng thái"
+        - rowgroup:
+          - row "user1@test.com Nguyen Van An 0912345678 Khách hàng Đang hoạt động Active 7 thg 9, 2026 Đang hoạt động":
+            - cell "user1@test.com"
+            - cell "Nguyen Van An"
+            - cell "0912345678"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "7 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái user1@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "user2@test.com Tran Thi Binh 0923456789 Khách hàng Đang hoạt động Active 7 thg 9, 2026 Đang hoạt động":
+            - cell "user2@test.com"
+            - cell "Tran Thi Binh"
+            - cell "0923456789"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "7 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái user2@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "user3@test.com Le Hoang Cuong 0934567890 Khách hàng Đang hoạt động Active 7 thg 9, 2026 Đang hoạt động":
+            - cell "user3@test.com"
+            - cell "Le Hoang Cuong"
+            - cell "0934567890"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "7 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái user3@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "admin@test.com Admin User 0901234567 Quản trị viên Đang hoạt động Active 7 thg 9, 2026 Đang hoạt động":
+            - cell "admin@test.com"
+            - cell "Admin User"
+            - cell "0901234567"
+            - cell "Quản trị viên":
+              - generic: Quản trị viên
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "7 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái admin@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "user4@test.com Nguyen Van Bon 0900000004 Khách hàng Đang hoạt động Active 8 thg 9, 2026 Đang hoạt động":
+            - cell "user4@test.com"
+            - cell "Nguyen Van Bon"
+            - cell "0900000004"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "8 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái user4@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "user5@test.com Hoang Thi Nam 0900000005 Khách hàng Đang hoạt động Active 8 thg 9, 2026 Đang hoạt động":
+            - cell "user5@test.com"
+            - cell "Hoang Thi Nam"
+            - cell "0900000005"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "8 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái user5@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "colduser@test.com Cold Start User 0900000009 Khách hàng Đang hoạt động Active 8 thg 9, 2026 Đang hoạt động":
+            - cell "colduser@test.com"
+            - cell "Cold Start User"
+            - cell "0900000009"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "8 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái colduser@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "mergeuser@test.com Merge Test User 0900000008 Khách hàng Đang hoạt động Active 8 thg 9, 2026 Đang hoạt động":
+            - cell "mergeuser@test.com"
+            - cell "Merge Test User"
+            - cell "0900000008"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "8 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái mergeuser@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788933440798@test.com Test Customer 1788933440798 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788933440798@test.com"
+            - cell "Test Customer 1788933440798"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788933440798@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788933516373@test.com Test Customer 1788933516373 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788933516373@test.com"
+            - cell "Test Customer 1788933516373"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788933516373@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788933583765@test.com Test Customer 1788933583765 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788933583765@test.com"
+            - cell "Test Customer 1788933583765"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788933583765@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788933606305@test.com Test Customer 1788933606305 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788933606305@test.com"
+            - cell "Test Customer 1788933606305"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788933606305@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788933927272@test.com Test Customer 1788933927272 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788933927272@test.com"
+            - cell "Test Customer 1788933927272"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788933927272@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939176357@test.com Test Customer 1788939176357 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939176357@test.com"
+            - cell "Test Customer 1788939176357"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939176357@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939203511@test.com Test Customer 1788939203511 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939203511@test.com"
+            - cell "Test Customer 1788939203511"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939203511@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939256493@test.com Test Customer 1788939256493 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939256493@test.com"
+            - cell "Test Customer 1788939256493"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939256493@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939306228@test.com Test Customer 1788939306228 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939306228@test.com"
+            - cell "Test Customer 1788939306228"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939306228@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939598395@test.com Test Customer 1788939598395 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939598395@test.com"
+            - cell "Test Customer 1788939598395"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939598395@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788939652055@test.com Test Customer 1788939652055 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788939652055@test.com"
+            - cell "Test Customer 1788939652055"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788939652055@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+          - row "customer_1788940245929@test.com Test Customer 1788940245929 — Khách hàng Đang hoạt động Active 9 thg 9, 2026 Đang hoạt động":
+            - cell "customer_1788940245929@test.com"
+            - cell "Test Customer 1788940245929"
+            - cell "—"
+            - cell "Khách hàng":
+              - generic: Khách hàng
+            - cell "Đang hoạt động Active":
+              - text: Đang hoạt động
+              - generic: Active
+            - cell "9 thg 9, 2026"
+            - cell "Đang hoạt động":
+              - combobox "Đổi trạng thái customer_1788940245929@test.com":
+                - option "Đang hoạt động" [selected]
+                - option "Đã khóa"
+                - option "Vô hiệu hóa"
+      - navigation "Phân trang người dùng":
+        - button "Trang trước" [disabled]
+        - generic: Trang 1
+        - button "Trang sau"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

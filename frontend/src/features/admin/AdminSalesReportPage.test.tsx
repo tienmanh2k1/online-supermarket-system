@@ -1,9 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { adminApi, type SalesReportDto } from '../../api/adminApi'
 import { useAuth } from '../auth/AuthContext'
 import { AdminSalesReportPage } from './AdminSalesReportPage'
+import { ApiError } from '../../api/httpClient'
 
 vi.mock('../../api/adminApi', () => ({
   adminApi: {
@@ -28,6 +29,45 @@ const mockReport30Days: SalesReportDto = {
 }
 
 describe('AdminSalesReportPage', () => {
+  it.each([
+    [{ detail: 'Detailed validation error', title: 'Invalid range' }, 'Detailed validation error'],
+    [{ title: 'Invalid range' }, 'Invalid range'],
+  ])('displays ProblemDetails from ApiError.data: %j', async (body, expected) => {
+    vi.mocked(adminApi.getSalesReport).mockRejectedValueOnce(new ApiError(400, body))
+    render(<AdminSalesReportPage />)
+    expect(await screen.findByRole('alert')).toHaveTextContent(expected)
+  })
+
+  it.each(['success', 'failure'])('ignores stale %s after the latest request succeeds', async (outcome) => {
+    let resolveOld!: (report: SalesReportDto) => void
+    let rejectOld!: (error: Error) => void
+    vi.mocked(adminApi.getSalesReport)
+      .mockImplementationOnce(() => new Promise((resolve, reject) => {
+        resolveOld = resolve
+        rejectOld = reject
+      }))
+      .mockResolvedValueOnce({ ...mockReport30Days, completedOrderCount: 7 })
+    render(<AdminSalesReportPage />)
+    const oldSignal = vi.mocked(adminApi.getSalesReport).mock.calls[0][3]
+    fireEvent.click(screen.getByRole('button', { name: '7 ngày' }))
+    await screen.findByText('7 đơn hàng hoàn tất')
+    expect(oldSignal?.aborted).toBe(true)
+    await act(async () => {
+      if (outcome === 'success') resolveOld(mockReport30Days)
+      else rejectOld(new ApiError(500, undefined, 'Old request failed'))
+    })
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByText('7 đơn hàng hoàn tất')).toBeInTheDocument()
+  })
+
+  it('aborts the pending request when unmounted', () => {
+    vi.mocked(adminApi.getSalesReport).mockImplementationOnce(() => new Promise(() => {}))
+    const { unmount } = render(<AdminSalesReportPage />)
+    const signal = vi.mocked(adminApi.getSalesReport).mock.calls[0][3]
+    unmount()
+    expect(signal?.aborted).toBe(true)
+  })
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'] })
     vi.setSystemTime(new Date('2026-09-09T12:00:00Z'))

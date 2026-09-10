@@ -12,7 +12,12 @@ vi.mock('./features/auth/AuthContext', () => ({
 vi.mock('./features/cart/CartContext', () => ({
   CartProvider: ({ children }: PropsWithChildren) => <>{children}</>,
 }))
-vi.mock('./features/products/ProductBrowsePage', () => ({ ProductBrowsePage: () => <div /> }))
+vi.mock('./features/home/HomePage', () => ({
+  HomePage: () => <h1>Home Page Route</h1>,
+}))
+vi.mock('./features/products/ProductBrowsePage', () => ({
+  ProductBrowsePage: () => <h1>Product Browse Route</h1>,
+}))
 vi.mock('./features/products/ProductDetailPage', () => ({ ProductDetailPage: () => <div /> }))
 vi.mock('./features/account/ProfilePage', () => ({ ProfilePage: () => <div /> }))
 vi.mock('./features/account/AddressListPage', () => ({ AddressListPage: () => <div /> }))
@@ -178,6 +183,18 @@ it('wires the terms route', () => {
   window.history.pushState({}, '', '/terms')
   render(<App />)
   expect(screen.getByRole('heading', { name: 'Terms Route' })).toBeInTheDocument()
+})
+
+it('wires the home page route', () => {
+  window.history.pushState({}, '', '/')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Home Page Route' })).toBeInTheDocument()
+})
+
+it('wires the browse route', () => {
+  window.history.pushState({}, '', '/browse')
+  render(<App />)
+  expect(screen.getByRole('heading', { name: 'Product Browse Route' })).toBeInTheDocument()
 })
 
 

@@ -94,9 +94,10 @@ export function AdminSalesReportPage() {
         if (controller.signal.aborted) return
         setState({ kind: 'ready', data: report })
       } catch (err: any) {
-        if (err instanceof Error && err.name === 'AbortError') return
-        // Read detail from ProblemDetails if available
-        const detail = err?.response?.data?.detail || err?.response?.data?.title || err.message
+        // Ignore aborted requests
+        if (controller.signal.aborted) return
+        // Read detail from ProblemDetails if available (ApiError stores body in .data)
+        const detail = err?.data?.detail || err?.data?.title || err?.message
         setState({ kind: 'error', message: detail || 'Không thể tải báo cáo doanh số.' })
       }
     },
@@ -105,6 +106,7 @@ export function AdminSalesReportPage() {
 
   useEffect(() => {
     fetchReport(fromInput, toInput)
+    return () => abortControllerRef.current?.abort()
   }, [fetchReport])
 
   const handleApplyPreset = (type: '30' | '7' | 'month') => {

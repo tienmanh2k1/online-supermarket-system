@@ -1,0 +1,133 @@
+{
+  "executedAtUtc": "2026-09-09T14:31:48.547Z",
+  "apiUrl": "http://localhost:8080",
+  "frontendUrl": "http://localhost:5173",
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "ok": true
+  },
+  "results": [
+    {
+      "id": "C-01",
+      "flow": "commerce",
+      "kind": "happy",
+      "page": "/product/0baae464-4f4c-49a0-8699-743aa32e28b3#reviews",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:30:13.336Z",
+      "finishedAt": "2026-09-09T14:30:19.210Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 2 s - OnlineSupermarket.Api.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-02",
+      "flow": "commerce",
+      "kind": "edge",
+      "page": "/shopping/cart",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:30:19.211Z",
+      "finishedAt": "2026-09-09T14:30:24.835Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 2 s - OnlineSupermarket.Api.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-03",
+      "flow": "commerce",
+      "kind": "edge",
+      "page": "/product/0baae464-4f4c-49a0-8699-743aa32e28b3#reviews",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:30:24.836Z",
+      "finishedAt": "2026-09-09T14:30:30.549Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 2 s - OnlineSupermarket.Api.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-04",
+      "flow": "commerce",
+      "kind": "edge",
+      "page": "/shopping/orders",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:30:30.549Z",
+      "finishedAt": "2026-09-09T14:31:13.970Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 23 s - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-05",
+      "flow": "recommendation",
+      "kind": "happy",
+      "page": "/",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:13.970Z",
+      "finishedAt": "2026-09-09T14:31:17.494Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\nNo test matches the given testcase filter `FullyQualifiedName~RecommendationEndpointsTests.Merge_ClaimsSessionForJwtOwner_ReturnsMergedCount|FullyQualifiedName~RecommendationEndpointsTests.Merge_RepeatedCall_ReturnsZeroOnSecondMerge` in C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll"
+    },
+    {
+      "id": "C-06",
+      "flow": "recommendation",
+      "kind": "edge",
+      "page": "/",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:17.494Z",
+      "finishedAt": "2026-09-09T14:31:22.165Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 s - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-07",
+      "flow": "recommendation",
+      "kind": "edge",
+      "page": "/",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:22.165Z",
+      "finishedAt": "2026-09-09T14:31:25.242Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 80 ms - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-08",
+      "flow": "recommendation",
+      "kind": "edge",
+      "page": "/browse",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:25.242Z",
+      "finishedAt": "2026-09-09T14:31:28.679Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\nNo test matches the given testcase filter `FullyQualifiedName~RecommendationEndpointsTests.RecordView_WithUnknownBranch_Returns404BranchNotFound_AndDoesNotInsert|FullyQualifiedName~RecommendationEndpointsTests.Merge_IgnoresUserIdInBody` in C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll"
+    },
+    {
+      "id": "C-09",
+      "flow": "forecast",
+      "kind": "happy",
+      "page": "/admin/forecast",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:28.679Z",
+      "finishedAt": "2026-09-09T14:31:33.292Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 s - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-10",
+      "flow": "forecast",
+      "kind": "edge",
+      "page": "/admin/forecast",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:33.292Z",
+      "finishedAt": "2026-09-09T14:31:37.746Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 s - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-11",
+      "flow": "forecast",
+      "kind": "edge",
+      "page": "/admin/forecast",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:37.746Z",
+      "finishedAt": "2026-09-09T14:31:43.970Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Api -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Api\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.dll\r\n  OnlineSupermarket.Api.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Api.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Api.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 2 s - OnlineSupermarket.Api.Tests.dll (net10.0)"
+    },
+    {
+      "id": "C-12",
+      "flow": "forecast",
+      "kind": "edge",
+      "page": "/admin/forecast",
+      "status": "passed",
+      "startedAt": "2026-09-09T14:31:43.971Z",
+      "finishedAt": "2026-09-09T14:31:48.510Z",
+      "output": "OnlineSupermarket.Domain -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Domain\\bin\\Debug\\net10.0\\OnlineSupermarket.Domain.dll\r\n  OnlineSupermarket.Infrastructure -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\src\\OnlineSupermarket.Infrastructure\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.dll\r\n  OnlineSupermarket.Infrastructure.Tests -> C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll\r\nTest run for C:\\Users\\manh\\Documents\\Project3\\online-supermarket-system\\backend\\tests\\OnlineSupermarket.Infrastructure.Tests\\bin\\Debug\\net10.0\\OnlineSupermarket.Infrastructure.Tests.dll (.NETCoreApp,Version=v10.0)\r\nA total of 1 test files matched the specified pattern.\r\n\r\nPassed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 s - OnlineSupermarket.Infrastructure.Tests.dll (net10.0)"
+    }
+  ]
+}

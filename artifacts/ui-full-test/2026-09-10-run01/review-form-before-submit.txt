@@ -1,0 +1,163 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - navigation "Breadcrumb":
+    - link "Danh sách sản phẩm":
+      - /url: /browse
+    - text: / Tai nghe
+  - img "AirPods Pro 2"
+  - heading "AirPods Pro 2" [level=1]
+  - generic: Apple
+  - generic: "SKU: PK-APP-001"
+  - generic: Tai nghe
+  - generic: "Đơn vị: c??i"
+  - paragraph: Tai nghe kh??ng d??y Apple th??? h??? 2 v???i chip H2 ch???ng ???n ch??? ?????ng g???p 2 l???n, ??m thanh kh??ng gian c?? nh??n h??a v?? h???p s???c MagSafe.
+  - generic: "Giá:"
+  - generic: 5.990.000 ₫
+  - generic: Chọn kho để xem giá và tồn kho
+  - generic: Kho hàng
+  - combobox "Kho hàng":
+    - option "Chọn kho" [selected]
+    - option "AptechMart B??nh Th???nh"
+    - option "AptechMart Qu???n 1"
+    - option "AptechMart Qu???n 3"
+  - generic: Số lượng
+  - spinbutton "Số lượng" [disabled]: "1"
+  - button "Thêm vào giỏ" [disabled]
+  - button "So sánh sản phẩm":
+    - text: So sánh sản phẩm
+  - region "Đánh giá sản phẩm":
+    - heading "Đánh giá sản phẩm" [level=2]
+    - heading "Viết đánh giá sản phẩm" [level=3]
+    - group "Chất lượng sản phẩm *":
+      - generic: Chất lượng sản phẩm *
+      - radio "1 sao"
+      - text: ★
+      - radio "2 sao"
+      - text: ★
+      - radio "3 sao"
+      - text: ★
+      - radio "4 sao"
+      - text: ★
+      - radio "5 sao" [checked]
+      - text: ★
+      - generic: 5 sao - Rất hài lòng
+    - generic: Bình luận nhận xét (không bắt buộc)
+    - textbox "Bình luận nhận xét (không bắt buộc)" [active]:
+      - /placeholder: Hãy chia sẻ trải nghiệm về sản phẩm (đóng gói, chất lượng, hạn sử dụng...)
+      - text: QA UI đánh giá sau khi hoàn tất đơn hàng.
+    - generic: Còn lại 1959 ký tự
+    - button "Gửi đánh giá"
+    - paragraph: Chưa có đánh giá nào cho sản phẩm này.
+  - region "Sản phẩm tương tự":
+    - heading "Sản phẩm tương tự" [level=2]
+    - list:
+      - article:
+        - img "Sony WH-1000XM5"
+        - heading "Sony WH-1000XM5" [level=3]:
+          - link "Sony WH-1000XM5":
+            - /url: /product/dc09e604-c0b5-4761-8808-4d15febef3ee
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 8.990.000 ₫
+      - article:
+        - img "MacBook Air 15\" M3"
+        - heading "MacBook Air 15\" M3" [level=3]:
+          - link "MacBook Air 15\" M3":
+            - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 32.990.000 ₫
+      - article:
+        - img "MacBook Pro 14\" M3 Pro"
+        - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+          - link "MacBook Pro 14\" M3 Pro":
+            - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 45.990.000 ₫
+      - article:
+        - img "iPhone 15 128GB"
+        - heading "iPhone 15 128GB" [level=3]:
+          - link "iPhone 15 128GB":
+            - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 22.990.000 ₫
+      - article:
+        - img "iPhone 15 Pro Max 256GB"
+        - heading "iPhone 15 Pro Max 256GB" [level=3]:
+          - link "iPhone 15 Pro Max 256GB":
+            - /url: /product/5ab9dcbe-def1-496d-9714-6d807f1dcedb
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 34.990.000 ₫
+      - article:
+        - img "iPad Mini 6 64GB WiFi"
+        - heading "iPad Mini 6 64GB WiFi" [level=3]:
+          - link "iPad Mini 6 64GB WiFi":
+            - /url: /product/9ceb086d-81f4-4284-a014-6be1d4b8f74b
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 13.490.000 ₫
+      - article:
+        - img "Apple Magic Mouse"
+        - heading "Apple Magic Mouse" [level=3]:
+          - link "Apple Magic Mouse":
+            - /url: /product/e8547ac9-1f1b-4079-aabb-63e6b1ffdec7
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 2.190.000 ₫
+      - article:
+        - img "Samsung Galaxy S24 Ultra 256GB"
+        - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+          - link "Samsung Galaxy S24 Ultra 256GB":
+            - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Tương tự với sản phẩm đang xem
+        - generic: 28.990.000 ₫
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,452 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá" [active]:
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Quản lý kho và giá":
+      - heading "Kho & Giá theo chi nhánh" [level=1]
+      - paragraph: Điều chỉnh giá bán, tồn kho và định mức nhập cho từng chi nhánh.
+      - generic: Chi nhánh
+      - combobox "Chi nhánh":
+        - option "AptechMart B??nh Th???nh" [selected]
+        - option "AptechMart Qu???n 1"
+        - option "AptechMart Qu???n 3"
+      - paragraph: 28 sản phẩm
+      - table "Tồn kho chi nhánh":
+        - rowgroup:
+          - row "Sản phẩm SKU Giá bán Tồn thực Đang giữ Khả dụng Định mức Hành động":
+            - columnheader "Sản phẩm"
+            - columnheader "SKU"
+            - columnheader "Giá bán"
+            - columnheader "Tồn thực"
+            - columnheader "Đang giữ"
+            - columnheader "Khả dụng"
+            - columnheader "Định mức"
+            - columnheader "Hành động":
+              - generic: Hành động
+        - rowgroup:
+          - row "AirPods Pro 2 PK-APP-001 5.990.000 ₫ 40 2 38 5 Lịch sử kho AirPods Pro 2 Chỉnh sửa AirPods Pro 2":
+            - cell "AirPods Pro 2"
+            - cell "PK-APP-001":
+              - code: PK-APP-001
+            - cell "5.990.000 ₫"
+            - cell "40"
+            - cell "2"
+            - cell "38"
+            - cell "5"
+            - cell "Lịch sử kho AirPods Pro 2 Chỉnh sửa AirPods Pro 2":
+              - button "Lịch sử kho AirPods Pro 2": Lịch sử kho
+              - button "Chỉnh sửa AirPods Pro 2": Sửa
+          - row "Apple Magic Mouse PK-APP-002 2.190.000 ₫ 40 0 40 5 Lịch sử kho Apple Magic Mouse Chỉnh sửa Apple Magic Mouse":
+            - cell "Apple Magic Mouse"
+            - cell "PK-APP-002":
+              - code: PK-APP-002
+            - cell "2.190.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Apple Magic Mouse Chỉnh sửa Apple Magic Mouse":
+              - button "Lịch sử kho Apple Magic Mouse": Lịch sử kho
+              - button "Chỉnh sửa Apple Magic Mouse": Sửa
+          - row "ASUS ROG Strix G16 Gaming LT-ASUS-001 28.990.000 ₫ 40 0 40 5 Lịch sử kho ASUS ROG Strix G16 Gaming Chỉnh sửa ASUS ROG Strix G16 Gaming":
+            - cell "ASUS ROG Strix G16 Gaming"
+            - cell "LT-ASUS-001":
+              - code: LT-ASUS-001
+            - cell "28.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho ASUS ROG Strix G16 Gaming Chỉnh sửa ASUS ROG Strix G16 Gaming":
+              - button "Lịch sử kho ASUS ROG Strix G16 Gaming": Lịch sử kho
+              - button "Chỉnh sửa ASUS ROG Strix G16 Gaming": Sửa
+          - row "ASUS ZenBook 14 OLED LT-ASUS-002 21.990.000 ₫ 40 0 40 5 Lịch sử kho ASUS ZenBook 14 OLED Chỉnh sửa ASUS ZenBook 14 OLED":
+            - cell "ASUS ZenBook 14 OLED"
+            - cell "LT-ASUS-002":
+              - code: LT-ASUS-002
+            - cell "21.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho ASUS ZenBook 14 OLED Chỉnh sửa ASUS ZenBook 14 OLED":
+              - button "Lịch sử kho ASUS ZenBook 14 OLED": Lịch sử kho
+              - button "Chỉnh sửa ASUS ZenBook 14 OLED": Sửa
+          - row "Canon EOS R50 Mirrorless Kit 18-45mm CAM-CAN-001 18.990.000 ₫ 40 0 40 5 Lịch sử kho Canon EOS R50 Mirrorless Kit 18-45mm Chỉnh sửa Canon EOS R50 Mirrorless Kit 18-45mm":
+            - cell "Canon EOS R50 Mirrorless Kit 18-45mm"
+            - cell "CAM-CAN-001":
+              - code: CAM-CAN-001
+            - cell "18.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Canon EOS R50 Mirrorless Kit 18-45mm Chỉnh sửa Canon EOS R50 Mirrorless Kit 18-45mm":
+              - button "Lịch sử kho Canon EOS R50 Mirrorless Kit 18-45mm": Lịch sử kho
+              - button "Chỉnh sửa Canon EOS R50 Mirrorless Kit 18-45mm": Sửa
+          - row "Dell XPS 15 9530 (i7, 16GB, 512GB) LT-DEL-001 35.990.000 ₫ 40 0 40 5 Lịch sử kho Dell XPS 15 9530 (i7, 16GB, 512GB) Chỉnh sửa Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - cell "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+            - cell "LT-DEL-001":
+              - code: LT-DEL-001
+            - cell "35.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Dell XPS 15 9530 (i7, 16GB, 512GB) Chỉnh sửa Dell XPS 15 9530 (i7, 16GB, 512GB)":
+              - button "Lịch sử kho Dell XPS 15 9530 (i7, 16GB, 512GB)": Lịch sử kho
+              - button "Chỉnh sửa Dell XPS 15 9530 (i7, 16GB, 512GB)": Sửa
+          - row "iPad Mini 6 64GB WiFi DT-APP-003 13.490.000 ₫ 40 0 40 5 Lịch sử kho iPad Mini 6 64GB WiFi Chỉnh sửa iPad Mini 6 64GB WiFi":
+            - cell "iPad Mini 6 64GB WiFi"
+            - cell "DT-APP-003":
+              - code: DT-APP-003
+            - cell "13.490.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho iPad Mini 6 64GB WiFi Chỉnh sửa iPad Mini 6 64GB WiFi":
+              - button "Lịch sử kho iPad Mini 6 64GB WiFi": Lịch sử kho
+              - button "Chỉnh sửa iPad Mini 6 64GB WiFi": Sửa
+          - row "iPhone 15 128GB DT-APP-002 22.990.000 ₫ 40 0 40 5 Lịch sử kho iPhone 15 128GB Chỉnh sửa iPhone 15 128GB":
+            - cell "iPhone 15 128GB"
+            - cell "DT-APP-002":
+              - code: DT-APP-002
+            - cell "22.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho iPhone 15 128GB Chỉnh sửa iPhone 15 128GB":
+              - button "Lịch sử kho iPhone 15 128GB": Lịch sử kho
+              - button "Chỉnh sửa iPhone 15 128GB": Sửa
+          - row "iPhone 15 Pro Max 256GB DT-APP-001 34.990.000 ₫ 40 0 40 5 Lịch sử kho iPhone 15 Pro Max 256GB Chỉnh sửa iPhone 15 Pro Max 256GB":
+            - cell "iPhone 15 Pro Max 256GB"
+            - cell "DT-APP-001":
+              - code: DT-APP-001
+            - cell "34.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho iPhone 15 Pro Max 256GB Chỉnh sửa iPhone 15 Pro Max 256GB":
+              - button "Lịch sử kho iPhone 15 Pro Max 256GB": Lịch sử kho
+              - button "Chỉnh sửa iPhone 15 Pro Max 256GB": Sửa
+          - row "JBL Flip 6 AT-JBL-002 3.490.000 ₫ 40 0 40 5 Lịch sử kho JBL Flip 6 Chỉnh sửa JBL Flip 6":
+            - cell "JBL Flip 6"
+            - cell "AT-JBL-002":
+              - code: AT-JBL-002
+            - cell "3.490.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho JBL Flip 6 Chỉnh sửa JBL Flip 6":
+              - button "Lịch sử kho JBL Flip 6": Lịch sử kho
+              - button "Chỉnh sửa JBL Flip 6": Sửa
+          - row "JBL PartyBox 310 AT-JBL-001 14.990.000 ₫ 40 0 40 5 Lịch sử kho JBL PartyBox 310 Chỉnh sửa JBL PartyBox 310":
+            - cell "JBL PartyBox 310"
+            - cell "AT-JBL-001":
+              - code: AT-JBL-001
+            - cell "14.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho JBL PartyBox 310 Chỉnh sửa JBL PartyBox 310":
+              - button "Lịch sử kho JBL PartyBox 310": Lịch sử kho
+              - button "Chỉnh sửa JBL PartyBox 310": Sửa
+          - row "LG Door-in-Door 601L InstaView GD-LG-002 42.990.000 ₫ 40 0 40 5 Lịch sử kho LG Door-in-Door 601L InstaView Chỉnh sửa LG Door-in-Door 601L InstaView":
+            - cell "LG Door-in-Door 601L InstaView"
+            - cell "GD-LG-002":
+              - code: GD-LG-002
+            - cell "42.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho LG Door-in-Door 601L InstaView Chỉnh sửa LG Door-in-Door 601L InstaView":
+              - button "Lịch sử kho LG Door-in-Door 601L InstaView": Lịch sử kho
+              - button "Chỉnh sửa LG Door-in-Door 601L InstaView": Sửa
+          - row "LG Inverter 2 HP B19END GD-LG-001 16.990.000 ₫ 40 0 40 5 Lịch sử kho LG Inverter 2 HP B19END Chỉnh sửa LG Inverter 2 HP B19END":
+            - cell "LG Inverter 2 HP B19END"
+            - cell "GD-LG-001":
+              - code: GD-LG-001
+            - cell "16.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho LG Inverter 2 HP B19END Chỉnh sửa LG Inverter 2 HP B19END":
+              - button "Lịch sử kho LG Inverter 2 HP B19END": Lịch sử kho
+              - button "Chỉnh sửa LG Inverter 2 HP B19END": Sửa
+          - row "LG OLED evo 4K 55 inch C4 TV-LG-001 32.990.000 ₫ 40 0 40 5 Lịch sử kho LG OLED evo 4K 55 inch C4 Chỉnh sửa LG OLED evo 4K 55 inch C4":
+            - cell "LG OLED evo 4K 55 inch C4"
+            - cell "TV-LG-001":
+              - code: TV-LG-001
+            - cell "32.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho LG OLED evo 4K 55 inch C4 Chỉnh sửa LG OLED evo 4K 55 inch C4":
+              - button "Lịch sử kho LG OLED evo 4K 55 inch C4": Lịch sử kho
+              - button "Chỉnh sửa LG OLED evo 4K 55 inch C4": Sửa
+          - row "MacBook Air 15\" M3 LT-APP-002 32.990.000 ₫ 40 0 40 5 Lịch sử kho MacBook Air 15\" M3 Chỉnh sửa MacBook Air 15\" M3":
+            - cell "MacBook Air 15\" M3"
+            - cell "LT-APP-002":
+              - code: LT-APP-002
+            - cell "32.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho MacBook Air 15\" M3 Chỉnh sửa MacBook Air 15\" M3":
+              - button "Lịch sử kho MacBook Air 15\" M3": Lịch sử kho
+              - button "Chỉnh sửa MacBook Air 15\" M3": Sửa
+          - row "MacBook Pro 14\" M3 Pro LT-APP-001 45.990.000 ₫ 40 0 40 5 Lịch sử kho MacBook Pro 14\" M3 Pro Chỉnh sửa MacBook Pro 14\" M3 Pro":
+            - cell "MacBook Pro 14\" M3 Pro"
+            - cell "LT-APP-001":
+              - code: LT-APP-001
+            - cell "45.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho MacBook Pro 14\" M3 Pro Chỉnh sửa MacBook Pro 14\" M3 Pro":
+              - button "Lịch sử kho MacBook Pro 14\" M3 Pro": Lịch sử kho
+              - button "Chỉnh sửa MacBook Pro 14\" M3 Pro": Sửa
+          - row "Panasonic Giant 8.5kg NA-F85V1 GD-PAN-002 14.990.000 ₫ 40 0 40 5 Lịch sử kho Panasonic Giant 8.5kg NA-F85V1 Chỉnh sửa Panasonic Giant 8.5kg NA-F85V1":
+            - cell "Panasonic Giant 8.5kg NA-F85V1"
+            - cell "GD-PAN-002":
+              - code: GD-PAN-002
+            - cell "14.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Panasonic Giant 8.5kg NA-F85V1 Chỉnh sửa Panasonic Giant 8.5kg NA-F85V1":
+              - button "Lịch sử kho Panasonic Giant 8.5kg NA-F85V1": Lịch sử kho
+              - button "Chỉnh sửa Panasonic Giant 8.5kg NA-F85V1": Sửa
+          - row "Panasonic Inverter 1.5 HP CU/CS-U12XK GD-PAN-001 12.990.000 ₫ 40 0 40 5 Lịch sử kho Panasonic Inverter 1.5 HP CU/CS-U12XK Chỉnh sửa Panasonic Inverter 1.5 HP CU/CS-U12XK":
+            - cell "Panasonic Inverter 1.5 HP CU/CS-U12XK"
+            - cell "GD-PAN-001":
+              - code: GD-PAN-001
+            - cell "12.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Panasonic Inverter 1.5 HP CU/CS-U12XK Chỉnh sửa Panasonic Inverter 1.5 HP CU/CS-U12XK":
+              - button "Lịch sử kho Panasonic Inverter 1.5 HP CU/CS-U12XK": Lịch sử kho
+              - button "Chỉnh sửa Panasonic Inverter 1.5 HP CU/CS-U12XK": Sửa
+          - row "Samsung Galaxy S24 Ultra 256GB DT-SAM-001 28.990.000 ₫ 40 0 40 5 Lịch sử kho Samsung Galaxy S24 Ultra 256GB Chỉnh sửa Samsung Galaxy S24 Ultra 256GB":
+            - cell "Samsung Galaxy S24 Ultra 256GB"
+            - cell "DT-SAM-001":
+              - code: DT-SAM-001
+            - cell "28.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Samsung Galaxy S24 Ultra 256GB Chỉnh sửa Samsung Galaxy S24 Ultra 256GB":
+              - button "Lịch sử kho Samsung Galaxy S24 Ultra 256GB": Lịch sử kho
+              - button "Chỉnh sửa Samsung Galaxy S24 Ultra 256GB": Sửa
+          - row "Samsung Galaxy Tab S9 FE DT-SAM-003 12.990.000 ₫ 40 0 40 5 Lịch sử kho Samsung Galaxy Tab S9 FE Chỉnh sửa Samsung Galaxy Tab S9 FE":
+            - cell "Samsung Galaxy Tab S9 FE"
+            - cell "DT-SAM-003":
+              - code: DT-SAM-003
+            - cell "12.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Samsung Galaxy Tab S9 FE Chỉnh sửa Samsung Galaxy Tab S9 FE":
+              - button "Lịch sử kho Samsung Galaxy Tab S9 FE": Lịch sử kho
+              - button "Chỉnh sửa Samsung Galaxy Tab S9 FE": Sửa
+          - row "Samsung Galaxy Z Fold6 DT-SAM-002 41.990.000 ₫ 40 0 40 5 Lịch sử kho Samsung Galaxy Z Fold6 Chỉnh sửa Samsung Galaxy Z Fold6":
+            - cell "Samsung Galaxy Z Fold6"
+            - cell "DT-SAM-002":
+              - code: DT-SAM-002
+            - cell "41.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Samsung Galaxy Z Fold6 Chỉnh sửa Samsung Galaxy Z Fold6":
+              - button "Lịch sử kho Samsung Galaxy Z Fold6": Lịch sử kho
+              - button "Chỉnh sửa Samsung Galaxy Z Fold6": Sửa
+          - row "Samsung M8 Smart Monitor 32\" MH-SAM-001 14.990.000 ₫ 40 0 40 5 Lịch sử kho Samsung M8 Smart Monitor 32\" Chỉnh sửa Samsung M8 Smart Monitor 32\"":
+            - cell "Samsung M8 Smart Monitor 32\""
+            - cell "MH-SAM-001":
+              - code: MH-SAM-001
+            - cell "14.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Samsung M8 Smart Monitor 32\" Chỉnh sửa Samsung M8 Smart Monitor 32\"":
+              - button "Lịch sử kho Samsung M8 Smart Monitor 32\"": Lịch sử kho
+              - button "Chỉnh sửa Samsung M8 Smart Monitor 32\"": Sửa
+          - row "Samsung Neo QLED 4K 65 inch QA65QN90C TV-SAM-001 45.990.000 ₫ 40 0 40 5 Lịch sử kho Samsung Neo QLED 4K 65 inch QA65QN90C Chỉnh sửa Samsung Neo QLED 4K 65 inch QA65QN90C":
+            - cell "Samsung Neo QLED 4K 65 inch QA65QN90C"
+            - cell "TV-SAM-001":
+              - code: TV-SAM-001
+            - cell "45.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Samsung Neo QLED 4K 65 inch QA65QN90C Chỉnh sửa Samsung Neo QLED 4K 65 inch QA65QN90C":
+              - button "Lịch sử kho Samsung Neo QLED 4K 65 inch QA65QN90C": Lịch sử kho
+              - button "Chỉnh sửa Samsung Neo QLED 4K 65 inch QA65QN90C": Sửa
+          - row "Sony Bravia 4K 55 inch XR-55A80L TV-SON-001 28.990.000 ₫ 40 0 40 5 Lịch sử kho Sony Bravia 4K 55 inch XR-55A80L Chỉnh sửa Sony Bravia 4K 55 inch XR-55A80L":
+            - cell "Sony Bravia 4K 55 inch XR-55A80L"
+            - cell "TV-SON-001":
+              - code: TV-SON-001
+            - cell "28.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Sony Bravia 4K 55 inch XR-55A80L Chỉnh sửa Sony Bravia 4K 55 inch XR-55A80L":
+              - button "Lịch sử kho Sony Bravia 4K 55 inch XR-55A80L": Lịch sử kho
+              - button "Chỉnh sửa Sony Bravia 4K 55 inch XR-55A80L": Sửa
+          - row "Sony PlayStation 5 Slim GM-SON-001 14.990.000 ₫ 40 0 40 5 Lịch sử kho Sony PlayStation 5 Slim Chỉnh sửa Sony PlayStation 5 Slim":
+            - cell "Sony PlayStation 5 Slim"
+            - cell "GM-SON-001":
+              - code: GM-SON-001
+            - cell "14.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Sony PlayStation 5 Slim Chỉnh sửa Sony PlayStation 5 Slim":
+              - button "Lịch sử kho Sony PlayStation 5 Slim": Lịch sử kho
+              - button "Chỉnh sửa Sony PlayStation 5 Slim": Sửa
+          - row "Sony WH-1000XM5 AT-SON-001 8.990.000 ₫ 40 0 40 5 Lịch sử kho Sony WH-1000XM5 Chỉnh sửa Sony WH-1000XM5":
+            - cell "Sony WH-1000XM5"
+            - cell "AT-SON-001":
+              - code: AT-SON-001
+            - cell "8.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Sony WH-1000XM5 Chỉnh sửa Sony WH-1000XM5":
+              - button "Lịch sử kho Sony WH-1000XM5": Lịch sử kho
+              - button "Chỉnh sửa Sony WH-1000XM5": Sửa
+          - row "Xiaomi Redmi Note 13 Pro DT-XIA-001 6.990.000 ₫ 40 0 40 5 Lịch sử kho Xiaomi Redmi Note 13 Pro Chỉnh sửa Xiaomi Redmi Note 13 Pro":
+            - cell "Xiaomi Redmi Note 13 Pro"
+            - cell "DT-XIA-001":
+              - code: DT-XIA-001
+            - cell "6.990.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Xiaomi Redmi Note 13 Pro Chỉnh sửa Xiaomi Redmi Note 13 Pro":
+              - button "Lịch sử kho Xiaomi Redmi Note 13 Pro": Lịch sử kho
+              - button "Chỉnh sửa Xiaomi Redmi Note 13 Pro": Sửa
+          - row "Xiaomi Smart Camera C300 2K CAM-XIA-001 890.000 ₫ 40 0 40 5 Lịch sử kho Xiaomi Smart Camera C300 2K Chỉnh sửa Xiaomi Smart Camera C300 2K":
+            - cell "Xiaomi Smart Camera C300 2K"
+            - cell "CAM-XIA-001":
+              - code: CAM-XIA-001
+            - cell "890.000 ₫"
+            - cell "40"
+            - cell "0"
+            - cell "40"
+            - cell "5"
+            - cell "Lịch sử kho Xiaomi Smart Camera C300 2K Chỉnh sửa Xiaomi Smart Camera C300 2K":
+              - button "Lịch sử kho Xiaomi Smart Camera C300 2K": Lịch sử kho
+              - button "Chỉnh sửa Xiaomi Smart Camera C300 2K": Sửa
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,169 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - region "Tổng quan":
+      - heading "Tổng quan hệ thống" [level=1]
+      - generic: Tổng số đơn hàng
+      - generic: 🧾
+      - generic: "7"
+      - generic: Đơn cần xử lý
+      - generic: ⏳
+      - generic: "1"
+      - generic: Tổng doanh thu đơn hoàn tất
+      - generic: 💰
+      - generic: 116.965.000 ₫
+      - generic: Hàng tồn thấp
+      - generic: ⚠️
+      - generic: "0"
+      - heading "Đơn hàng gần đây" [level=2]
+      - table:
+        - rowgroup:
+          - row "Mã đơn Thời gian Số món Hình thức Tổng tiền Trạng thái":
+            - columnheader "Mã đơn"
+            - columnheader "Thời gian"
+            - columnheader "Số món"
+            - columnheader "Hình thức"
+            - columnheader "Tổng tiền"
+            - columnheader "Trạng thái"
+        - rowgroup:
+          - row "f9d528f3-9ae5-45fa-b427-7ee887b1ca21 06:19 10/09/2026 1 Nhận tại kho 2.190.000 ₫ Cancelled":
+            - cell "f9d528f3-9ae5-45fa-b427-7ee887b1ca21":
+              - link "f9d528f3-9ae5-45fa-b427-7ee887b1ca21":
+                - /url: /admin/orders/f9d528f3-9ae5-45fa-b427-7ee887b1ca21
+            - cell "06:19 10/09/2026"
+            - cell "1"
+            - cell "Nhận tại kho"
+            - cell "2.190.000 ₫"
+            - cell "Cancelled":
+              - generic: Cancelled
+          - row "118c7d00-86a6-4969-a6df-1d07c1036ce8 06:17 10/09/2026 1 Nhận tại kho 5.990.000 ₫ Cancelled":
+            - cell "118c7d00-86a6-4969-a6df-1d07c1036ce8":
+              - link "118c7d00-86a6-4969-a6df-1d07c1036ce8":
+                - /url: /admin/orders/118c7d00-86a6-4969-a6df-1d07c1036ce8
+            - cell "06:17 10/09/2026"
+            - cell "1"
+            - cell "Nhận tại kho"
+            - cell "5.990.000 ₫"
+            - cell "Cancelled":
+              - generic: Cancelled
+          - row "93fdd938-52bf-4c63-8afd-3fef94cd7070 06:09 10/09/2026 1 Giao hàng 11.995.000 ₫ Completed":
+            - cell "93fdd938-52bf-4c63-8afd-3fef94cd7070":
+              - link "93fdd938-52bf-4c63-8afd-3fef94cd7070":
+                - /url: /admin/orders/93fdd938-52bf-4c63-8afd-3fef94cd7070
+            - cell "06:09 10/09/2026"
+            - cell "1"
+            - cell "Giao hàng"
+            - cell "11.995.000 ₫"
+            - cell "Completed":
+              - generic: Completed
+          - row "0e9b1542-4524-4657-9563-187108154056 09:23 07/09/2026 1 Giao hàng 42.990.000 ₫ Completed":
+            - cell "0e9b1542-4524-4657-9563-187108154056":
+              - link "0e9b1542-4524-4657-9563-187108154056":
+                - /url: /admin/orders/0e9b1542-4524-4657-9563-187108154056
+            - cell "09:23 07/09/2026"
+            - cell "1"
+            - cell "Giao hàng"
+            - cell "42.990.000 ₫"
+            - cell "Completed":
+              - generic: Completed
+          - row "69ca18f1-2cc3-4130-b2ae-8ca0ec1b7e9a 09:23 07/09/2026 2 Nhận tại kho 26.480.000 ₫ Preparing":
+            - cell "69ca18f1-2cc3-4130-b2ae-8ca0ec1b7e9a":
+              - link "69ca18f1-2cc3-4130-b2ae-8ca0ec1b7e9a":
+                - /url: /admin/orders/69ca18f1-2cc3-4130-b2ae-8ca0ec1b7e9a
+            - cell "09:23 07/09/2026"
+            - cell "2"
+            - cell "Nhận tại kho"
+            - cell "26.480.000 ₫"
+            - cell "Preparing":
+              - generic: Preparing
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

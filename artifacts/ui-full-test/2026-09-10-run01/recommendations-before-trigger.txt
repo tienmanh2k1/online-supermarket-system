@@ -1,0 +1,300 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Gợi ý sản phẩm":
+      - heading "Gợi ý sản phẩm" [level=1]
+      - paragraph: Kích hoạt lại lượt tính gợi ý và duyệt các dòng kết quả gần nhất của thuật toán.
+      - generic: Phạm vi
+      - combobox "Phạm vi":
+        - option "Tất cả" [selected]
+        - option "Toàn hệ thống"
+        - option "Theo người dùng"
+        - option "Sản phẩm tương tự"
+      - generic: Số dòng
+      - combobox "Số dòng":
+        - option "10"
+        - option "20" [selected]
+        - option "50"
+      - button "Chạy lại lần tính"
+      - paragraph: "Lượt #693192ea · thuật toán content-v1 · tạo lúc 06:02:42 10/9/2026 · hết hạn 07:17:42 10/9/2026"
+      - table "Kết quả gợi ý sản phẩm":
+        - rowgroup:
+          - row "Phạm vi Đối tượng Sản phẩm Điểm Hạng Lý do":
+            - columnheader "Phạm vi"
+            - columnheader "Đối tượng"
+            - columnheader "Sản phẩm"
+            - columnheader "Điểm"
+            - columnheader "Hạng"
+            - columnheader "Lý do"
+        - rowgroup:
+          - row "Toàn hệ thống global 37059735… 0.9500 1 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "37059735…":
+              - code: 37059735…
+            - cell "0.9500"
+            - cell "1"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 8b189102… 0.7375 2 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "8b189102…":
+              - code: 8b189102…
+            - cell "0.7375"
+            - cell "2"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global bd00c190… 0.6000 3 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "bd00c190…":
+              - code: bd00c190…
+            - cell "0.6000"
+            - cell "3"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 0baae464… 0.4000 4 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "0baae464…":
+              - code: 0baae464…
+            - cell "0.4000"
+            - cell "4"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 285bbaef… 0.2500 5 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "285bbaef…":
+              - code: 285bbaef…
+            - cell "0.2500"
+            - cell "5"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 7f22bfa6… 0.2500 6 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "7f22bfa6…":
+              - code: 7f22bfa6…
+            - cell "0.2500"
+            - cell "6"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 4c4b6daa… 0.2000 7 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "4c4b6daa…":
+              - code: 4c4b6daa…
+            - cell "0.2000"
+            - cell "7"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 3201f989… 0.1500 8 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "3201f989…":
+              - code: 3201f989…
+            - cell "0.1500"
+            - cell "8"
+            - cell "Được nhiều người quan tâm"
+          - row "Toàn hệ thống global 5ab9dcbe… 0.1500 9 Được nhiều người quan tâm":
+            - cell "Toàn hệ thống"
+            - cell "global":
+              - code: global
+            - cell "5ab9dcbe…":
+              - code: 5ab9dcbe…
+            - cell "0.1500"
+            - cell "9"
+            - cell "Được nhiều người quan tâm"
+          - row "Sản phẩm tương tự product:0baae464-4f4c-49a0-8699-743aa32e28b3 37059735… 0.6950 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:0baae464-4f4c-49a0-8699-743aa32e28b3":
+              - code: product:0baae464-4f4c-49a0-8699-743aa32e28b3
+            - cell "37059735…":
+              - code: 37059735…
+            - cell "0.6950"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:5ab9dcbe-def1-496d-9714-6d807f1dcedb 4c4b6daa… 0.9200 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:5ab9dcbe-def1-496d-9714-6d807f1dcedb":
+              - code: product:5ab9dcbe-def1-496d-9714-6d807f1dcedb
+            - cell "4c4b6daa…":
+              - code: 4c4b6daa…
+            - cell "0.9200"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:37059735-8e29-4fa6-9971-ad2ea58b3eed 7f22bfa6… 0.9250 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:37059735-8e29-4fa6-9971-ad2ea58b3eed":
+              - code: product:37059735-8e29-4fa6-9971-ad2ea58b3eed
+            - cell "7f22bfa6…":
+              - code: 7f22bfa6…
+            - cell "0.9250"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be 5ab9dcbe… 0.9150 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be":
+              - code: product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+            - cell "5ab9dcbe…":
+              - code: 5ab9dcbe…
+            - cell "0.9150"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:7f22bfa6-46d4-4db4-8512-c1407d844562 37059735… 0.9950 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:7f22bfa6-46d4-4db4-8512-c1407d844562":
+              - code: product:7f22bfa6-46d4-4db4-8512-c1407d844562
+            - cell "37059735…":
+              - code: 37059735…
+            - cell "0.9950"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:8b189102-5794-4f8a-b664-676e45e1c425 f779c85e… 0.9000 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:8b189102-5794-4f8a-b664-676e45e1c425":
+              - code: product:8b189102-5794-4f8a-b664-676e45e1c425
+            - cell "f779c85e…":
+              - code: f779c85e…
+            - cell "0.9000"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:3201f989-ff03-4a97-be7c-620ea7bc1b32 9ceb086d… 0.6000 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:3201f989-ff03-4a97-be7c-620ea7bc1b32":
+              - code: product:3201f989-ff03-4a97-be7c-620ea7bc1b32
+            - cell "9ceb086d…":
+              - code: 9ceb086d…
+            - cell "0.6000"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:285bbaef-ae80-4d1b-a9fb-33661daa67c9 dc09e604… 0.6000 1 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:285bbaef-ae80-4d1b-a9fb-33661daa67c9":
+              - code: product:285bbaef-ae80-4d1b-a9fb-33661daa67c9
+            - cell "dc09e604…":
+              - code: dc09e604…
+            - cell "0.6000"
+            - cell "1"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:0baae464-4f4c-49a0-8699-743aa32e28b3 7f22bfa6… 0.6250 2 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:0baae464-4f4c-49a0-8699-743aa32e28b3":
+              - code: product:0baae464-4f4c-49a0-8699-743aa32e28b3
+            - cell "7f22bfa6…":
+              - code: 7f22bfa6…
+            - cell "0.6250"
+            - cell "2"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:3201f989-ff03-4a97-be7c-620ea7bc1b32 8b189102… 0.3738 2 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:3201f989-ff03-4a97-be7c-620ea7bc1b32":
+              - code: product:3201f989-ff03-4a97-be7c-620ea7bc1b32
+            - cell "8b189102…":
+              - code: 8b189102…
+            - cell "0.3738"
+            - cell "2"
+            - cell "Tương tự với sản phẩm đang xem"
+          - row "Sản phẩm tương tự product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be 8b189102… 0.6737 2 Tương tự với sản phẩm đang xem":
+            - cell "Sản phẩm tương tự"
+            - cell "product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be":
+              - code: product:4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+            - cell "8b189102…":
+              - code: 8b189102…
+            - cell "0.6737"
+            - cell "2"
+            - cell "Tương tự với sản phẩm đang xem"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

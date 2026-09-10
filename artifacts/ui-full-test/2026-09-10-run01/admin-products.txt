@@ -1,0 +1,540 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - heading "Quản lý sản phẩm" [level=1]
+    - heading "Thêm sản phẩm mới" [level=2]
+    - generic: "Tên sản phẩm *:"
+    - textbox "Tên sản phẩm *:":
+      - /placeholder: "VD: Smart Tivi Samsung 55 inch..."
+    - generic: "Mã SKU *:"
+    - textbox "Mã SKU *:":
+      - /placeholder: "VD: TV-SAM-55-01"
+    - generic: "Slug *:"
+    - textbox "Slug *:":
+      - /placeholder: "VD: smart-tivi-samsung-55-inch"
+    - generic: "Danh mục *:"
+    - combobox "Danh mục *:":
+      - option "-- Chọn danh mục --" [selected]
+      - option "??i???n tho???i"
+      - option "??i???n tho???i & Tablet"
+      - option "??m thanh & Loa"
+      - option "Camera & An ninh"
+      - option "Camera an ninh"
+      - option "Ch??a ph??n lo???i"
+      - option "Chu???t"
+      - option "Game & Gaming"
+      - option "Laptop"
+      - option "Laptop & M??y t??nh"
+      - option "Loa"
+      - option "M??n h??nh m??y t??nh"
+      - option "M??y ???nh"
+      - option "M??y ch??i game"
+      - option "M??y gi???t"
+      - option "M??y l???nh"
+      - option "M??y t??nh b???ng"
+      - option "Ph??? ki???n"
+      - option "T??? l???nh"
+      - option "Tai nghe"
+      - option "Thi???t b??? gia d???ng"
+      - option "TV"
+      - option "TV & M??n h??nh"
+    - generic: "Thương hiệu *:"
+    - combobox "Thương hiệu *:":
+      - option "-- Chọn thương hiệu --" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: "Giá gốc (VNĐ) *:"
+    - spinbutton "Giá gốc (VNĐ) *:"
+    - generic: "Đơn vị tính *:"
+    - textbox "Đơn vị tính *:":
+      - /placeholder: "VD: cái, hộp, kg..."
+    - generic: "URL hình ảnh:"
+    - textbox "URL hình ảnh:":
+      - /placeholder: "VD: https://example.com/images/product.jpg"
+    - generic: "Mô tả sản phẩm:"
+    - textbox "Mô tả sản phẩm:":
+      - /placeholder: Mô tả thông số hoặc đặc điểm nổi bật...
+    - button "Thêm sản phẩm"
+    - heading "Danh sách sản phẩm (28)" [level=2]
+    - generic: "Tìm kiếm:"
+    - textbox "Tìm kiếm:":
+      - /placeholder: Tên sản phẩm hoặc SKU...
+    - generic: "Danh mục:"
+    - combobox "Danh mục:":
+      - option "Tất cả danh mục" [selected]
+      - option "??i???n tho???i"
+      - option "??i???n tho???i & Tablet"
+      - option "??m thanh & Loa"
+      - option "Camera & An ninh"
+      - option "Camera an ninh"
+      - option "Ch??a ph??n lo???i"
+      - option "Chu???t"
+      - option "Game & Gaming"
+      - option "Laptop"
+      - option "Laptop & M??y t??nh"
+      - option "Loa"
+      - option "M??n h??nh m??y t??nh"
+      - option "M??y ???nh"
+      - option "M??y ch??i game"
+      - option "M??y gi???t"
+      - option "M??y l???nh"
+      - option "M??y t??nh b???ng"
+      - option "Ph??? ki???n"
+      - option "T??? l???nh"
+      - option "Tai nghe"
+      - option "Thi???t b??? gia d???ng"
+      - option "TV"
+      - option "TV & M??n h??nh"
+    - generic: "Thương hiệu:"
+    - combobox "Thương hiệu:":
+      - option "Tất cả thương hiệu" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: "Trạng thái:"
+    - combobox "Trạng thái:":
+      - option "Tất cả" [selected]
+      - option "Hoạt động"
+      - option "Vô hiệu hóa"
+    - table:
+      - rowgroup:
+        - row "Ảnh SKU Tên sản phẩm Danh mục Thương hiệu Giá gốc Đơn vị Trạng thái Thao tác":
+          - columnheader "Ảnh"
+          - columnheader "SKU"
+          - columnheader "Tên sản phẩm"
+          - columnheader "Danh mục"
+          - columnheader "Thương hiệu"
+          - columnheader "Giá gốc"
+          - columnheader "Đơn vị"
+          - columnheader "Trạng thái"
+          - columnheader "Thao tác"
+      - rowgroup:
+        - row "AirPods Pro 2 PK-APP-001 AirPods Pro 2 Tai nghe Apple 5.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "AirPods Pro 2":
+            - img "AirPods Pro 2"
+          - cell "PK-APP-001":
+            - code: PK-APP-001
+          - cell "AirPods Pro 2":
+            - strong: AirPods Pro 2
+          - cell "Tai nghe"
+          - cell "Apple"
+          - cell "5.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Apple Magic Mouse PK-APP-002 Apple Magic Mouse Chu???t Apple 2.190.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Apple Magic Mouse":
+            - img "Apple Magic Mouse"
+          - cell "PK-APP-002":
+            - code: PK-APP-002
+          - cell "Apple Magic Mouse":
+            - strong: Apple Magic Mouse
+          - cell "Chu???t"
+          - cell "Apple"
+          - cell "2.190.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "ASUS ROG Strix G16 Gaming LT-ASUS-001 ASUS ROG Strix G16 Gaming Laptop ASUS 28.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "ASUS ROG Strix G16 Gaming":
+            - img "ASUS ROG Strix G16 Gaming"
+          - cell "LT-ASUS-001":
+            - code: LT-ASUS-001
+          - cell "ASUS ROG Strix G16 Gaming":
+            - strong: ASUS ROG Strix G16 Gaming
+          - cell "Laptop"
+          - cell "ASUS"
+          - cell "28.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "ASUS ZenBook 14 OLED LT-ASUS-002 ASUS ZenBook 14 OLED Laptop ASUS 21.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "ASUS ZenBook 14 OLED":
+            - img "ASUS ZenBook 14 OLED"
+          - cell "LT-ASUS-002":
+            - code: LT-ASUS-002
+          - cell "ASUS ZenBook 14 OLED":
+            - strong: ASUS ZenBook 14 OLED
+          - cell "Laptop"
+          - cell "ASUS"
+          - cell "21.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Canon EOS R50 Mirrorless Kit 18-45mm CAM-CAN-001 Canon EOS R50 Mirrorless Kit 18-45mm M??y ???nh Canon 18.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Canon EOS R50 Mirrorless Kit 18-45mm":
+            - img "Canon EOS R50 Mirrorless Kit 18-45mm"
+          - cell "CAM-CAN-001":
+            - code: CAM-CAN-001
+          - cell "Canon EOS R50 Mirrorless Kit 18-45mm":
+            - strong: Canon EOS R50 Mirrorless Kit 18-45mm
+          - cell "M??y ???nh"
+          - cell "Canon"
+          - cell "18.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Dell XPS 15 9530 (i7, 16GB, 512GB) LT-DEL-001 Dell XPS 15 9530 (i7, 16GB, 512GB) Laptop Dell 35.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+          - cell "LT-DEL-001":
+            - code: LT-DEL-001
+          - cell "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - strong: Dell XPS 15 9530 (i7, 16GB, 512GB)
+          - cell "Laptop"
+          - cell "Dell"
+          - cell "35.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "iPad Mini 6 64GB WiFi DT-APP-003 iPad Mini 6 64GB WiFi M??y t??nh b???ng Apple 13.490.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "iPad Mini 6 64GB WiFi":
+            - img "iPad Mini 6 64GB WiFi"
+          - cell "DT-APP-003":
+            - code: DT-APP-003
+          - cell "iPad Mini 6 64GB WiFi":
+            - strong: iPad Mini 6 64GB WiFi
+          - cell "M??y t??nh b???ng"
+          - cell "Apple"
+          - cell "13.490.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "iPhone 15 128GB DT-APP-002 iPhone 15 128GB ??i???n tho???i Apple 22.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "iPhone 15 128GB":
+            - img "iPhone 15 128GB"
+          - cell "DT-APP-002":
+            - code: DT-APP-002
+          - cell "iPhone 15 128GB":
+            - strong: iPhone 15 128GB
+          - cell "??i???n tho???i"
+          - cell "Apple"
+          - cell "22.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "iPhone 15 Pro Max 256GB DT-APP-001 iPhone 15 Pro Max 256GB ??i???n tho???i Apple 34.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "iPhone 15 Pro Max 256GB":
+            - img "iPhone 15 Pro Max 256GB"
+          - cell "DT-APP-001":
+            - code: DT-APP-001
+          - cell "iPhone 15 Pro Max 256GB":
+            - strong: iPhone 15 Pro Max 256GB
+          - cell "??i???n tho???i"
+          - cell "Apple"
+          - cell "34.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "JBL Flip 6 AT-JBL-002 JBL Flip 6 Loa JBL 3.490.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "JBL Flip 6":
+            - img "JBL Flip 6"
+          - cell "AT-JBL-002":
+            - code: AT-JBL-002
+          - cell "JBL Flip 6":
+            - strong: JBL Flip 6
+          - cell "Loa"
+          - cell "JBL"
+          - cell "3.490.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "JBL PartyBox 310 AT-JBL-001 JBL PartyBox 310 Loa JBL 14.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "JBL PartyBox 310":
+            - img "JBL PartyBox 310"
+          - cell "AT-JBL-001":
+            - code: AT-JBL-001
+          - cell "JBL PartyBox 310":
+            - strong: JBL PartyBox 310
+          - cell "Loa"
+          - cell "JBL"
+          - cell "14.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "LG Door-in-Door 601L InstaView GD-LG-002 LG Door-in-Door 601L InstaView T??? l???nh LG 42.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "LG Door-in-Door 601L InstaView":
+            - img "LG Door-in-Door 601L InstaView"
+          - cell "GD-LG-002":
+            - code: GD-LG-002
+          - cell "LG Door-in-Door 601L InstaView":
+            - strong: LG Door-in-Door 601L InstaView
+          - cell "T??? l???nh"
+          - cell "LG"
+          - cell "42.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "LG Inverter 2 HP B19END GD-LG-001 LG Inverter 2 HP B19END M??y l???nh LG 16.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "LG Inverter 2 HP B19END":
+            - img "LG Inverter 2 HP B19END"
+          - cell "GD-LG-001":
+            - code: GD-LG-001
+          - cell "LG Inverter 2 HP B19END":
+            - strong: LG Inverter 2 HP B19END
+          - cell "M??y l???nh"
+          - cell "LG"
+          - cell "16.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "LG OLED evo 4K 55 inch C4 TV-LG-001 LG OLED evo 4K 55 inch C4 TV LG 32.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "LG OLED evo 4K 55 inch C4":
+            - img "LG OLED evo 4K 55 inch C4"
+          - cell "TV-LG-001":
+            - code: TV-LG-001
+          - cell "LG OLED evo 4K 55 inch C4":
+            - strong: LG OLED evo 4K 55 inch C4
+          - cell "TV"
+          - cell "LG"
+          - cell "32.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "MacBook Air 15\" M3 LT-APP-002 MacBook Air 15\" M3 Laptop Apple 32.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "MacBook Air 15\" M3":
+            - img "MacBook Air 15\" M3"
+          - cell "LT-APP-002":
+            - code: LT-APP-002
+          - cell "MacBook Air 15\" M3":
+            - strong: MacBook Air 15" M3
+          - cell "Laptop"
+          - cell "Apple"
+          - cell "32.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "MacBook Pro 14\" M3 Pro LT-APP-001 MacBook Pro 14\" M3 Pro Laptop Apple 45.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "MacBook Pro 14\" M3 Pro":
+            - img "MacBook Pro 14\" M3 Pro"
+          - cell "LT-APP-001":
+            - code: LT-APP-001
+          - cell "MacBook Pro 14\" M3 Pro":
+            - strong: MacBook Pro 14" M3 Pro
+          - cell "Laptop"
+          - cell "Apple"
+          - cell "45.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Panasonic Giant 8.5kg NA-F85V1 GD-PAN-002 Panasonic Giant 8.5kg NA-F85V1 M??y gi???t Panasonic 14.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Panasonic Giant 8.5kg NA-F85V1":
+            - img "Panasonic Giant 8.5kg NA-F85V1"
+          - cell "GD-PAN-002":
+            - code: GD-PAN-002
+          - cell "Panasonic Giant 8.5kg NA-F85V1":
+            - strong: Panasonic Giant 8.5kg NA-F85V1
+          - cell "M??y gi???t"
+          - cell "Panasonic"
+          - cell "14.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Panasonic Inverter 1.5 HP CU/CS-U12XK GD-PAN-001 Panasonic Inverter 1.5 HP CU/CS-U12XK M??y l???nh Panasonic 12.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Panasonic Inverter 1.5 HP CU/CS-U12XK":
+            - img "Panasonic Inverter 1.5 HP CU/CS-U12XK"
+          - cell "GD-PAN-001":
+            - code: GD-PAN-001
+          - cell "Panasonic Inverter 1.5 HP CU/CS-U12XK":
+            - strong: Panasonic Inverter 1.5 HP CU/CS-U12XK
+          - cell "M??y l???nh"
+          - cell "Panasonic"
+          - cell "12.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Samsung Galaxy S24 Ultra 256GB DT-SAM-001 Samsung Galaxy S24 Ultra 256GB ??i???n tho???i Samsung 28.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Samsung Galaxy S24 Ultra 256GB":
+            - img "Samsung Galaxy S24 Ultra 256GB"
+          - cell "DT-SAM-001":
+            - code: DT-SAM-001
+          - cell "Samsung Galaxy S24 Ultra 256GB":
+            - strong: Samsung Galaxy S24 Ultra 256GB
+          - cell "??i???n tho???i"
+          - cell "Samsung"
+          - cell "28.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Samsung Galaxy Tab S9 FE DT-SAM-003 Samsung Galaxy Tab S9 FE M??y t??nh b???ng Samsung 12.990.000 đ c??i Hoạt động Sửa Vô hiệu hóa":
+          - cell "Samsung Galaxy Tab S9 FE":
+            - img "Samsung Galaxy Tab S9 FE"
+          - cell "DT-SAM-003":
+            - code: DT-SAM-003
+          - cell "Samsung Galaxy Tab S9 FE":
+            - strong: Samsung Galaxy Tab S9 FE
+          - cell "M??y t??nh b???ng"
+          - cell "Samsung"
+          - cell "12.990.000 đ"
+          - cell "c??i"
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+    - button "Trang trước" [disabled]
+    - generic: Trang 1 / 2 (28 sản phẩm)
+    - button "Trang sau"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

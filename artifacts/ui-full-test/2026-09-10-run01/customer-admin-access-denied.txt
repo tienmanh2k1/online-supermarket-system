@@ -1,0 +1,519 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - region "Khám phá siêu thị điện máy":
+    - generic: Siêu Thị Điện Máy AptechMart — Chính Hãng & Giá Kho
+    - search:
+      - text: 🔍
+      - textbox "Tìm kiếm sản phẩm điện máy":
+        - /placeholder: Tìm Tivi QLED, Tủ lạnh Side-by-side, Máy giặt Inverter...
+      - button "Tìm kiếm"
+    - complementary "Danh mục ngành hàng điện máy":
+      - generic: ☰
+      - generic: DANH MỤC ĐIỆN MÁY
+      - menu:
+        - menuitem "Tivi - Âm Thanh HOT":
+          - generic: 📺
+          - generic: Tivi - Âm Thanh
+          - generic: HOT
+          - generic: ›
+        - menuitem "Tủ Lạnh - Tủ Đông":
+          - generic: ❄️
+          - generic: Tủ Lạnh - Tủ Đông
+          - generic: ›
+        - menuitem "Máy Giặt - Máy Sấy":
+          - generic: 🧺
+          - generic: Máy Giặt - Máy Sấy
+          - generic: ›
+        - menuitem "Điều Hòa - Lọc Khí":
+          - generic: 💨
+          - generic: Điều Hòa - Lọc Khí
+          - generic: ›
+        - menuitem "Gia Dụng - Bếp -40%":
+          - generic: 🍳
+          - generic: Gia Dụng - Bếp
+          - generic: "-40%"
+          - generic: ›
+        - menuitem "Điện Thoại - Laptop":
+          - generic: 📱
+          - generic: Điện Thoại - Laptop
+          - generic: ›
+    - img "Banner Tivi Samsung QLED 4K ưu đãi mùa lễ hội"
+    - generic: SIÊU PHẨM CÔNG NGHỆ 2026
+    - heading "Đại Tiệc Tivi QLED 4K Thế Hệ Mới" [level=2]
+    - paragraph: Đỉnh cao hình ảnh rực rỡ, tích hợp AI Upscaling và âm thanh vòm Dolby Atmos
+    - link "Khám phá ưu đãi →":
+      - /url: /browse?categoryId=tivi-loa
+    - button "Banner trước": ❮
+    - button "Banner kế tiếp": ❯
+    - button "Chuyển tới banner 1"
+    - button "Chuyển tới banner 2"
+    - button "Chuyển tới banner 3"
+    - complementary "Ưu đãi dịch vụ đặc quyền":
+      - link "Banner ưu đãi mua sắm trả góp lãi suất 0% DUYỆT NHANH 5 PHÚT Đặc Quyền Trả Góp 0% Trả trước 0đ • Không phí ẩn • Hỗ trợ mọi ngân hàng":
+        - /url: /browse?filter=installment
+        - img "Banner ưu đãi mua sắm trả góp lãi suất 0%"
+        - generic: DUYỆT NHANH 5 PHÚT
+        - strong: Đặc Quyền Trả Góp 0%
+        - generic: Trả trước 0đ • Không phí ẩn • Hỗ trợ mọi ngân hàng
+      - link "Banner chương trình thu cũ đổi mới điện máy trợ giá hấp dẫn TRỢ GIÁ 3 TRIỆU Thu Cũ Đổi Mới Lên Đời Thu mọi dòng máy cũ • Định giá tại nhà • Nhận quà khủng":
+        - /url: /browse?filter=trade-in
+        - img "Banner chương trình thu cũ đổi mới điện máy trợ giá hấp dẫn"
+        - generic: TRỢ GIÁ 3 TRIỆU
+        - strong: Thu Cũ Đổi Mới Lên Đời
+        - generic: Thu mọi dòng máy cũ • Định giá tại nhà • Nhận quà khủng
+  - region "Cam kết dịch vụ điện máy":
+    - generic: ⚡
+    - strong: Giao siêu tốc 2 giờ
+    - generic: Miễn phí nội thành, hẹn giờ chuẩn xác
+    - generic: 🛠️
+    - strong: Lắp đặt miễn phí tận nhà
+    - generic: Kỹ thuật viên chuyên nghiệp, tận tâm
+    - generic: 🔄
+    - strong: Lỗi 1 đổi 1 trong 30 ngày
+    - generic: Thủ tục nhanh gọn cho lỗi phần cứng
+    - generic: 🛡️
+    - strong: Bảo hành chính hãng 100%
+    - generic: Kích hoạt bảo hành điện tử chính hãng
+  - region "Giờ vàng giá sốc điện máy":
+    - generic: 🔥
+    - generic: GIỜ VÀNG GIÁ SỐC
+    - heading "Xả Kho Điện Máy — Giảm Đến 50%" [level=2]
+    - generic: "Kết thúc sau:"
+    - generic "Thời gian còn lại":
+      - generic: "05"
+      - generic: ":"
+      - generic: "59"
+      - generic: ":"
+      - generic: "58"
+    - article:
+      - generic: Trả góp 0%
+      - generic: "-26%"
+      - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+      - link "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D":
+        - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+        - img "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D"
+      - generic: Samsung
+      - generic: "Model: QA55QN85DBXXV"
+      - heading "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D" [level=3]:
+        - link "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D":
+          - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+      - generic "Thông số kỹ thuật tiêu biểu":
+        - 'generic "Kích thước: 55 inch 4K"': 55 inch 4K
+        - 'generic "Tần số quét: 120 Hz"': 120 Hz
+        - 'generic "Công nghệ: Quantum Matrix Neo QLED"': Quantum Matrix Neo QLED
+      - generic: 21.490.000 ₫
+      - generic: 28.900.000 ₫
+      - generic "Tặng Loa thanh Soundbar trị giá 3.500.000đ":
+        - generic: 🎁
+        - generic: Tặng Loa thanh Soundbar trị giá 3.500.000đ
+      - generic: Đã bán 34/50
+      - link "Xem chi tiết & Đặt hàng":
+        - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+    - article:
+      - generic: Trả góp 0%
+      - generic: "-29%"
+      - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+      - link "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS":
+        - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+        - img "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS"
+      - generic: LG
+      - generic: "Model: GR-D257JS"
+      - heading "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS" [level=3]:
+        - link "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS":
+          - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+      - generic "Thông số kỹ thuật tiêu biểu":
+        - 'generic "Dung tích: 635 Lít"': 635 Lít
+        - 'generic "Động cơ: Linear Inverter tiết kiệm điện"': Linear Inverter tiết kiệm điện
+        - 'generic "Tiện ích: Lấy nước & đá ngoài tự động"': Lấy nước & đá ngoài tự động
+      - generic: 24.890.000 ₫
+      - generic: 34.990.000 ₫
+      - generic "Tặng Nồi chiên không dầu Lock&Lock 5.2L":
+        - generic: 🎁
+        - generic: Tặng Nồi chiên không dầu Lock&Lock 5.2L
+      - generic: Đã bán 19/25
+      - link "Xem chi tiết & Đặt hàng":
+        - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+    - article:
+      - generic: Trả góp 0%
+      - generic: "-26%"
+      - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+      - link "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg":
+        - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+        - img "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg"
+      - generic: Electrolux
+      - generic: "Model: EWF1042R7SB"
+      - heading "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg" [level=3]:
+        - link "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg":
+          - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+      - generic "Thông số kỹ thuật tiêu biểu":
+        - 'generic "Khối lượng: 10 kg giặt"': 10 kg giặt
+        - 'generic "Công nghệ: SensorWash cảm biến vết bẩn"': SensorWash cảm biến vết bẩn
+        - 'generic "Động cơ: EcoInverter vận hành êm"': EcoInverter vận hành êm
+      - generic: 12.990.000 ₫
+      - generic: 17.490.000 ₫
+      - generic "Tặng Giàn phơi thông minh + Nước giặt OMO 4.2kg":
+        - generic: 🎁
+        - generic: Tặng Giàn phơi thông minh + Nước giặt OMO 4.2kg
+      - generic: Đã bán 42/50
+      - link "Xem chi tiết & Đặt hàng":
+        - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+    - article:
+      - generic: "-29%"
+      - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+      - link "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90":
+        - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+        - img "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90"
+      - generic: Philips
+      - generic: "Model: HD9880/90"
+      - heading "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90" [level=3]:
+        - link "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90":
+          - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+      - generic "Thông số kỹ thuật tiêu biểu":
+        - 'generic "Dung tích: 7.2 Lít (chiên gà nguyên con)"': 7.2 Lít (chiên gà nguyên con)
+        - 'generic "Công nghệ: Rapid CombiAir đối lưu kép"': Rapid CombiAir đối lưu kép
+        - 'generic "Công suất: 2200 W"': 2200 W
+      - generic: 5.690.000 ₫
+      - generic: 7.990.000 ₫
+      - generic "Tặng Bộ dao làm bếp Đức 5 món cao cấp":
+        - generic: 🎁
+        - generic: Tặng Bộ dao làm bếp Đức 5 món cao cấp
+      - generic: Đã bán 45/60
+      - link "Xem chi tiết & Đặt hàng":
+        - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+  - region "Thiết Bị Điện Máy Chính Hãng":
+    - heading "Thiết Bị Điện Máy Chính Hãng" [level=2]
+    - paragraph: Chọn ngành hàng yêu thích để khám phá công nghệ mới nhất từ Samsung, LG, Daikin, Electrolux...
+    - link "Xem toàn bộ kho hàng →":
+      - /url: /browse
+    - tablist "Lọc sản phẩm theo ngành hàng":
+      - tab "Tất Cả Sản Phẩm" [selected]
+      - tab "Tivi - Loa"
+      - tab "Tủ Lạnh"
+      - tab "Máy Giặt"
+      - tab "Điều Hòa"
+      - tab "Gia Dụng Bếp"
+      - tab "Thiết Bị Số"
+    - tabpanel "Tất Cả Sản Phẩm":
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-26%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D":
+          - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+          - img "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D"
+        - generic: Samsung
+        - generic: "Model: QA55QN85DBXXV"
+        - heading "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D" [level=3]:
+          - link "Smart Tivi Neo QLED 4K 55 inch Samsung QA55QN85D":
+            - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Kích thước: 55 inch 4K"': 55 inch 4K
+          - 'generic "Tần số quét: 120 Hz"': 120 Hz
+          - 'generic "Công nghệ: Quantum Matrix Neo QLED"': Quantum Matrix Neo QLED
+        - generic: 21.490.000 ₫
+        - generic: 28.900.000 ₫
+        - generic "Tặng Loa thanh Soundbar trị giá 3.500.000đ":
+          - generic: 🎁
+          - generic: Tặng Loa thanh Soundbar trị giá 3.500.000đ
+        - generic: Đã bán 34/50
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=Smart%20Tivi%20Neo%20QLED%204K%2055%20inch%20Samsung%20QA55QN85D
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-29%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS":
+          - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+          - img "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS"
+        - generic: LG
+        - generic: "Model: GR-D257JS"
+        - heading "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS" [level=3]:
+          - link "Tủ lạnh LG Inverter 635 Lít Side-By-Side GR-D257JS":
+            - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Dung tích: 635 Lít"': 635 Lít
+          - 'generic "Động cơ: Linear Inverter tiết kiệm điện"': Linear Inverter tiết kiệm điện
+          - 'generic "Tiện ích: Lấy nước & đá ngoài tự động"': Lấy nước & đá ngoài tự động
+        - generic: 24.890.000 ₫
+        - generic: 34.990.000 ₫
+        - generic "Tặng Nồi chiên không dầu Lock&Lock 5.2L":
+          - generic: 🎁
+          - generic: Tặng Nồi chiên không dầu Lock&Lock 5.2L
+        - generic: Đã bán 19/25
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20LG%20Inverter%20635%20L%C3%ADt%20Side-By-Side%20GR-D257JS
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-26%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg":
+          - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+          - img "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg"
+        - generic: Electrolux
+        - generic: "Model: EWF1042R7SB"
+        - heading "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg" [level=3]:
+          - link "Máy giặt lồng ngang Electrolux UltimateCare 900 10kg":
+            - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Khối lượng: 10 kg giặt"': 10 kg giặt
+          - 'generic "Công nghệ: SensorWash cảm biến vết bẩn"': SensorWash cảm biến vết bẩn
+          - 'generic "Động cơ: EcoInverter vận hành êm"': EcoInverter vận hành êm
+        - generic: 12.990.000 ₫
+        - generic: 17.490.000 ₫
+        - generic "Tặng Giàn phơi thông minh + Nước giặt OMO 4.2kg":
+          - generic: 🎁
+          - generic: Tặng Giàn phơi thông minh + Nước giặt OMO 4.2kg
+        - generic: Đã bán 42/50
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20l%E1%BB%93ng%20ngang%20Electrolux%20UltimateCare%20900%2010kg
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-18%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Điều hòa Daikin Inverter 1 HP FTKB25YVMV":
+          - /url: /browse?search=%C4%90i%E1%BB%81u%20h%C3%B2a%20Daikin%20Inverter%201%20HP%20FTKB25YVMV
+          - img "Điều hòa Daikin Inverter 1 HP FTKB25YVMV"
+        - generic: Daikin
+        - generic: "Model: FTKB25YVMV"
+        - heading "Điều hòa Daikin Inverter 1 HP FTKB25YVMV" [level=3]:
+          - link "Điều hòa Daikin Inverter 1 HP FTKB25YVMV":
+            - /url: /browse?search=%C4%90i%E1%BB%81u%20h%C3%B2a%20Daikin%20Inverter%201%20HP%20FTKB25YVMV
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Công suất: 1 HP (9.000 BTU)"': 1 HP (9.000 BTU)
+          - 'generic "Khử mùi: Phin lọc Enzyme Blue tích hợp PM2.5"': Phin lọc Enzyme Blue tích hợp PM2.5
+          - 'generic "Gas lạnh: R32 thân thiện môi trường"': R32 thân thiện môi trường
+        - generic: 9.490.000 ₫
+        - generic: 11.590.000 ₫
+        - generic "Miễn phí công lắp đặt + 5m ống đồng":
+          - generic: 🎁
+          - generic: Miễn phí công lắp đặt + 5m ống đồng
+        - generic: Đã bán 68/80
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=%C4%90i%E1%BB%81u%20h%C3%B2a%20Daikin%20Inverter%201%20HP%20FTKB25YVMV
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-26%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Google Tivi Sony 4K 65 inch KD-65X77L":
+          - /url: /browse?search=Google%20Tivi%20Sony%204K%2065%20inch%20KD-65X77L
+          - img "Google Tivi Sony 4K 65 inch KD-65X77L"
+        - generic: Sony
+        - generic: "Model: KD-65X77L"
+        - heading "Google Tivi Sony 4K 65 inch KD-65X77L" [level=3]:
+          - link "Google Tivi Sony 4K 65 inch KD-65X77L":
+            - /url: /browse?search=Google%20Tivi%20Sony%204K%2065%20inch%20KD-65X77L
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Kích thước: 65 inch 4K"': 65 inch 4K
+          - 'generic "Bộ xử lý: 4K X-Reality PRO nâng cấp nét"': 4K X-Reality PRO nâng cấp nét
+          - 'generic "Âm thanh: X-Balanced Speaker 20W"': X-Balanced Speaker 20W
+        - generic: 15.490.000 ₫
+        - generic: 20.900.000 ₫
+        - generic "Gói ứng dụng VieON VIP + Galaxy Play 12 tháng":
+          - generic: 🎁
+          - generic: Gói ứng dụng VieON VIP + Galaxy Play 12 tháng
+        - generic: Đã bán 27/40
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=Google%20Tivi%20Sony%204K%2065%20inch%20KD-65X77L
+      - article:
+        - generic: "-29%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90":
+          - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+          - img "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90"
+        - generic: Philips
+        - generic: "Model: HD9880/90"
+        - heading "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90" [level=3]:
+          - link "Nồi chiên không dầu kết hợp hấp Philips 7.2L HD9880/90":
+            - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Dung tích: 7.2 Lít (chiên gà nguyên con)"': 7.2 Lít (chiên gà nguyên con)
+          - 'generic "Công nghệ: Rapid CombiAir đối lưu kép"': Rapid CombiAir đối lưu kép
+          - 'generic "Công suất: 2200 W"': 2200 W
+        - generic: 5.690.000 ₫
+        - generic: 7.990.000 ₫
+        - generic "Tặng Bộ dao làm bếp Đức 5 món cao cấp":
+          - generic: 🎁
+          - generic: Tặng Bộ dao làm bếp Đức 5 món cao cấp
+        - generic: Đã bán 45/60
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=N%E1%BB%93i%20chi%C3%AAn%20kh%C3%B4ng%20d%E1%BA%A7u%20k%E1%BA%BFt%20h%E1%BB%A3p%20h%E1%BA%A5p%20Philips%207.2L%20HD9880%2F90
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-18%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Tủ lạnh Panasonic Inverter 417 Lít NR-BX471GPKV":
+          - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20Panasonic%20Inverter%20417%20L%C3%ADt%20NR-BX471GPKV
+          - img "Tủ lạnh Panasonic Inverter 417 Lít NR-BX471GPKV"
+        - generic: Panasonic
+        - generic: "Model: NR-BX471GPKV"
+        - heading "Tủ lạnh Panasonic Inverter 417 Lít NR-BX471GPKV" [level=3]:
+          - link "Tủ lạnh Panasonic Inverter 417 Lít NR-BX471GPKV":
+            - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20Panasonic%20Inverter%20417%20L%C3%ADt%20NR-BX471GPKV
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Dung tích: 417 Lít"': 417 Lít
+          - 'generic "Ngăn mềm: Prime Fresh -3°C nấu ngay không rã đông"': Prime Fresh -3°C nấu ngay không rã đông
+          - 'generic "Kháng khuẩn: Công nghệ Nanoe-X khử mùi 99.99%"': Công nghệ Nanoe-X khử mùi 99.99%
+        - generic: 15.990.000 ₫
+        - generic: 19.490.000 ₫
+        - generic "Tặng Máy xay sinh tố Panasonic đa năng":
+          - generic: 🎁
+          - generic: Tặng Máy xay sinh tố Panasonic đa năng
+        - generic: Đã bán 16/30
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=T%E1%BB%A7%20l%E1%BA%A1nh%20Panasonic%20Inverter%20417%20L%C3%ADt%20NR-BX471GPKV
+      - article:
+        - generic: Trả góp 0%
+        - generic: "-26%"
+        - generic "Tem năng lượng chuẩn": ⭐ 5 Sao
+        - link "Máy giặt sấy lồng ngang LG AI DD 11kg / sấy 7kg FV1411D4W":
+          - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20s%E1%BA%A5y%20l%E1%BB%93ng%20ngang%20LG%20AI%20DD%2011kg%20%2F%20s%E1%BA%A5y%207kg%20FV1411D4W
+          - img "Máy giặt sấy lồng ngang LG AI DD 11kg / sấy 7kg FV1411D4W"
+        - generic: LG
+        - generic: "Model: FV1411D4W"
+        - heading "Máy giặt sấy lồng ngang LG AI DD 11kg / sấy 7kg FV1411D4W" [level=3]:
+          - link "Máy giặt sấy lồng ngang LG AI DD 11kg / sấy 7kg FV1411D4W":
+            - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20s%E1%BA%A5y%20l%E1%BB%93ng%20ngang%20LG%20AI%20DD%2011kg%20%2F%20s%E1%BA%A5y%207kg%20FV1411D4W
+        - generic "Thông số kỹ thuật tiêu biểu":
+          - 'generic "Khối lượng: Giặt 11 kg + Sấy 7 kg"': Giặt 11 kg + Sấy 7 kg
+          - 'generic "Công nghệ: AI DD bảo vệ sợi vải thêm 18%"': AI DD bảo vệ sợi vải thêm 18%
+          - 'generic "Tốc độ vắt: 1400 vòng/phút"': 1400 vòng/phút
+        - generic: 16.290.000 ₫
+        - generic: 21.990.000 ₫
+        - generic "Tặng Bàn là hơi nước đứng cầm tay Philips":
+          - generic: 🎁
+          - generic: Tặng Bàn là hơi nước đứng cầm tay Philips
+        - generic: Đã bán 29/35
+        - link "Xem chi tiết & Đặt hàng":
+          - /url: /browse?search=M%C3%A1y%20gi%E1%BA%B7t%20s%E1%BA%A5y%20l%E1%BB%93ng%20ngang%20LG%20AI%20DD%2011kg%20%2F%20s%E1%BA%A5y%207kg%20FV1411D4W
+  - region "Gợi ý sản phẩm thông minh":
+    - region "Gợi ý thiết bị điện máy phù hợp cho bạn":
+      - heading "Gợi ý thiết bị điện máy phù hợp cho bạn" [level=2]
+      - list:
+        - article:
+          - img "MacBook Air 15\" M3"
+          - heading "MacBook Air 15\" M3" [level=3]:
+            - link "MacBook Air 15\" M3":
+              - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 32.990.000 ₫
+        - article:
+          - img "Samsung Galaxy S24 Ultra 256GB"
+          - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+            - link "Samsung Galaxy S24 Ultra 256GB":
+              - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 28.990.000 ₫
+        - article:
+          - img "LG Door-in-Door 601L InstaView"
+          - heading "LG Door-in-Door 601L InstaView" [level=3]:
+            - link "LG Door-in-Door 601L InstaView":
+              - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 42.990.000 ₫
+        - article:
+          - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+          - heading "Dell XPS 15 9530 (i7, 16GB, 512GB)" [level=3]:
+            - link "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+              - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 35.990.000 ₫
+        - article:
+          - img "AirPods Pro 2"
+          - heading "AirPods Pro 2" [level=3]:
+            - link "AirPods Pro 2":
+              - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 5.990.000 ₫
+        - article:
+          - img "MacBook Pro 14\" M3 Pro"
+          - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+            - link "MacBook Pro 14\" M3 Pro":
+              - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 45.990.000 ₫
+        - article:
+          - img "iPhone 15 128GB"
+          - heading "iPhone 15 128GB" [level=3]:
+            - link "iPhone 15 128GB":
+              - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 22.990.000 ₫
+        - article:
+          - img "Samsung Galaxy Tab S9 FE"
+          - heading "Samsung Galaxy Tab S9 FE" [level=3]:
+            - link "Samsung Galaxy Tab S9 FE":
+              - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+          - paragraph:
+            - generic: "Vì sao:"
+            - text: Được nhiều người quan tâm
+          - generic: 12.990.000 ₫
+  - region "Hệ thống siêu thị điện máy":
+    - generic: HỆ THỐNG ĐA CHI NHÁNH & KHO HÀNG
+    - heading "Trải Nghiệm Trực Tiếp Tại Trung Tâm Điện Máy AptechMart" [level=2]
+    - paragraph: Hơn 15 chi nhánh phủ sóng toàn quốc. Đến trải nghiệm tận mắt công nghệ màn hình OLED, nghe thử âm thanh Dolby Atmos và nhận tư vấn kỹ thuật chuyên sâu từ các chuyên gia.
+    - link "Tìm siêu thị gần bạn nhất →":
+      - /url: /branches
+  - region "Lộ Trình Phát Triển Dịch Vụ Điện Máy & Công Nghệ":
+    - heading "Lộ Trình Phát Triển Dịch Vụ Điện Máy & Công Nghệ" [level=2]
+    - paragraph: Cam kết chuẩn mực dịch vụ hậu mãi và số hóa toàn diện hệ thống bán lẻ điện máy
+    - generic: Giai đoạn 1 • Đã hoàn thành
+    - heading "Số Hóa Bán Lẻ & Đặt Hàng Trực Tuyến" [level=3]
+    - paragraph: Đồng bộ tồn kho đa chi nhánh thời gian thực, hỗ trợ đặt giữ hàng online và thanh toán an toàn qua thẻ ngân hàng, ví điện tử, trả góp 0%.
+    - generic: Giai đoạn 2 • Đang vận hành
+    - heading "AI Gợi Ý & Dự Báo Nhu Cầu Tiêu Thụ" [level=3]
+    - paragraph: Tích hợp công nghệ AI gợi ý thiết bị tương thích theo diện tích phòng và dự báo nhu cầu nhập hàng mùa cao điểm (mùa nóng điều hòa, mùa lễ Tết tivi).
+    - generic: Giai đoạn 3 • Đang mở rộng
+    - heading "Giao Lắp Siêu Tốc 60 Phút & Bảo Hành Tận Nhà" [level=3]
+    - paragraph: Ứng dụng điều phối kỹ thuật viên thông minh, cam kết giao lắp trong 60 phút và hỗ trợ xử lý bảo hành tận nhà trong vòng 24 giờ.
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,73 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng (1 sản phẩm)":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+    - generic "1 sản phẩm trong giỏ": "1"
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - heading "Giỏ hàng của bạn" [level=1]
+  - generic: Kho của giỏ hàng
+  - combobox "Kho của giỏ hàng":
+    - option "AptechMart B??nh Th???nh" [selected]
+    - option "AptechMart Qu???n 1"
+    - option "AptechMart Qu???n 3"
+  - dialog "Đổi kho và xóa giỏ hiện tại?":
+    - heading "Đổi kho và xóa giỏ hiện tại?" [level=2]
+    - paragraph: Đổi kho sẽ xóa toàn bộ sản phẩm đang có trong giỏ.
+    - button "Giữ giỏ hiện tại" [active]
+    - button "Đổi kho và xóa giỏ"
+  - paragraph: Giỏ hàng có 1 dòng sản phẩm.
+  - button "Xóa toàn bộ giỏ hàng"
+  - article:
+    - img "Ảnh thay thế cho AirPods Pro 2": SP
+    - heading "AirPods Pro 2" [level=2]
+    - paragraph: PK-APP-001
+    - paragraph: "Đơn giá: 5.990.000 ₫"
+    - paragraph: Còn 38 sản phẩm tại kho
+    - strong: "Thành tiền: 5.990.000 ₫"
+    - button "Giảm số lượng AirPods Pro 2" [disabled]: −
+    - textbox "Số lượng AirPods Pro 2": "1"
+    - button "Tăng số lượng AirPods Pro 2": +
+    - button "Xóa AirPods Pro 2": Xóa
+  - complementary "Tóm tắt giỏ hàng":
+    - heading "Tóm tắt đơn hàng" [level=2]
+    - generic: Tổng số lượng
+    - strong: "1"
+    - generic: Tạm tính
+    - strong: 5.990.000 ₫
+    - link "Tiến hành thanh toán":
+      - /url: /shopping/checkout
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

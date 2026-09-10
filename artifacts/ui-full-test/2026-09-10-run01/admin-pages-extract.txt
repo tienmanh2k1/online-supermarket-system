@@ -1,0 +1,221 @@
+## dashboard
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+    - region "Tổng quan":
+      - heading "Tổng quan hệ thống" [level=1]
+      - heading "Đơn hàng gần đây" [level=2]
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## users
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+      - heading "Quản lý người dùng" [level=1]
+      - paragraph: Xem danh sách tài khoản và khóa / mở khóa / vô hiệu hóa.
+      - table "Danh sách người dùng":
+              - combobox "Đổi trạng thái user1@test.com":
+              - combobox "Đổi trạng thái user2@test.com":
+              - combobox "Đổi trạng thái user3@test.com":
+              - combobox "Đổi trạng thái admin@test.com":
+              - combobox "Đổi trạng thái user4@test.com":
+              - combobox "Đổi trạng thái user5@test.com":
+              - combobox "Đổi trạng thái colduser@test.com":
+              - combobox "Đổi trạng thái mergeuser@test.com":
+              - combobox "Đổi trạng thái customer_1788933440798@test.com":
+              - combobox "Đổi trạng thái customer_1788933516373@test.com":
+              - combobox "Đổi trạng thái customer_1788933583765@test.com":
+              - combobox "Đổi trạng thái customer_1788933606305@test.com":
+              - combobox "Đổi trạng thái customer_1788933927272@test.com":
+              - combobox "Đổi trạng thái customer_1788939176357@test.com":
+              - combobox "Đổi trạng thái customer_1788939203511@test.com":
+              - combobox "Đổi trạng thái customer_1788939256493@test.com":
+              - combobox "Đổi trạng thái customer_1788939306228@test.com":
+              - combobox "Đổi trạng thái customer_1788939598395@test.com":
+              - combobox "Đổi trạng thái customer_1788939652055@test.com":
+              - combobox "Đổi trạng thái customer_1788940245929@test.com":
+        - button "Trang trước" [disabled]
+        - button "Trang sau"
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## branches
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+      - heading "Quản lý chi nhánh" [level=1]
+      - paragraph: Tạo, chỉnh sửa và bật/tắt hoạt động của chi nhánh.
+      - button "+ Tạo chi nhánh"
+      - table "Danh sách chi nhánh":
+              - button "Sửa chi nhánh AptechMart B??nh Th???nh": Sửa
+              - button "Sửa chi nhánh AptechMart Qu???n 1": Sửa
+              - button "Sửa chi nhánh AptechMart Qu???n 3": Sửa
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## categories
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+    - heading "Quản lý danh mục" [level=1]
+    - heading "Thêm danh mục mới" [level=2]
+    - textbox "Tên danh mục:":
+    - textbox "Slug:":
+    - combobox "Danh mục cha:":
+    - button "Thêm danh mục"
+    - heading "Danh sách danh mục" [level=2]
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+
+## brands
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+    - heading "Quản lý thương hiệu" [level=1]
+    - heading "Thêm thương hiệu mới" [level=2]
+    - textbox "Tên thương hiệu:":
+    - textbox "Slug:":
+    - button "Thêm thương hiệu"
+    - heading "Danh sách thương hiệu" [level=2]
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## products
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+    - heading "Quản lý sản phẩm" [level=1]
+    - heading "Thêm sản phẩm mới" [level=2]
+    - textbox "Tên sản phẩm *:":
+    - textbox "Mã SKU *:":
+    - textbox "Slug *:":
+    - combobox "Danh mục *:":
+    - combobox "Thương hiệu *:":
+    - spinbutton "Giá gốc (VNĐ) *:"
+    - textbox "Đơn vị tính *:":
+    - textbox "URL hình ảnh:":
+    - textbox "Mô tả sản phẩm:":
+    - button "Thêm sản phẩm"
+    - heading "Danh sách sản phẩm (28)" [level=2]
+    - textbox "Tìm kiếm:":
+    - combobox "Danh mục:":
+    - combobox "Thương hiệu:":
+    - combobox "Trạng thái:":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+            - button "Sửa"
+
+## promotions
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+      - heading "Quản lý khuyến mãi" [level=1]
+      - paragraph: Tạo, chỉnh sửa và bật/tắt mã giảm giá.
+      - button "+ Tạo mã mới"
+      - table "Danh sách khuyến mãi":
+              - button "Sửa mã SAVE50K": Sửa
+              - button "Sửa mã WELCOME10": Sửa
+        - button "Trang trước" [disabled]
+        - button "Trang sau" [disabled]
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## forecast
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+      - heading "Dự báo nhu cầu" [level=1]
+      - paragraph: Moving average 7/14 ngày theo chi nhánh. Chạy lại lượt tính khi nhu cầu válto.
+      - combobox "Chi nhánh":
+      - combobox "Kỳ dự báo":
+      - button "Chạy lại dự báo"
+      - paragraph: "Lượt gần nhất #82d5a16a · trạng Succeeded · kết lúc 06:02:43 10/9/2026"
+      - table "Lịch sử lượt dự báo":
+      - alert:
+        - paragraph: Không thể tải dự báo. Vui lòng thử lại.
+        - button "Thử lại"
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+
+## recommendations
+  - button "So sánh sản phẩm":
+  - button "Đăng xuất"
+  - status:
+      - heading "Gợi ý sản phẩm" [level=1]
+      - paragraph: Kích hoạt lại lượt tính gợi ý và duyệt các dòng kết quả gần nhất của thuật toán.
+      - combobox "Phạm vi":
+      - combobox "Số dòng":
+      - button "Chạy lại lần tính"
+      - paragraph: "Lượt #693192ea · thuật toán content-v1 · tạo lúc 06:02:42 10/9/2026 · hết hạn 07:17:42 10/9/2026"
+      - table "Kết quả gợi ý sản phẩm":
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.

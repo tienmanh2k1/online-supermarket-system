@@ -1,0 +1,152 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - navigation "Breadcrumb":
+    - link "Danh sách sản phẩm":
+      - /url: /browse
+    - text: / QA UI Category 27789
+  - generic: Hình ảnh sản phẩm
+  - heading "QA UI Product No Image 44762" [level=1]
+  - generic: QA UI Brand 15248
+  - generic: "SKU: QA-SKU-44762"
+  - generic: QA UI Category 27789
+  - generic: "Đơn vị: cái"
+  - paragraph: QA UI product with no image to verify placeholder.
+  - generic: "Giá:"
+  - generic: 123.456 ₫
+  - generic: Sản phẩm không có tại kho này
+  - generic: Kho hàng
+  - combobox "Kho hàng":
+    - option "Chọn kho"
+    - option "AptechMart B??nh Th???nh"
+    - option "AptechMart Qu???n 1" [selected]
+    - option "AptechMart Qu???n 3"
+  - generic: Số lượng
+  - spinbutton "Số lượng" [disabled]: "1"
+  - button "Thêm vào giỏ" [disabled]
+  - button "So sánh sản phẩm":
+    - text: So sánh sản phẩm
+  - region "Đánh giá sản phẩm":
+    - heading "Đánh giá sản phẩm" [level=2]
+    - paragraph: Chỉ những khách hàng đã mua và nhận hàng thành công mới có thể đánh giá sản phẩm này.
+    - paragraph: Chưa có đánh giá nào cho sản phẩm này.
+  - region "Sản phẩm tương tự":
+    - heading "Sản phẩm tương tự" [level=2]
+    - list:
+      - article:
+        - img "MacBook Air 15\" M3"
+        - heading "MacBook Air 15\" M3" [level=3]:
+          - link "MacBook Air 15\" M3":
+            - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 32.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "Samsung Galaxy S24 Ultra 256GB"
+        - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+          - link "Samsung Galaxy S24 Ultra 256GB":
+            - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 28.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "LG Door-in-Door 601L InstaView"
+        - heading "LG Door-in-Door 601L InstaView" [level=3]:
+          - link "LG Door-in-Door 601L InstaView":
+            - /url: /product/bd00c190-a496-484f-8818-98dba5a52533?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 42.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+        - heading "Dell XPS 15 9530 (i7, 16GB, 512GB)" [level=3]:
+          - link "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 35.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "AirPods Pro 2"
+        - heading "AirPods Pro 2" [level=3]:
+          - link "AirPods Pro 2":
+            - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 5.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "MacBook Pro 14\" M3 Pro"
+        - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+          - link "MacBook Pro 14\" M3 Pro":
+            - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 45.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "iPhone 15 128GB"
+        - heading "iPhone 15 128GB" [level=3]:
+          - link "iPhone 15 128GB":
+            - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 22.990.000 ₫
+        - generic: Còn 30 tại kho này
+      - article:
+        - img "Samsung Galaxy Tab S9 FE"
+        - heading "Samsung Galaxy Tab S9 FE" [level=3]:
+          - link "Samsung Galaxy Tab S9 FE":
+            - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32?branchId=de4870ff-651e-4eb5-b509-21a834d76bb2
+        - paragraph:
+          - generic: "Tương tự:"
+          - text: Được nhiều người quan tâm
+        - generic: 12.990.000 ₫
+        - generic: Còn 30 tại kho này
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

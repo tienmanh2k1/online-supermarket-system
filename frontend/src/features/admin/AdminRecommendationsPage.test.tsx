@@ -140,7 +140,9 @@ describe('AdminRecommendationsPage', () => {
     await waitFor(() => {
       expect(screen.getByText(/hoàn thành thành công/)).toBeInTheDocument()
     }, { timeout: 3000 })
-    expect(getSample.mock.calls.length).toBeGreaterThan(callsBefore)
+    await waitFor(() => {
+      expect(getSample.mock.calls.length).toBeGreaterThan(callsBefore)
+    })
   })
 
   it('polls the run until Failed and unblocks UI with error message', async () => {

@@ -1,0 +1,491 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - text: Gian Hàng Trực Tuyến
+  - heading "Duyệt & Tìm Kiếm Sản Phẩm" [level=1]
+  - paragraph: Lựa chọn hàng hóa tươi sống, kiểm tra giá và tình trạng còn hàng theo từng chi nhánh siêu thị.
+  - generic: Kho hàng đang xem
+  - strong: Tất cả chi nhánh
+  - generic: Hiển thị giá gốc hệ thống
+  - region "Gợi ý dành cho bạn":
+    - heading "Gợi ý dành cho bạn" [level=2]
+    - list:
+      - article:
+        - img "MacBook Pro 14\" M3 Pro"
+        - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+          - link "MacBook Pro 14\" M3 Pro":
+            - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 45.990.000 ₫
+      - article:
+        - img "iPhone 15 128GB"
+        - heading "iPhone 15 128GB" [level=3]:
+          - link "iPhone 15 128GB":
+            - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 22.990.000 ₫
+      - article:
+        - img "Samsung Galaxy S24 Ultra 256GB"
+        - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+          - link "Samsung Galaxy S24 Ultra 256GB":
+            - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 28.990.000 ₫
+      - article:
+        - img "Samsung Galaxy Tab S9 FE"
+        - heading "Samsung Galaxy Tab S9 FE" [level=3]:
+          - link "Samsung Galaxy Tab S9 FE":
+            - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 12.990.000 ₫
+      - article:
+        - img "iPhone 15 Pro Max 256GB"
+        - heading "iPhone 15 Pro Max 256GB" [level=3]:
+          - link "iPhone 15 Pro Max 256GB":
+            - /url: /product/5ab9dcbe-def1-496d-9714-6d807f1dcedb
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 34.990.000 ₫
+      - article:
+        - img "MacBook Air 15\" M3"
+        - heading "MacBook Air 15\" M3" [level=3]:
+          - link "MacBook Air 15\" M3":
+            - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 32.990.000 ₫
+      - article:
+        - img "LG Door-in-Door 601L InstaView"
+        - heading "LG Door-in-Door 601L InstaView" [level=3]:
+          - link "LG Door-in-Door 601L InstaView":
+            - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 42.990.000 ₫
+      - article:
+        - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+        - heading "Dell XPS 15 9530 (i7, 16GB, 512GB)" [level=3]:
+          - link "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+            - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+        - paragraph:
+          - generic: "Vì sao:"
+          - text: Gợi ý từ mô hình AI
+        - generic: 35.990.000 ₫
+  - button "Bộ lọc & Tìm kiếm" [active]:
+    - text: Bộ lọc & Tìm kiếm
+  - complementary "Bộ lọc tìm kiếm sản phẩm":
+    - heading "Bộ lọc tìm kiếm" [level=2]
+    - button "Đóng bộ lọc": ✕
+    - generic: Tìm kiếm từ khóa / SKU
+    - textbox "Tìm kiếm từ khóa / SKU":
+      - /placeholder: Nhập tên sản phẩm, SKU...
+    - button "Tìm"
+    - generic: Chi nhánh siêu thị
+    - combobox "Chi nhánh siêu thị":
+      - option "-- Tất cả chi nhánh --" [selected]
+      - option "AptechMart B??nh Th???nh (789 Nguy???n X??, B??nh Th???nh, TP.HCM)"
+      - option "AptechMart Qu???n 1 (123 Nguy???n Hu???, Qu???n 1, TP.HCM)"
+      - option "AptechMart Qu???n 3 (456 ???????ng 3 Th??ng 2, Qu???n 10, TP.HCM)"
+    - generic: Danh mục sản phẩm
+    - combobox "Danh mục sản phẩm":
+      - option "-- Tất cả danh mục --" [selected]
+      - option "??i???n tho???i & Tablet"
+      - option "— ??i???n tho???i"
+      - option "— M??y t??nh b???ng"
+      - option "??m thanh & Loa"
+      - option "— Loa"
+      - option "— Tai nghe"
+      - option "Camera & An ninh"
+      - option "— Camera an ninh"
+      - option "— M??y ???nh"
+      - option "Game & Gaming"
+      - option "— M??y ch??i game"
+      - option "Laptop & M??y t??nh"
+      - option "— Laptop"
+      - option "Ph??? ki???n"
+      - option "— Chu???t"
+      - option "QA UI Category 27789"
+      - option "Thi???t b??? gia d???ng"
+      - option "— M??y gi???t"
+      - option "— M??y l???nh"
+      - option "— T??? l???nh"
+      - option "TV & M??n h??nh"
+      - option "— M??n h??nh m??y t??nh"
+      - option "— TV"
+      - option "Ch??a ph??n lo???i"
+    - generic: Thương hiệu
+    - combobox "Thương hiệu":
+      - option "-- Tất cả thương hiệu --" [selected]
+      - option "Apple"
+      - option "ASUS"
+      - option "Canon"
+      - option "Dell"
+      - option "JBL"
+      - option "LG"
+      - option "Panasonic"
+      - option "QA UI Brand 15248"
+      - option "Samsung"
+      - option "Sony"
+      - option "Xiaomi"
+    - generic: Khoảng giá (VNĐ)
+    - spinbutton "Giá tối thiểu"
+    - generic: "-"
+    - spinbutton "Giá tối đa"
+    - button "Áp dụng giá"
+    - button "Dưới 50.000đ"
+    - button "50.000đ - 150.000đ"
+    - button "150.000đ - 300.000đ"
+    - button "Trên 300.000đ"
+    - button "Xóa toàn bộ bộ lọc" [disabled]:
+      - text: Xóa toàn bộ bộ lọc
+  - main:
+    - article:
+      - link "Xem AirPods Pro 2":
+        - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9
+        - img "AirPods Pro 2"
+      - generic: Tai nghe
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: PK-APP-001"
+      - heading "AirPods Pro 2" [level=3]:
+        - link "AirPods Pro 2":
+          - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9
+      - generic: 5.990.000 ₫
+      - link "Chi tiết AirPods Pro 2":
+        - /url: /product/285bbaef-ae80-4d1b-a9fb-33661daa67c9
+        - text: Chi tiết
+    - article:
+      - link "Xem Apple Magic Mouse":
+        - /url: /product/e8547ac9-1f1b-4079-aabb-63e6b1ffdec7
+        - img "Apple Magic Mouse"
+      - generic: Chu???t
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: PK-APP-002"
+      - heading "Apple Magic Mouse" [level=3]:
+        - link "Apple Magic Mouse":
+          - /url: /product/e8547ac9-1f1b-4079-aabb-63e6b1ffdec7
+      - generic: 2.190.000 ₫
+      - link "Chi tiết Apple Magic Mouse":
+        - /url: /product/e8547ac9-1f1b-4079-aabb-63e6b1ffdec7
+        - text: Chi tiết
+    - article:
+      - link "Xem ASUS ROG Strix G16 Gaming":
+        - /url: /product/b97e28b2-2e58-4420-bfa3-29195f2a0218
+        - img "ASUS ROG Strix G16 Gaming"
+      - generic: Laptop
+      - button "Thêm vào so sánh":
+      - generic: ASUS
+      - generic: "SKU: LT-ASUS-001"
+      - heading "ASUS ROG Strix G16 Gaming" [level=3]:
+        - link "ASUS ROG Strix G16 Gaming":
+          - /url: /product/b97e28b2-2e58-4420-bfa3-29195f2a0218
+      - generic: 28.990.000 ₫
+      - link "Chi tiết ASUS ROG Strix G16 Gaming":
+        - /url: /product/b97e28b2-2e58-4420-bfa3-29195f2a0218
+        - text: Chi tiết
+    - article:
+      - link "Xem ASUS ZenBook 14 OLED":
+        - /url: /product/a71221c6-39bd-4cb9-a470-cc2565680d4d
+        - img "ASUS ZenBook 14 OLED"
+      - generic: Laptop
+      - button "Thêm vào so sánh":
+      - generic: ASUS
+      - generic: "SKU: LT-ASUS-002"
+      - heading "ASUS ZenBook 14 OLED" [level=3]:
+        - link "ASUS ZenBook 14 OLED":
+          - /url: /product/a71221c6-39bd-4cb9-a470-cc2565680d4d
+      - generic: 21.990.000 ₫
+      - link "Chi tiết ASUS ZenBook 14 OLED":
+        - /url: /product/a71221c6-39bd-4cb9-a470-cc2565680d4d
+        - text: Chi tiết
+    - article:
+      - link "Xem Canon EOS R50 Mirrorless Kit 18-45mm":
+        - /url: /product/d48b47fa-f503-4b74-84f5-e5957144896f
+        - img "Canon EOS R50 Mirrorless Kit 18-45mm"
+      - generic: M??y ???nh
+      - button "Thêm vào so sánh":
+      - generic: Canon
+      - generic: "SKU: CAM-CAN-001"
+      - heading "Canon EOS R50 Mirrorless Kit 18-45mm" [level=3]:
+        - link "Canon EOS R50 Mirrorless Kit 18-45mm":
+          - /url: /product/d48b47fa-f503-4b74-84f5-e5957144896f
+      - generic: 18.990.000 ₫
+      - link "Chi tiết Canon EOS R50 Mirrorless Kit 18-45mm":
+        - /url: /product/d48b47fa-f503-4b74-84f5-e5957144896f
+        - text: Chi tiết
+    - article:
+      - link "Xem Dell XPS 15 9530 (i7, 16GB, 512GB)":
+        - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+        - img "Dell XPS 15 9530 (i7, 16GB, 512GB)"
+      - generic: Laptop
+      - button "Thêm vào so sánh":
+      - generic: Dell
+      - generic: "SKU: LT-DEL-001"
+      - heading "Dell XPS 15 9530 (i7, 16GB, 512GB)" [level=3]:
+        - link "Dell XPS 15 9530 (i7, 16GB, 512GB)":
+          - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+      - generic: 35.990.000 ₫
+      - link "Chi tiết Dell XPS 15 9530 (i7, 16GB, 512GB)":
+        - /url: /product/0baae464-4f4c-49a0-8699-743aa32e28b3
+        - text: Chi tiết
+    - article:
+      - link "Xem iPad Mini 6 64GB WiFi":
+        - /url: /product/9ceb086d-81f4-4284-a014-6be1d4b8f74b
+        - img "iPad Mini 6 64GB WiFi"
+      - generic: M??y t??nh b???ng
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: DT-APP-003"
+      - heading "iPad Mini 6 64GB WiFi" [level=3]:
+        - link "iPad Mini 6 64GB WiFi":
+          - /url: /product/9ceb086d-81f4-4284-a014-6be1d4b8f74b
+      - generic: 13.490.000 ₫
+      - link "Chi tiết iPad Mini 6 64GB WiFi":
+        - /url: /product/9ceb086d-81f4-4284-a014-6be1d4b8f74b
+        - text: Chi tiết
+    - article:
+      - link "Xem iPhone 15 128GB":
+        - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+        - img "iPhone 15 128GB"
+      - generic: "??i???n tho???i"
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: DT-APP-002"
+      - heading "iPhone 15 128GB" [level=3]:
+        - link "iPhone 15 128GB":
+          - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+      - generic: 22.990.000 ₫
+      - link "Chi tiết iPhone 15 128GB":
+        - /url: /product/4c4b6daa-67e3-4a5f-ad69-9469e3bcd5be
+        - text: Chi tiết
+    - article:
+      - link "Xem iPhone 15 Pro Max 256GB":
+        - /url: /product/5ab9dcbe-def1-496d-9714-6d807f1dcedb
+        - img "iPhone 15 Pro Max 256GB"
+      - generic: "??i???n tho???i"
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: DT-APP-001"
+      - heading "iPhone 15 Pro Max 256GB" [level=3]:
+        - link "iPhone 15 Pro Max 256GB":
+          - /url: /product/5ab9dcbe-def1-496d-9714-6d807f1dcedb
+      - generic: 34.990.000 ₫
+      - link "Chi tiết iPhone 15 Pro Max 256GB":
+        - /url: /product/5ab9dcbe-def1-496d-9714-6d807f1dcedb
+        - text: Chi tiết
+    - article:
+      - link "Xem JBL Flip 6":
+        - /url: /product/61084061-b6a0-4d20-994a-90db7419419b
+        - img "JBL Flip 6"
+      - generic: Loa
+      - button "Thêm vào so sánh":
+      - generic: JBL
+      - generic: "SKU: AT-JBL-002"
+      - heading "JBL Flip 6" [level=3]:
+        - link "JBL Flip 6":
+          - /url: /product/61084061-b6a0-4d20-994a-90db7419419b
+      - generic: 3.490.000 ₫
+      - link "Chi tiết JBL Flip 6":
+        - /url: /product/61084061-b6a0-4d20-994a-90db7419419b
+        - text: Chi tiết
+    - article:
+      - link "Xem JBL PartyBox 310":
+        - /url: /product/1e901669-673e-4226-b81f-ca78c60c85e7
+        - img "JBL PartyBox 310"
+      - generic: Loa
+      - button "Thêm vào so sánh":
+      - generic: JBL
+      - generic: "SKU: AT-JBL-001"
+      - heading "JBL PartyBox 310" [level=3]:
+        - link "JBL PartyBox 310":
+          - /url: /product/1e901669-673e-4226-b81f-ca78c60c85e7
+      - generic: 14.990.000 ₫
+      - link "Chi tiết JBL PartyBox 310":
+        - /url: /product/1e901669-673e-4226-b81f-ca78c60c85e7
+        - text: Chi tiết
+    - article:
+      - link "Xem LG Door-in-Door 601L InstaView":
+        - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+        - img "LG Door-in-Door 601L InstaView"
+      - generic: T??? l???nh
+      - button "Thêm vào so sánh":
+      - generic: LG
+      - generic: "SKU: GD-LG-002"
+      - heading "LG Door-in-Door 601L InstaView" [level=3]:
+        - link "LG Door-in-Door 601L InstaView":
+          - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+      - generic: 42.990.000 ₫
+      - link "Chi tiết LG Door-in-Door 601L InstaView":
+        - /url: /product/bd00c190-a496-484f-8818-98dba5a52533
+        - text: Chi tiết
+    - article:
+      - link "Xem LG Inverter 2 HP B19END":
+        - /url: /product/6e4a2bf1-fcf9-4bd2-8116-a8fb57b3f183
+        - img "LG Inverter 2 HP B19END"
+      - generic: M??y l???nh
+      - button "Thêm vào so sánh":
+      - generic: LG
+      - generic: "SKU: GD-LG-001"
+      - heading "LG Inverter 2 HP B19END" [level=3]:
+        - link "LG Inverter 2 HP B19END":
+          - /url: /product/6e4a2bf1-fcf9-4bd2-8116-a8fb57b3f183
+      - generic: 16.990.000 ₫
+      - link "Chi tiết LG Inverter 2 HP B19END":
+        - /url: /product/6e4a2bf1-fcf9-4bd2-8116-a8fb57b3f183
+        - text: Chi tiết
+    - article:
+      - link "Xem LG OLED evo 4K 55 inch C4":
+        - /url: /product/dea6a901-215e-4271-8811-911cbced8b2d
+        - img "LG OLED evo 4K 55 inch C4"
+      - generic: TV
+      - button "Thêm vào so sánh":
+      - generic: LG
+      - generic: "SKU: TV-LG-001"
+      - heading "LG OLED evo 4K 55 inch C4" [level=3]:
+        - link "LG OLED evo 4K 55 inch C4":
+          - /url: /product/dea6a901-215e-4271-8811-911cbced8b2d
+      - generic: 32.990.000 ₫
+      - link "Chi tiết LG OLED evo 4K 55 inch C4":
+        - /url: /product/dea6a901-215e-4271-8811-911cbced8b2d
+        - text: Chi tiết
+    - article:
+      - link "Xem MacBook Air 15\" M3":
+        - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+        - img "MacBook Air 15\" M3"
+      - generic: Laptop
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: LT-APP-002"
+      - heading "MacBook Air 15\" M3" [level=3]:
+        - link "MacBook Air 15\" M3":
+          - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+      - generic: 32.990.000 ₫
+      - link "Chi tiết MacBook Air 15\" M3":
+        - /url: /product/37059735-8e29-4fa6-9971-ad2ea58b3eed
+        - text: Chi tiết
+    - article:
+      - link "Xem MacBook Pro 14\" M3 Pro":
+        - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+        - img "MacBook Pro 14\" M3 Pro"
+      - generic: Laptop
+      - button "Thêm vào so sánh":
+      - generic: Apple
+      - generic: "SKU: LT-APP-001"
+      - heading "MacBook Pro 14\" M3 Pro" [level=3]:
+        - link "MacBook Pro 14\" M3 Pro":
+          - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+      - generic: 45.990.000 ₫
+      - link "Chi tiết MacBook Pro 14\" M3 Pro":
+        - /url: /product/7f22bfa6-46d4-4db4-8512-c1407d844562
+        - text: Chi tiết
+    - article:
+      - link "Xem Panasonic Giant 8.5kg NA-F85V1":
+        - /url: /product/03161b4f-c967-4376-b67f-a31980c17555
+        - img "Panasonic Giant 8.5kg NA-F85V1"
+      - generic: M??y gi???t
+      - button "Thêm vào so sánh":
+      - generic: Panasonic
+      - generic: "SKU: GD-PAN-002"
+      - heading "Panasonic Giant 8.5kg NA-F85V1" [level=3]:
+        - link "Panasonic Giant 8.5kg NA-F85V1":
+          - /url: /product/03161b4f-c967-4376-b67f-a31980c17555
+      - generic: 14.990.000 ₫
+      - link "Chi tiết Panasonic Giant 8.5kg NA-F85V1":
+        - /url: /product/03161b4f-c967-4376-b67f-a31980c17555
+        - text: Chi tiết
+    - article:
+      - link "Xem Panasonic Inverter 1.5 HP CU/CS-U12XK":
+        - /url: /product/98d24b62-ba49-47e9-8953-02e55f9eeead
+        - img "Panasonic Inverter 1.5 HP CU/CS-U12XK"
+      - generic: M??y l???nh
+      - button "Thêm vào so sánh":
+      - generic: Panasonic
+      - generic: "SKU: GD-PAN-001"
+      - heading "Panasonic Inverter 1.5 HP CU/CS-U12XK" [level=3]:
+        - link "Panasonic Inverter 1.5 HP CU/CS-U12XK":
+          - /url: /product/98d24b62-ba49-47e9-8953-02e55f9eeead
+      - generic: 12.990.000 ₫
+      - link "Chi tiết Panasonic Inverter 1.5 HP CU/CS-U12XK":
+        - /url: /product/98d24b62-ba49-47e9-8953-02e55f9eeead
+        - text: Chi tiết
+    - article:
+      - link "Xem Samsung Galaxy S24 Ultra 256GB":
+        - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+        - img "Samsung Galaxy S24 Ultra 256GB"
+      - generic: "??i???n tho???i"
+      - button "Thêm vào so sánh":
+      - generic: Samsung
+      - generic: "SKU: DT-SAM-001"
+      - heading "Samsung Galaxy S24 Ultra 256GB" [level=3]:
+        - link "Samsung Galaxy S24 Ultra 256GB":
+          - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+      - generic: 28.990.000 ₫
+      - link "Chi tiết Samsung Galaxy S24 Ultra 256GB":
+        - /url: /product/8b189102-5794-4f8a-b664-676e45e1c425
+        - text: Chi tiết
+    - article:
+      - link "Xem Samsung Galaxy Tab S9 FE":
+        - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+        - img "Samsung Galaxy Tab S9 FE"
+      - generic: M??y t??nh b???ng
+      - button "Thêm vào so sánh":
+      - generic: Samsung
+      - generic: "SKU: DT-SAM-003"
+      - heading "Samsung Galaxy Tab S9 FE" [level=3]:
+        - link "Samsung Galaxy Tab S9 FE":
+          - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+      - generic: 12.990.000 ₫
+      - link "Chi tiết Samsung Galaxy Tab S9 FE":
+        - /url: /product/3201f989-ff03-4a97-be7c-620ea7bc1b32
+        - text: Chi tiết
+    - navigation "Điều hướng trang sản phẩm":
+      - text: Hiển thị
+      - strong: "1"
+      - text: "-"
+      - strong: "20"
+      - text: trên tổng số
+      - strong: "28"
+      - text: sản phẩm
+      - button "Trang trước" [disabled]: ‹ Trước
+      - button "Trang 1" [disabled]: "1"
+      - button "Trang 2": "2"
+      - button "Trang sau": Sau ›
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

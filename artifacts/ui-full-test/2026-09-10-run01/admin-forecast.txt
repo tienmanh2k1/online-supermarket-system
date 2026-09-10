@@ -1,0 +1,143 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Dự báo nhu cầu":
+      - heading "Dự báo nhu cầu" [level=1]
+      - paragraph: Moving average 7/14 ngày theo chi nhánh. Chạy lại lượt tính khi nhu cầu válto.
+      - generic: Chi nhánh
+      - combobox "Chi nhánh":
+        - option "AptechMart B??nh Th???nh" [selected]
+        - option "AptechMart Qu???n 1"
+        - option "AptechMart Qu???n 3"
+      - generic: Kỳ dự báo
+      - combobox "Kỳ dự báo":
+        - option "7 ngày" [selected]
+        - option "14 ngày"
+      - button "Chạy lại dự báo"
+      - paragraph: "Lượt gần nhất #82d5a16a · trạng Succeeded · kết lúc 06:02:43 10/9/2026"
+      - table "Lịch sử lượt dự báo":
+        - rowgroup:
+          - row "Lượt Trạng Tạo lúc Kết lúc":
+            - columnheader "Lượt"
+            - columnheader "Trạng"
+            - columnheader "Tạo lúc"
+            - columnheader "Kết lúc"
+        - rowgroup:
+          - row "82d5a16a… Succeeded 06:02:43 10/9/2026 06:02:43 10/9/2026":
+            - cell "82d5a16a…":
+              - code: 82d5a16a…
+            - cell "Succeeded"
+            - cell "06:02:43 10/9/2026"
+            - cell "06:02:43 10/9/2026"
+          - row "77d55645… Succeeded 02:55:54 9/9/2026 02:55:55 9/9/2026":
+            - cell "77d55645…":
+              - code: 77d55645…
+            - cell "Succeeded"
+            - cell "02:55:54 9/9/2026"
+            - cell "02:55:55 9/9/2026"
+          - row "ec8ac96d… Succeeded 03:51:53 8/9/2026 03:51:53 8/9/2026":
+            - cell "ec8ac96d…":
+              - code: ec8ac96d…
+            - cell "Succeeded"
+            - cell "03:51:53 8/9/2026"
+            - cell "03:51:53 8/9/2026"
+          - row "132c82cd… Succeeded 09:23:15 7/9/2026 09:23:15 7/9/2026":
+            - cell "132c82cd…":
+              - code: 132c82cd…
+            - cell "Succeeded"
+            - cell "09:23:15 7/9/2026"
+            - cell "09:23:15 7/9/2026"
+      - alert:
+        - paragraph: Không thể tải dự báo. Vui lòng thử lại.
+        - button "Thử lại"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

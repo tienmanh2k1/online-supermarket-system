@@ -30,12 +30,14 @@ builder.Services.AddOpenApi(options =>
 
     options.AddOperationTransformer((operation, context, cancellationToken) =>
     {
-        if (context.Description.ActionDescriptor.EndpointMetadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any())
+        var metadata = context.Description.ActionDescriptor.EndpointMetadata;
+        if (metadata.OfType<Microsoft.AspNetCore.Authorization.IAuthorizeData>().Any()
+            && !metadata.OfType<Microsoft.AspNetCore.Authorization.IAllowAnonymous>().Any())
         {
             operation.Security ??= new List<Microsoft.OpenApi.OpenApiSecurityRequirement>();
             var requirement = new Microsoft.OpenApi.OpenApiSecurityRequirement
             {
-                [new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer")] = new List<string>()
+                [new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer", context.Document)] = new List<string>()
             };
             operation.Security.Add(requirement);
         }

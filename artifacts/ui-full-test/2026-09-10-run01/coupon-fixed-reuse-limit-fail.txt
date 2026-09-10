@@ -1,0 +1,84 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng (1 sản phẩm)":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+    - generic "1 sản phẩm trong giỏ": "1"
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - navigation "Breadcrumb":
+    - link "Giỏ hàng":
+      - /url: /shopping/cart
+  - heading "Thanh toán đơn hàng" [level=1]
+  - form "Thông tin thanh toán":
+    - group "Hình thức nhận hàng":
+      - generic: Hình thức nhận hàng
+      - radio "Nhận tại chi nhánh Miễn phí - Nhận hàng trực tiếp tại siêu thị" [checked]
+      - generic: Nhận tại chi nhánh
+      - generic: Miễn phí - Nhận hàng trực tiếp tại siêu thị
+      - 'radio "Giao hàng tận nơi Phí giao hàng: 15.000 ₫"'
+      - generic: Giao hàng tận nơi
+      - generic: "Phí giao hàng: 15.000 ₫"
+    - group "Phương thức thanh toán":
+      - generic: Phương thức thanh toán
+      - radio "Thanh toán khi nhận hàng (COD) Thanh toán tiền mặt hoặc quẹt thẻ khi nhận hàng" [checked]
+      - generic: Thanh toán khi nhận hàng (COD)
+      - generic: Thanh toán tiền mặt hoặc quẹt thẻ khi nhận hàng
+      - radio "VNPay Sandbox Thanh toán qua cổng VNPay (môi trường thử nghiệm)"
+      - generic: VNPay Sandbox
+      - generic: Thanh toán qua cổng VNPay (môi trường thử nghiệm)
+      - radio "MoMo Sandbox Thanh toán qua ví điện tử MoMo (môi trường thử nghiệm)"
+      - generic: MoMo Sandbox
+      - generic: Thanh toán qua ví điện tử MoMo (môi trường thử nghiệm)
+    - group "Mã giảm giá":
+      - generic: Mã giảm giá
+      - textbox "Mã giảm giá":
+        - /placeholder: Nhập mã giảm giá
+        - text: QA_UI_0910_25K_64888
+      - button "Áp dụng"
+      - alert: Mã giảm giá đã hết lượt sử dụng.
+    - button "Đặt hàng"
+  - complementary "Tóm tắt đơn hàng":
+    - heading "Tóm tắt đơn hàng" [level=2]
+    - generic: Apple Magic Mouse
+    - generic: "Số lượng: 1"
+    - generic: 2.190.000 ₫
+    - generic: Tạm tính
+    - strong: 2.190.000 ₫
+    - generic: Phí giao hàng
+    - strong: 0 ₫
+    - generic: Tổng thanh toán
+    - strong: 2.190.000 ₫
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

@@ -1,0 +1,59 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - region "Hệ thống chi nhánh":
+    - heading "Hệ thống chi nhánh" [level=1]
+    - paragraph: Chọn một chi nhánh để xem sản phẩm, giá bán và tồn kho tại nơi bạn muốn mua.
+    - list:
+      - heading "AptechMart B??nh Th???nh" [level=3]
+      - generic: Đang hoạt động
+      - paragraph: 789 Nguy???n X??, B??nh Th???nh, TP.HCM
+      - paragraph: ☎ 028 3891 9012
+      - button "Xem sản phẩm AptechMart B??nh Th???nh": Xem sản phẩm
+      - heading "AptechMart Qu???n 1" [level=3]
+      - generic: Đang hoạt động
+      - paragraph: 123 Nguy???n Hu???, Qu???n 1, TP.HCM
+      - paragraph: ☎ 028 3822 1234
+      - button "Xem sản phẩm AptechMart Qu???n 1": Xem sản phẩm
+      - heading "AptechMart Qu???n 3" [level=3]
+      - generic: Đang hoạt động
+      - paragraph: 456 ???????ng 3 Th??ng 2, Qu???n 10, TP.HCM
+      - paragraph: ☎ 028 3862 5678
+      - button "Xem sản phẩm AptechMart Qu???n 3": Xem sản phẩm
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

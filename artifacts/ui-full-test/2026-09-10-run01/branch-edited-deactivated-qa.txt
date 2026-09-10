@@ -1,0 +1,140 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - main "Quản lý chi nhánh":
+      - heading "Quản lý chi nhánh" [level=1]
+      - paragraph: Tạo, chỉnh sửa và bật/tắt hoạt động của chi nhánh.
+      - button "+ Tạo chi nhánh"
+      - table "Danh sách chi nhánh":
+        - rowgroup:
+          - row "Tên chi nhánh Địa chỉ SĐT Trạng thái Hành động":
+            - columnheader "Tên chi nhánh"
+            - columnheader "Địa chỉ"
+            - columnheader "SĐT"
+            - columnheader "Trạng thái"
+            - columnheader "Hành động":
+              - generic: Hành động
+        - rowgroup:
+          - row "AptechMart B??nh Th???nh 789 Nguy???n X??, B??nh Th???nh, TP.HCM 028 3891 9012 Đang hoạt động Sửa chi nhánh AptechMart B??nh Th???nh":
+            - cell "AptechMart B??nh Th???nh"
+            - cell "789 Nguy???n X??, B??nh Th???nh, TP.HCM"
+            - cell "028 3891 9012"
+            - cell "Đang hoạt động":
+              - generic: Đang hoạt động
+            - cell "Sửa chi nhánh AptechMart B??nh Th???nh":
+              - button "Sửa chi nhánh AptechMart B??nh Th???nh": Sửa
+          - row "AptechMart Qu???n 1 123 Nguy???n Hu???, Qu???n 1, TP.HCM 028 3822 1234 Đang hoạt động Sửa chi nhánh AptechMart Qu???n 1":
+            - cell "AptechMart Qu???n 1"
+            - cell "123 Nguy???n Hu???, Qu???n 1, TP.HCM"
+            - cell "028 3822 1234"
+            - cell "Đang hoạt động":
+              - generic: Đang hoạt động
+            - cell "Sửa chi nhánh AptechMart Qu???n 1":
+              - button "Sửa chi nhánh AptechMart Qu???n 1": Sửa
+          - row "AptechMart Qu???n 3 456 ???????ng 3 Th??ng 2, Qu???n 10, TP.HCM 028 3862 5678 Đang hoạt động Sửa chi nhánh AptechMart Qu???n 3":
+            - cell "AptechMart Qu???n 3"
+            - cell "456 ???????ng 3 Th??ng 2, Qu???n 10, TP.HCM"
+            - cell "028 3862 5678"
+            - cell "Đang hoạt động":
+              - generic: Đang hoạt động
+            - cell "Sửa chi nhánh AptechMart Qu???n 3":
+              - button "Sửa chi nhánh AptechMart Qu???n 3": Sửa
+          - row "QA UI Branch 92582 OFF 99 QA Test Street, TP Ho Chi Minh 02800000910 Đã tắt Sửa chi nhánh QA UI Branch 92582 OFF":
+            - cell "QA UI Branch 92582 OFF"
+            - cell "99 QA Test Street, TP Ho Chi Minh"
+            - cell "02800000910"
+            - cell "Đã tắt":
+              - generic: Đã tắt
+            - cell "Sửa chi nhánh QA UI Branch 92582 OFF":
+              - button "Sửa chi nhánh QA UI Branch 92582 OFF": Sửa
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

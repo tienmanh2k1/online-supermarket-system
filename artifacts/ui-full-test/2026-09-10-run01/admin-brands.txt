@@ -1,0 +1,212 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "AU Admin User Quản trị viên":
+    - /url: /account/profile
+    - generic "Admin User": AU
+    - generic: Admin User
+    - generic: Quản trị viên
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - link "⚙️ Quản trị":
+    - /url: /admin/orders
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - complementary "Điều hướng quản trị":
+    - generic: Bảng điều khiển
+    - navigation:
+      - link "Tổng quan":
+        - /url: /admin/dashboard
+        - generic: 📊
+        - generic: Tổng quan
+      - link "Báo cáo doanh số":
+        - /url: /admin/reports/sales
+        - generic: 📈
+        - generic: Báo cáo doanh số
+      - link "Đơn hàng":
+        - /url: /admin/orders
+        - generic: 🧾
+        - generic: Đơn hàng
+      - link "Chi nhánh":
+        - /url: /admin/branches
+        - generic: 🏬
+        - generic: Chi nhánh
+      - link "Kho & Giá":
+        - /url: /admin/inventory
+        - generic: 📦
+        - generic: Kho & Giá
+      - link "Dự báo nhu cầu":
+        - /url: /admin/forecast
+        - generic: 📈
+        - generic: Dự báo nhu cầu
+      - link "Gợi ý sản phẩm":
+        - /url: /admin/recommendations
+        - generic: ✨
+        - generic: Gợi ý sản phẩm
+      - link "Khuyến mãi":
+        - /url: /admin/promotions
+        - generic: 🎟️
+        - generic: Khuyến mãi
+      - link "Người dùng":
+        - /url: /admin/users
+        - generic: 👥
+        - generic: Người dùng
+      - link "Danh mục":
+        - /url: /admin/catalog/categories
+        - generic: 🗂️
+        - generic: Danh mục
+      - link "Thương hiệu":
+        - /url: /admin/catalog/brands
+        - generic: 🏷️
+        - generic: Thương hiệu
+      - link "Sản phẩm":
+        - /url: /admin/catalog/products
+        - generic: 🛒
+        - generic: Sản phẩm
+  - main:
+    - heading "Quản lý thương hiệu" [level=1]
+    - heading "Thêm thương hiệu mới" [level=2]
+    - generic: "Tên thương hiệu:"
+    - textbox "Tên thương hiệu:":
+      - /placeholder: "VD: Samsung, Sony, Vinamilk..."
+    - generic: "Slug:"
+    - textbox "Slug:":
+      - /placeholder: "VD: samsung, sony, vinamilk..."
+    - button "Thêm thương hiệu"
+    - heading "Danh sách thương hiệu" [level=2]
+    - table:
+      - rowgroup:
+        - row "Tên thương hiệu Slug Trạng thái Thao tác":
+          - columnheader "Tên thương hiệu"
+          - columnheader "Slug"
+          - columnheader "Trạng thái"
+          - columnheader "Thao tác"
+      - rowgroup:
+        - row "Apple apple Hoạt động Sửa Vô hiệu hóa":
+          - cell "Apple":
+            - strong: Apple
+          - cell "apple":
+            - code: apple
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "ASUS asus Hoạt động Sửa Vô hiệu hóa":
+          - cell "ASUS":
+            - strong: ASUS
+          - cell "asus":
+            - code: asus
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Canon canon Hoạt động Sửa Vô hiệu hóa":
+          - cell "Canon":
+            - strong: Canon
+          - cell "canon":
+            - code: canon
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Dell dell Hoạt động Sửa Vô hiệu hóa":
+          - cell "Dell":
+            - strong: Dell
+          - cell "dell":
+            - code: dell
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "JBL jbl Hoạt động Sửa Vô hiệu hóa":
+          - cell "JBL":
+            - strong: JBL
+          - cell "jbl":
+            - code: jbl
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "LG lg Hoạt động Sửa Vô hiệu hóa":
+          - cell "LG":
+            - strong: LG
+          - cell "lg":
+            - code: lg
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Panasonic panasonic Hoạt động Sửa Vô hiệu hóa":
+          - cell "Panasonic":
+            - strong: Panasonic
+          - cell "panasonic":
+            - code: panasonic
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Samsung samsung Hoạt động Sửa Vô hiệu hóa":
+          - cell "Samsung":
+            - strong: Samsung
+          - cell "samsung":
+            - code: samsung
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Sony sony Hoạt động Sửa Vô hiệu hóa":
+          - cell "Sony":
+            - strong: Sony
+          - cell "sony":
+            - code: sony
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+        - row "Xiaomi xiaomi Hoạt động Sửa Vô hiệu hóa":
+          - cell "Xiaomi":
+            - strong: Xiaomi
+          - cell "xiaomi":
+            - code: xiaomi
+          - cell "Hoạt động":
+            - generic: Hoạt động
+          - cell "Sửa Vô hiệu hóa":
+            - button "Sửa"
+            - button "Vô hiệu hóa"
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms

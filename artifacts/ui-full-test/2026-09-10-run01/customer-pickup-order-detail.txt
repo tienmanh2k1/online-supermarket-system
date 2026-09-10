@@ -1,0 +1,75 @@
+- banner:
+  - link "AptechMart — trang chủ":
+    - /url: /
+    - generic: AM
+    - strong: AptechMart
+    - generic: Siêu thị điện tử
+  - navigation "Điều hướng chính":
+    - link "Sản phẩm":
+      - /url: /browse
+    - link "Chi nhánh":
+      - /url: /branches
+    - link "Lộ trình":
+      - /url: /#roadmap
+  - button "So sánh sản phẩm":
+    - generic: ⇄
+    - generic: So sánh
+  - link "Giỏ hàng":
+    - /url: /shopping/cart
+    - generic: 🛒
+    - generic: Giỏ hàng
+  - link "Q QA_UI_20260910_C1 Khách hàng":
+    - /url: /account/profile
+    - generic "QA_UI_20260910_C1": Q
+    - generic: QA_UI_20260910_C1
+    - generic: Khách hàng
+  - link "📍 Địa chỉ":
+    - /url: /account/addresses
+  - link "Đơn hàng":
+    - /url: /orders/history
+  - button "Đăng xuất"
+  - status:
+    - generic: API đã sẵn sàng
+- main:
+  - navigation "Breadcrumb":
+    - link "Lịch sử đơn hàng":
+      - /url: /orders/history
+  - heading "Chi tiết đơn hàng 118c7d00-86a6-4969-a6df-1d07c1036ce8" [level=1]
+  - region "Thông tin giao hàng":
+    - heading "Thông tin giao hàng" [level=2]
+    - paragraph: N/A
+    - paragraph: N/A
+    - paragraph: Pickup at branch
+  - region "Sản phẩm trong đơn":
+    - heading "Sản phẩm" [level=2]
+    - generic: AirPods Pro 2
+    - generic: PK-APP-001
+    - generic: 5.990.000 ₫ x 1
+    - generic: 5.990.000 ₫
+  - region "Lịch sử trạng thái":
+    - heading "Lịch sử trạng thái" [level=2]
+    - generic: Pending → Pending
+    - generic: Order created
+    - generic: 06:17 10 thg 9, 2026
+  - region "Tóm tắt đơn hàng":
+    - heading "Tóm tắt" [level=2]
+    - paragraph: "Tạm tính: 5.990.000 ₫"
+    - paragraph: "Phí giao hàng: 0 ₫"
+    - paragraph:
+      - strong: "Tổng cộng: 5.990.000 ₫"
+  - region "Thanh toán":
+    - heading "Thanh toán" [level=2]
+    - paragraph: COD
+    - paragraph: PendingCollection
+    - paragraph: 5.990.000 ₫
+  - region "Trạng thái":
+    - heading "Trạng thái" [level=2]
+    - text: Đã xác nhận
+    - generic: Confirmed
+- contentinfo:
+  - paragraph: © 2026 AptechMart. Siêu thị điện tử tiện lợi.
+  - link "Chính sách bảo mật":
+    - /url: /privacy
+  - generic: •
+  - link "Điều khoản dịch vụ":
+    - /url: /terms
