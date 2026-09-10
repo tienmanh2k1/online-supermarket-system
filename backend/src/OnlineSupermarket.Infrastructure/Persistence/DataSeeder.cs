@@ -45,33 +45,119 @@ public static class DataSeeder
 
     public static async Task SeedBranchesAsync(AppDbContext context)
     {
-        if (await context.Branches.AnyAsync()) return;
-
-        var branches = new List<Branch>
+        var branches = await context.Branches.ToListAsync();
+        if (branches.Count == 0)
         {
-            new(
-                "AptechMart Quận 1",
-                "123 Nguyễn Huệ, Quận 1, TP.HCM",
-                "028 3822 1234",
-                10.7769m,
-                106.7009m),
-            new(
-                "AptechMart Quận 3",
-                "456 Đường 3 Tháng 2, Quận 10, TP.HCM",
-                "028 3862 5678",
-                10.7791m,
-                106.6801m),
-            new(
-                "AptechMart Bình Thạnh",
-                "789 Nguyễn Xí, Bình Thạnh, TP.HCM",
-                "028 3891 9012",
-                10.8037m,
-                106.7195m),
+            var newBranches = new List<Branch>
+            {
+                new(
+                    "AptechMart Quận 1",
+                    "123 Nguyễn Huệ, Quận 1, TP.HCM",
+                    "028 3822 1234",
+                    10.7769m,
+                    106.7009m),
+                new(
+                    "AptechMart Quận 3",
+                    "456 Đường 3 Tháng 2, Quận 10, TP.HCM",
+                    "028 3862 5678",
+                    10.7791m,
+                    106.6801m),
+                new(
+                    "AptechMart Bình Thạnh",
+                    "789 Nguyễn Xí, Bình Thạnh, TP.HCM",
+                    "028 3891 9012",
+                    10.8037m,
+                    106.7195m),
+            };
+
+            await context.Branches.AddRangeAsync(newBranches);
+            await context.SaveChangesAsync();
+            return;
+        }
+
+        // Conditional correction for existing seed branches corrupted with mojibake
+        bool branchesUpdated = false;
+        var knownMojibakeBranch1Names = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AptechMart Qu??n 1", "AptechMart Qu?n 1", "AptechMart Qu???n 1"
+        };
+        var knownMojibakeBranch2Names = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AptechMart Qu??n 3", "AptechMart Qu?n 3", "AptechMart Qu???n 3"
+        };
+        var knownMojibakeBranch3Names = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AptechMart B??nh Th???nh", "AptechMart B?nh Th?nh", "AptechMart B??nh Th??nh"
         };
 
-        await context.Branches.AddRangeAsync(branches);
-        await context.SaveChangesAsync();
+        foreach (var branch in branches)
+        {
+            if (branch.Phone == "028 3822 1234" || knownMojibakeBranch1Names.Contains(branch.Name))
+            {
+                string targetName = knownMojibakeBranch1Names.Contains(branch.Name) ? "AptechMart Quận 1" : branch.Name;
+                string targetAddress = (branch.Address.StartsWith("123 Nguy", StringComparison.OrdinalIgnoreCase) && branch.Address.Contains('?'))
+                    ? "123 Nguyễn Huệ, Quận 1, TP.HCM"
+                    : branch.Address;
+
+                if (targetName != branch.Name || targetAddress != branch.Address)
+                {
+                    branch.Update(targetName, targetAddress, branch.Phone);
+                    branchesUpdated = true;
+                }
+            }
+            else if (branch.Phone == "028 3862 5678" || knownMojibakeBranch2Names.Contains(branch.Name))
+            {
+                string targetName = knownMojibakeBranch2Names.Contains(branch.Name) ? "AptechMart Quận 3" : branch.Name;
+                string targetAddress = (branch.Address.StartsWith("456 ", StringComparison.OrdinalIgnoreCase) && branch.Address.Contains('?'))
+                    ? "456 Đường 3 Tháng 2, Quận 10, TP.HCM"
+                    : branch.Address;
+
+                if (targetName != branch.Name || targetAddress != branch.Address)
+                {
+                    branch.Update(targetName, targetAddress, branch.Phone);
+                    branchesUpdated = true;
+                }
+            }
+            else if (branch.Phone == "028 3891 9012" || knownMojibakeBranch3Names.Contains(branch.Name))
+            {
+                string targetName = knownMojibakeBranch3Names.Contains(branch.Name) ? "AptechMart Bình Thạnh" : branch.Name;
+                string targetAddress = (branch.Address.StartsWith("789 Nguy", StringComparison.OrdinalIgnoreCase) && branch.Address.Contains('?'))
+                    ? "789 Nguyễn Xí, Bình Thạnh, TP.HCM"
+                    : branch.Address;
+
+                if (targetName != branch.Name || targetAddress != branch.Address)
+                {
+                    branch.Update(targetName, targetAddress, branch.Phone);
+                    branchesUpdated = true;
+                }
+            }
+        }
+
+        if (branchesUpdated)
+        {
+            await context.SaveChangesAsync();
+        }
     }
+
+    private static readonly Dictionary<string, HashSet<string>> KnownMojibakeCategoryNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["dien-thoai-tablet"] = new() { "??i???n tho???i & Tablet", "??i?n tho?i & Tablet", "?i?n tho?i & Tablet", "??i??n tho??i & Tablet" },
+        ["laptop-may-tinh"] = new() { "Laptop & M??y t??nh", "Laptop & M?y t?nh", "Laptop & M??y t?nh" },
+        ["tv-man-hinh"] = new() { "TV & M??n h??nh", "TV & M?n h?nh", "TV & M??n h?nh" },
+        ["thiet-bi-gia-dung"] = new() { "Thi???t b??? gia d???ng", "Thi?t b? gia d?ng", "Thi?t b? gia d??ng", "Thi??t b?? gia d??ng" },
+        ["am-thanh-loa"] = new() { "??m thanh & Loa", "?m thanh & Loa" },
+        ["phu-kien"] = new() { "Ph??? ki???n", "Ph? ki?n", "Ph?? ki??n" },
+        ["uncategorized"] = new() { "Ch??a ph??n lo???i", "Ch?a ph?n lo?i", "Ch??a ph??n lo??i" },
+        ["dien-thoai"] = new() { "??i???n tho???i", "??i?n tho?i", "?i?n tho?i", "??i??n tho??i" },
+        ["may-tinh-bang"] = new() { "M??y t??nh b???ng", "M?y t?nh b?ng", "M??y t??nh b??ng" },
+        ["man-hinh-may-tinh"] = new() { "M??n h??nh m??y t??nh", "M?n h?nh m?y t?nh", "M??n h?nh m??y t?nh" },
+        ["may-lanh"] = new() { "M??y l???nh", "M?y l?nh", "M??y l??nh" },
+        ["tu-lanh"] = new() { "T??? l???nh", "T? l?nh", "T?? l??nh" },
+        ["may-giat"] = new() { "M??y gi???t", "M?y gi?t", "M??y gi??t" },
+        ["chuot"] = new() { "Chu???t", "Chu?t", "Chu??t" },
+        ["may-choi-game"] = new() { "M??y ch??i game", "M?y ch?i game", "M??y ch?i game" },
+        ["may-anh"] = new() { "M??y ???nh", "M?y ?nh", "M??y ??nh" },
+    };
 
     public static async Task SeedCategoriesAsync(AppDbContext context)
     {
@@ -81,6 +167,11 @@ public static class DataSeeder
         {
             if (categoriesBySlug.TryGetValue(definition.Slug, out var existing))
             {
+                if (KnownMojibakeCategoryNames.TryGetValue(definition.Slug, out var corruptedNames) &&
+                    corruptedNames.Contains(existing.Name))
+                {
+                    existing.Update(definition.Name, existing.Slug, existing.ParentCategoryId ?? parentId);
+                }
                 return existing;
             }
 
@@ -127,8 +218,6 @@ public static class DataSeeder
 
     public static async Task SeedProductsAsync(AppDbContext context)
     {
-        if (await context.Products.AnyAsync()) return;
-
         var categories = await context.Categories.ToDictionaryAsync(c => c.Slug, c => c.Id);
         var brands = await context.Brands.ToDictionaryAsync(b => b.Slug, b => b.Id);
 
@@ -285,8 +374,69 @@ public static class DataSeeder
                 890000m, "cái", "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=500&q=80"),
         };
 
-        await context.Products.AddRangeAsync(products);
-        await context.SaveChangesAsync();
+        var existingProducts = await context.Products.ToDictionaryAsync(p => p.Sku, StringComparer.OrdinalIgnoreCase);
+        if (existingProducts.Count == 0)
+        {
+            await context.Products.AddRangeAsync(products);
+            await context.SaveChangesAsync();
+            return;
+        }
+
+        bool productsUpdated = false;
+        foreach (var seedProduct in products)
+        {
+            if (existingProducts.TryGetValue(seedProduct.Sku, out var existing))
+            {
+                string targetName = IsKnownLegacyMojibake(existing.Name, seedProduct.Name)
+                    ? seedProduct.Name
+                    : existing.Name;
+
+                string? targetDescription = IsKnownLegacyMojibake(existing.Description, seedProduct.Description)
+                    ? seedProduct.Description
+                    : existing.Description;
+
+                string targetUnit = IsKnownLegacyMojibake(existing.Unit, seedProduct.Unit)
+                    ? seedProduct.Unit
+                    : existing.Unit;
+
+                if (targetName != existing.Name ||
+                    targetDescription != existing.Description ||
+                    targetUnit != existing.Unit)
+                {
+                    existing.Update(
+                        existing.CategoryId,
+                        existing.BrandId,
+                        existing.Sku,
+                        targetName,
+                        existing.Slug,
+                        targetDescription,
+                        existing.BasePrice,
+                        targetUnit,
+                        existing.ImageUrl);
+                    productsUpdated = true;
+                }
+            }
+            else
+            {
+                await context.Products.AddAsync(seedProduct);
+                productsUpdated = true;
+            }
+        }
+
+        if (productsUpdated)
+        {
+            await context.SaveChangesAsync();
+        }
+    }
+
+    private static bool IsKnownLegacyMojibake(string? value, string? seedValue)
+    {
+        if (value is null || seedValue is null || value == seedValue) return false;
+
+        // Legacy ASCII conversion replaced either each UTF-8 byte or each Unicode character.
+        // Compare the entire field against its own seed value, never punctuation alone.
+        return value == System.Text.Encoding.ASCII.GetString(System.Text.Encoding.UTF8.GetBytes(seedValue)) ||
+            value == System.Text.Encoding.ASCII.GetString(System.Text.Encoding.ASCII.GetBytes(seedValue));
     }
 
     private static async Task ReconcileSeedProductCategoriesAsync(AppDbContext context)
@@ -359,24 +509,59 @@ public static class DataSeeder
 
     public static async Task SeedAddressesAsync(AppDbContext context)
     {
-        if (await context.Addresses.AnyAsync()) return;
-
         var users = await context.Users.ToDictionaryAsync(u => u.Email, u => u.Id);
         if (!users.ContainsKey("user1@test.com") || !users.ContainsKey("user2@test.com") || !users.ContainsKey("user3@test.com"))
         {
             return;
         }
 
-        var addresses = new List<Address>
+        var existingAddresses = await context.Addresses.ToListAsync();
+        if (existingAddresses.Count == 0)
         {
-            Address.Create(users["user1@test.com"], "Nguyen Van An", "0912345678", "45 Lê Lai", "Bến Thành", "Quận 1", "TP.HCM", "700000", isDefault: true),
-            Address.Create(users["user1@test.com"], "Nguyen Van An", "0912345678", "78 Nguyễn Trãi", "Phường 2", "Quận 5", "TP.HCM", "700000", isDefault: false),
-            Address.Create(users["user2@test.com"], "Tran Thi Binh", "0923456789", "123 Pasteur", "Bến Nghé", "Quận 1", "TP.HCM", "700000", isDefault: true),
-            Address.Create(users["user3@test.com"], "Le Hoang Cuong", "0934567890", "456 Điện Biên Phủ", "Phường 25", "Bình Thạnh", "TP.HCM", "700000", isDefault: true),
-        };
+            var addresses = new List<Address>
+            {
+                Address.Create(users["user1@test.com"], "Nguyen Van An", "0912345678", "45 Lê Lai", "Bến Thành", "Quận 1", "TP.HCM", "700000", isDefault: true),
+                Address.Create(users["user1@test.com"], "Nguyen Van An", "0912345678", "78 Nguyễn Trãi", "Phường 2", "Quận 5", "TP.HCM", "700000", isDefault: false),
+                Address.Create(users["user2@test.com"], "Tran Thi Binh", "0923456789", "123 Pasteur", "Bến Nghé", "Quận 1", "TP.HCM", "700000", isDefault: true),
+                Address.Create(users["user3@test.com"], "Le Hoang Cuong", "0934567890", "456 Điện Biên Phủ", "Phường 25", "Bình Thạnh", "TP.HCM", "700000", isDefault: true),
+            };
 
-        await context.Addresses.AddRangeAsync(addresses);
-        await context.SaveChangesAsync();
+            await context.Addresses.AddRangeAsync(addresses);
+            await context.SaveChangesAsync();
+            return;
+        }
+
+        var seedAddresses = new[]
+        {
+            (UserId: users["user1@test.com"], Street: "45 Lê Lai", Ward: "Bến Thành", District: "Quận 1"),
+            (UserId: users["user1@test.com"], Street: "78 Nguyễn Trãi", Ward: "Phường 2", District: "Quận 5"),
+            (UserId: users["user2@test.com"], Street: "123 Pasteur", Ward: "Bến Nghé", District: "Quận 1"),
+            (UserId: users["user3@test.com"], Street: "456 Điện Biên Phủ", Ward: "Phường 25", District: "Bình Thạnh"),
+        };
+        bool addressesUpdated = false;
+        static string Repair(string current, string seed) => IsKnownLegacyMojibake(current, seed) ? seed : current;
+
+        foreach (var seed in seedAddresses)
+        {
+            foreach (var addr in existingAddresses.Where(a => a.UserId == seed.UserId &&
+                (a.Street == seed.Street || IsKnownLegacyMojibake(a.Street, seed.Street))))
+            {
+                var street = Repair(addr.Street, seed.Street);
+                var ward = Repair(addr.Ward, seed.Ward);
+                var district = Repair(addr.District, seed.District);
+                var city = Repair(addr.City, "TP.HCM");
+                if (street == addr.Street && ward == addr.Ward && district == addr.District && city == addr.City)
+                    continue;
+
+                addr.Update(addr.RecipientName, addr.Phone, street, ward, district, city, addr.PostalCode);
+                addressesUpdated = true;
+            }
+        }
+
+        if (addressesUpdated)
+        {
+            await context.SaveChangesAsync();
+        }
     }
 
     public static async Task SeedCartsAsync(AppDbContext context)
