@@ -38,13 +38,20 @@ test.describe('Phase 4: Edge Cases, Deferred Feature Baseline & UX Audits', () =
 
     if (compareCount >= 2) {
       await compareButtons.nth(0).click();
-      await page.waitForTimeout(300);
-      await compareButtons.nth(1).click();
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
 
-      const compareModalOrBar = page.locator('.compare-modal, .compare-drawer, .compare-bar');
-      if (await compareModalOrBar.isVisible()) {
-        await expect(compareModalOrBar).toBeVisible();
+      const closeBtn = page.locator('.compare-modal__close-btn');
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+        await page.waitForTimeout(300);
+      }
+
+      await compareButtons.nth(1).click();
+      await page.waitForTimeout(500);
+
+      const compareModalOrBar = page.locator('.compare-modal, .compare-drawer, .compare-bar, .compare-modal-overlay');
+      if (await compareModalOrBar.first().isVisible()) {
+        await expect(compareModalOrBar.first()).toBeVisible();
       }
     }
 
