@@ -207,6 +207,9 @@ public static class OrderEndpoints
                     .FirstOrDefaultAsync(p => p.Id == order.PromotionId.Value, cancellationToken);
                 promotion?.ReleaseUsage();
             }
+
+            if (payment is { IsMock: true, Status: PaymentStatus.Pending })
+                payment.MarkFailed("{\"mode\":\"Mock\",\"outcome\":\"Cancelled\",\"reason\":\"AdminCancelled\"}");
         }
         else if (newStatus == OrderStatus.Completed)
         {
@@ -290,7 +293,10 @@ public static class OrderEndpoints
         CancellationToken cancellationToken)
     {
         var payment = await dbContext.Payments
-            .FirstOrDefaultAsync(p => p.OrderId == order.Id, cancellationToken);
+            .Where(p => p.OrderId == order.Id)
+            .OrderByDescending(p => p.CreatedAtUtc)
+            .ThenByDescending(p => p.Id)
+            .FirstOrDefaultAsync(cancellationToken);
 
         var itemIds = order.Items.Select(i => i.Id).ToList();
         var reviews = await dbContext.Reviews
@@ -323,7 +329,7 @@ public static class OrderEndpoints
         {
             paymentDto = new PaymentDto(
                 payment.Id, payment.Method.ToString(), payment.Status.ToString(),
-                payment.Amount, payment.ProviderTransactionId, payment.CreatedAtUtc);
+                payment.Amount, payment.ProviderTransactionId, payment.CreatedAtUtc, payment.IsMock);
         }
 
         return new OrderDetailDto(

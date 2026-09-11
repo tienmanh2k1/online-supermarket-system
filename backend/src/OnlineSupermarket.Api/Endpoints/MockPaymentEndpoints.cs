@@ -31,7 +31,14 @@ public static class MockPaymentEndpoints
         var callback = new PaymentCallbackVerificationResult(false, $"mock:{payment.Payment.Id}:{request.Outcome}", payment.Payment.OrderId, payment.Payment.Amount,
             request.Outcome == "Success", JsonSerializer.Serialize(new { mode = "Mock", outcome = request.Outcome }), null, true, payment.Payment.Id);
         var outcome = await processor.ProcessAsync(payment.Payment.Method.ToString(), callback, ct);
-        if (outcome == PaymentCallbackOutcome.Conflict) return Results.Conflict();
+        if (outcome == PaymentCallbackOutcome.Conflict)
+        {
+            db.ChangeTracker.Clear();
+            payment = await FindOwnedMockPaymentAsync(paymentId, UserId(user), db, ct);
+            if (payment is not null && OutcomeFrom(payment.Payment.ProviderResponse) == request.Outcome)
+                return Results.Ok(ToDto(payment));
+            return Results.Conflict();
+        }
         db.ChangeTracker.Clear();
         payment = await FindOwnedMockPaymentAsync(paymentId, UserId(user), db, ct);
         return payment is null ? Results.NotFound() : Results.Ok(ToDto(payment));
@@ -44,7 +51,31 @@ public static class MockPaymentEndpoints
             .Select(item => new PaymentView(item.Payment, item.Order))
             .FirstOrDefaultAsync(ct);
 
-    private static MockPaymentDto ToDto(PaymentView value) => new(value.Payment.Id, value.Payment.OrderId, value.Payment.Method.ToString(), value.Payment.Amount, value.Payment.Status.ToString(), value.Order.Status.ToString(), true);
+    private static MockPaymentDto ToDto(PaymentView value) => new(
+        value.Payment.Id,
+        value.Payment.OrderId,
+        value.Payment.Method.ToString(),
+        value.Payment.Amount,
+        value.Payment.Status.ToString(),
+        value.Order.Status.ToString(),
+        true,
+        OutcomeFrom(value.Payment.ProviderResponse));
+
+    private static string? OutcomeFrom(string? payload)
+    {
+        if (string.IsNullOrWhiteSpace(payload)) return null;
+        try
+        {
+            using var document = JsonDocument.Parse(payload);
+            return document.RootElement.TryGetProperty("outcome", out var outcome)
+                ? outcome.GetString()
+                : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
     private static Guid UserId(ClaimsPrincipal user) => Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? user.FindFirst("sub")!.Value);
     private sealed record PaymentView(OnlineSupermarket.Domain.Payments.Payment Payment, OnlineSupermarket.Domain.Orders.Order Order);
 }

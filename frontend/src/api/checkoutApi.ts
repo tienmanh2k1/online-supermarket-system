@@ -1,4 +1,4 @@
-import { postJson } from './httpClient'
+import { getJson, postJson } from './httpClient'
 
 export type FulfillmentType = 'Pickup' | 'Delivery'
 export type PaymentMethod = 'COD' | 'VNPay' | 'MoMo'
@@ -46,11 +46,19 @@ export interface PaymentRequest {
   method: PaymentMethod
 }
 
+export interface PaymentOptionsDto {
+  mode: 'Mock' | 'Sandbox'
+  onlineEnabled: boolean
+  disabledReason: string | null
+}
+
 export const checkoutApi = {
   checkout: (data: CheckoutRequest, token: string, signal?: AbortSignal) =>
     postJson<CheckoutResponse>('/checkout', data, { token, signal }),
   initiatePayment: (data: PaymentRequest, token: string, signal?: AbortSignal) =>
     postJson<PaymentInitDto>('/checkout/payment', data, { token, signal }),
+  getPaymentOptions: (token: string, signal?: AbortSignal) =>
+    getJson<PaymentOptionsDto>('/checkout/payment-options', { token, signal }),
   validateCoupon: (data: CouponValidationRequest, token: string, signal?: AbortSignal) =>
     postJson<CouponValidationResponse>('/checkout/validate-coupon', data, { token, signal }),
 }

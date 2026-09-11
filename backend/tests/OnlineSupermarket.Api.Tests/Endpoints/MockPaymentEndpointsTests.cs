@@ -101,6 +101,7 @@ public sealed class MockPaymentEndpointsTests
         var body = JsonDocument.Parse(await detail.Content.ReadAsStringAsync()).RootElement;
         Assert.Equal("Completed", body.GetProperty("paymentStatus").GetString());
         Assert.Equal("Confirmed", body.GetProperty("orderStatus").GetString());
+        Assert.Equal("Success", body.GetProperty("outcome").GetString());
     }
 
     [Theory]
@@ -123,6 +124,9 @@ public sealed class MockPaymentEndpointsTests
         Assert.Equal(1, await db.PaymentCallbacks.CountAsync(item => item.PaymentId == paymentId));
         Assert.Equal(PaymentStatus.Failed, (await db.Payments.SingleAsync(item => item.Id == paymentId)).Status);
         Assert.Equal(OrderStatus.Cancelled, (await db.Orders.SingleAsync(item => item.Id == order.Id)).Status);
+        var detail = await client.GetAsync($"/api/payments/mock/{paymentId}");
+        var detailBody = JsonDocument.Parse(await detail.Content.ReadAsStringAsync()).RootElement;
+        Assert.Equal(outcome, detailBody.GetProperty("outcome").GetString());
     }
 
     private static async Task<(HttpClient Client, Order Order)> SeedPendingOrderAsync(WebApplicationFactory<Program> factory)

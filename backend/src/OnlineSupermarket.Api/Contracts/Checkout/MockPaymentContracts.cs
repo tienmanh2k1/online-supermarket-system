@@ -11,4 +11,5 @@ public sealed record MockPaymentDto(
     [property: JsonPropertyName("amount")] decimal Amount,
     [property: JsonPropertyName("paymentStatus")] string PaymentStatus,
     [property: JsonPropertyName("orderStatus")] string OrderStatus,
-    [property: JsonPropertyName("isMock")] bool IsMock);
+    [property: JsonPropertyName("isMock")] bool IsMock,
+    [property: JsonPropertyName("outcome")] string? Outcome);

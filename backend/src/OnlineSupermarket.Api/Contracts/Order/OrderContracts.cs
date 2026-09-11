@@ -53,7 +53,8 @@ public sealed record PaymentDto(
     [property: JsonPropertyName("status")] string Status,
     [property: JsonPropertyName("amount")] decimal Amount,
     [property: JsonPropertyName("providerTransactionId")] string? ProviderTransactionId,
-    [property: JsonPropertyName("createdAtUtc")] DateTime CreatedAtUtc);
+    [property: JsonPropertyName("createdAtUtc")] DateTime CreatedAtUtc,
+    [property: JsonPropertyName("isMock")] bool IsMock = false);
 
 public sealed record UpdateOrderStatusRequest(
     [property: JsonPropertyName("status")] string Status,

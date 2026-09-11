@@ -164,6 +164,10 @@ function OrderDetailContent({ order }: { order: OrderDetailDto }) {
                 <p>{order.payment.method}</p>
                 <p>{order.payment.status}</p>
                 <p>{formatPrice(order.payment.amount)}</p>
+                {order.payment.isMock && <p>Giả lập — không thu tiền</p>}
+                {order.payment.isMock && order.payment.status === 'Pending' && order.status === 'Pending' && (
+                  <Link to={`/shopping/payment/mock/${order.payment.id}`}>Tiếp tục thanh toán giả lập</Link>
+                )}
               </>
             ) : (
               <p>Chưa ghi nhận</p>

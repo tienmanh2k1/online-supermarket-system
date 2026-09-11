@@ -208,6 +208,7 @@ function AdminOrderContent({
                 <p>Phương thức: {order.payment.method}</p>
                 <p>Trạng thái: {order.payment.status}</p>
                 <p>Số tiền: {formatPrice(order.payment.amount)}</p>
+                {order.payment.isMock && <p>Giả lập — không thu tiền</p>}
               </>
             ) : (
               <p>Chưa ghi nhận thanh toán.</p>

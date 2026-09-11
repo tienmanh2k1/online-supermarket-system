@@ -10,6 +10,7 @@ import {
   type PaymentMethod,
   type CheckoutRequest,
   type PaymentInitDto,
+  type PaymentOptionsDto,
 } from '../../api/checkoutApi'
 import { getAddressesApi, type AddressDto } from '../../api/addressApi'
 import { ApiError } from '../../api/httpClient'
@@ -194,6 +195,7 @@ export function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountAmount: number } | null>(null)
   const [couponError, setCouponError] = useState<string | null>(null)
   const [couponChecking, setCouponChecking] = useState(false)
+  const [paymentOptions, setPaymentOptions] = useState<PaymentOptionsDto | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return
@@ -212,6 +214,22 @@ export function CheckoutPage() {
       .catch((error) => {
         if (!isAbortError(error)) {
           setAddressLoadError('Không thể tải sổ địa chỉ. Bạn vẫn có thể nhập địa chỉ thủ công.')
+        }
+      })
+    return () => controller.abort()
+  }, [isAuthenticated, accessToken])
+
+  useEffect(() => {
+    if (!isAuthenticated || !accessToken) return
+    const controller = new AbortController()
+    checkoutApi.getPaymentOptions(accessToken, controller.signal)
+      .then((options) => {
+        setPaymentOptions(options)
+        if (!options.onlineEnabled) setPaymentMethod((current) => current === 'COD' ? current : 'COD')
+      })
+      .catch((error) => {
+        if (!isAbortError(error)) {
+          setPaymentOptions({ mode: 'Sandbox', onlineEnabled: false, disabledReason: 'Không thể tải tùy chọn thanh toán online.' })
         }
       })
     return () => controller.abort()
@@ -334,7 +352,7 @@ export function CheckoutPage() {
     }
 
     if (payment.checkoutUrl) {
-      window.location.assign(payment.checkoutUrl)
+      navigate(payment.checkoutUrl)
       return
     }
 
@@ -393,7 +411,7 @@ export function CheckoutPage() {
                   value="Pickup"
                   checked={fulfillmentType === 'Pickup'}
                   onChange={() => setFulfillmentType('Pickup')}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || paymentOptions?.onlineEnabled !== true}
                 />
                 <div className="checkout-radio-content">
                   <span className="checkout-radio-title">Nhận tại chi nhánh</span>
@@ -535,12 +553,12 @@ export function CheckoutPage() {
                   value="VNPay"
                   checked={paymentMethod === 'VNPay'}
                   onChange={() => setPaymentMethod('VNPay')}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || paymentOptions?.onlineEnabled !== true}
                 />
                 <div className="checkout-radio-content">
-                  <span className="checkout-radio-title">VNPay Sandbox</span>
+                  <span className="checkout-radio-title">VNPay giả lập — không thu tiền</span>
                   <span className="checkout-radio-desc">
-                    Thanh toán qua cổng VNPay (môi trường thử nghiệm)
+                    Chọn kết quả thanh toán ngay trong ứng dụng.
                   </span>
                 </div>
               </label>
@@ -556,16 +574,21 @@ export function CheckoutPage() {
                   value="MoMo"
                   checked={paymentMethod === 'MoMo'}
                   onChange={() => setPaymentMethod('MoMo')}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || paymentOptions?.onlineEnabled !== true}
                 />
                 <div className="checkout-radio-content">
-                  <span className="checkout-radio-title">MoMo Sandbox</span>
+                  <span className="checkout-radio-title">MoMo giả lập — không thu tiền</span>
                   <span className="checkout-radio-desc">
-                    Thanh toán qua ví điện tử MoMo (môi trường thử nghiệm)
+                    Chọn kết quả thanh toán ngay trong ứng dụng.
                   </span>
                 </div>
               </label>
             </div>
+            {paymentOptions?.onlineEnabled === false && (
+              <p className="checkout-alert" role="status">
+                Thanh toán online chưa khả dụng: {paymentOptions.disabledReason ?? 'PAYMENT_PROVIDER_NOT_CONFIGURED'}
+              </p>
+            )}
           </fieldset>
 
           <fieldset

@@ -35,6 +35,7 @@ export interface PaymentDto {
   amount: number
   providerTransactionId: string | null
   createdAtUtc: string
+  isMock?: boolean
 }
 
 export interface OrderDetailDto {
