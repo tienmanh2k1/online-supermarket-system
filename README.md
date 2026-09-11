@@ -1,198 +1,174 @@
-# AptechMart - Hệ Thống Siêu Thị Điện Tử Đa Chi Nhánh
+# AptechMart — Siêu thị điện tử đa chi nhánh
 
-Hệ thống bán hàng và siêu thị điện tử trực tuyến đa chi nhánh xây dựng trên nền tảng **.NET 10 (ASP.NET Core Minimal API)**, **Entity Framework Core 10**, **MySQL 8.4 LTS** và **React 19 (TypeScript + Vite 7)**.
+Ứng dụng bán hàng trực tuyến với giá bán và tồn kho riêng cho từng chi nhánh. Khách hàng tìm sản phẩm, đặt hàng, theo dõi đơn và đánh giá sản phẩm đã mua; quản trị viên quản lý danh mục, kho, đơn hàng, báo cáo doanh số, dự báo nhu cầu và gợi ý sản phẩm.
 
-Dự án hỗ trợ quản lý danh mục sản phẩm dùng chung toàn hệ thống, đồng thời duy trì giá bán và lượng tồn kho độc lập theo từng chi nhánh. Hệ thống cung cấp đầy đủ chu trình: xác thực bảo mật JWT, quản lý sổ địa chỉ, giỏ hàng theo chi nhánh, quy trình checkout giao dịch đảm bảo tính toàn vẹn tồn kho, thanh toán sandbox (COD, VNPay, MoMo) và quản lý đơn hàng.
+**Bắt đầu:** [Setup tiếng Việt](SETUP-VI.md) · [Hướng dẫn nghiệm thu](docs/testing/FINAL-UAT-2026-09-11.md) · [Kết quả test final](docs/testing/FINAL-RESULT-2026-09-11.md)
 
----
+## Công nghệ
 
-## 🛠️ Công Nghệ Sử Dụng
+| Thành phần | Công nghệ |
+|---|---|
+| Backend | .NET 10, ASP.NET Core Minimal API |
+| Database | MySQL 8.4, Entity Framework Core 10, MySql.EntityFrameworkCore |
+| Frontend | React 19, TypeScript 5.9, Vite 7 |
+| Xác thực | JWT, refresh token, phân quyền Customer/Admin |
+| Gợi ý và dự báo | ML.NET, tác vụ nền, dự báo 7/14 ngày |
+| Kiểm thử | xUnit, MySQL Testcontainers, Vitest, Playwright |
+| Đóng gói | Docker Compose, Nginx |
 
-- **Backend Framework**: .NET 10, ASP.NET Core Minimal APIs.
-- **ORM & Data Access**: Entity Framework Core 10, MySQL Connector / Pomelo.
-- **Database**: MySQL 8.4 LTS (hỗ trợ UUID v7/CHAR(36), chỉ mục duy nhất và quan hệ toàn vẹn).
-- **Bảo mật & Xác thực**: JWT Bearer Access Token, Refresh Token xoay vòng (Rotation) chống lạm dụng, mã hóa mật khẩu bảo mật (PBKDF2/HMAC-SHA256).
-- **Dịch vụ nền**: .NET BackgroundService tự động thu hồi và dọn dẹp refresh token quá hạn.
-- **Frontend**: React 19, TypeScript 5.9, Vite 7, Vitest, Testing Library.
-- **Môi trường & Container**: Docker Compose, Nginx Reverse Proxy.
+## Chức năng
 
----
+- **Khách hàng:** đăng ký/đăng nhập, hồ sơ và sổ địa chỉ; tìm kiếm/lọc sản phẩm; chọn chi nhánh; giỏ hàng; nhận tại cửa hàng hoặc giao tận nơi; lịch sử đơn; đánh giá sản phẩm theo điều kiện mua hàng.
+- **Quản trị:** danh mục, thương hiệu, sản phẩm, chi nhánh; giá và tồn kho; nhật ký biến động kho; xử lý đơn; khóa/mở tài khoản; dashboard và báo cáo doanh số.
+- **Tác vụ nền:** dự báo nhu cầu, gợi ý sản phẩm và giao diện quản lý tác vụ.
+- **Thanh toán:** COD và luồng sandbox VNPay/MoMo. Kiểm thử cổng bên ngoài chưa được xác minh xuyên suốt trong đợt final.
+- **So sánh, coupon và khuyến mãi:** đã có mã nguồn/giao diện; tài liệu phạm vi release ghi deferred, không tính là nghiệm thu đầy đủ mọi biến thể.
 
-## 📁 Cấu Trúc Dự Án
+## Chạy dự án
 
-```text
-online-supermarket-system/
-├── backend/
-│   ├── src/
-│   │   ├── OnlineSupermarket.Api/            # HTTP Composition Root & Minimal API Endpoints
-│   │   │   ├── Contracts/                    # Request/Response DTOs & Models
-│   │   │   ├── Endpoints/                    # Endpoint Handlers (Auth, Catalog, Cart, Orders,...)
-│   │   │   └── Program.cs                    # Pipeline & Dependency Injection setup
-│   │   ├── OnlineSupermarket.Domain/         # Domain Layer (Entities, Enums, Business Invariants)
-│   │   │   ├── Branches/                     # Chi nhánh
-│   │   │   ├── Catalog/                      # Danh mục, Thương hiệu, Sản phẩm
-│   │   │   ├── Identity/                     # User, RefreshToken, PasswordResetToken, Role, Status
-│   │   │   ├── Inventory/                    # Tồn kho chi nhánh (BranchInventory)
-│   │   │   ├── Orders/                       # Đơn hàng, OrderItem, Trạng thái đơn hàng
-│   │   │   ├── Payments/                     # Thanh toán, Callback giao dịch
-│   │   │   └── Shopping/                     # Giỏ hàng, CartItem, Địa chỉ giao hàng
-│   │   └── OnlineSupermarket.Infrastructure/ # Infrastructure Layer (EF Core, MySQL, Services)
-│   │       ├── BackgroundServices/           # RefreshTokenCleanupService
-│   │       ├── Identity/                     # PasswordHasher, TokenService
-│   │       ├── Persistence/                  # AppDbContext, Configurations, Migrations
-│   │       └── Services/                     # PasswordResetService, EmailSender
-│   └── tests/
-│       ├── OnlineSupermarket.Api.Tests/            # Integration & Configuration Tests
-│       ├── OnlineSupermarket.Domain.Tests/         # Domain Unit Tests & Invariants
-│       └── OnlineSupermarket.Infrastructure.Tests/ # Data Access & Service Tests
-├── frontend/                                 # React 19 Storefront & Client App
-│   ├── src/
-│   │   ├── api/                              # HTTP Client & API wrappers
-│   │   ├── app/                              # App Shell & Navigation
-│   │   ├── features/                         # Auth, Address, Profile, System Status
-│   │   └── styles/                           # CSS Modules & Design System
-├── docs/                                     # Toàn bộ tài liệu kỹ thuật & kiến trúc
-│   ├── api/                                  # openapi.json (OpenAPI 3.1.1 Contract)
-│   ├── architecture/                         # ERD, DFD, Sitemap chi tiết
-│   ├── requirements/                         # functional-requirements.md (Canonical SSoT)
-│   └── project-spec.html                     # Đặc tả dự án tổng thể
-├── compose.yaml                              # Docker Compose orchestration
-└── OnlineSupermarket.slnx                    # Solution file cho Visual Studio / Rider / dotnet CLI
-```
+Chọn một trong hai cách dưới đây. Lần đầu cần Internet để tải dependencies hoặc Docker images.
 
----
+### Cách 1: Visual Studio + MySQL + Vite
 
-## 🚀 Hướng Dẫn Chạy Dự Án
+**Yêu cầu:** Visual Studio hỗ trợ .NET 10 và solution .slnx, workload ASP.NET; .NET SDK **10.0.400** hoặc bản vá tương thích theo [global.json](global.json); Node.js **24**; MySQL **8.4**.
 
-### 1. Chạy Backend Native (.NET 10)
+1. Tạo database và tài khoản MySQL theo [hướng dẫn setup](SETUP-VI.md).
+2. Mở solution **OnlineSupermarket.slnx** trong Visual Studio.
+3. Sửa **ConnectionStrings.DefaultConnection** trong **backend/src/OnlineSupermarket.Api/appsettings.Development.json** theo MySQL đang dùng.
+4. Chọn **OnlineSupermarket.Api** làm Startup Project, profile **http**, bấm **F5**. Kiểm tra [API health](http://localhost:5072/api/health).
+5. Mở terminal tại thư mục dự án để chạy frontend:
 
-**Yêu cầu**: .NET SDK 10.0+ và MySQL 8.4 đang chạy trên máy host.
-
-1. Thiết lập chuỗi kết nối MySQL trên PowerShell:
-   ```powershell
-   $env:ConnectionStrings__DefaultConnection = "Server=localhost;Port=3306;Database=online_supermarket;User=supermarket_app;Password=change_me"
-   ```
-2. Khôi phục packages và chạy tests:
-   ```powershell
-   dotnet restore OnlineSupermarket.slnx
-   dotnet test OnlineSupermarket.slnx
-   ```
-3. Cập nhật Database Migration:
-   ```powershell
-   dotnet tool restore
-   dotnet dotnet-ef database update --project backend/src/OnlineSupermarket.Infrastructure --startup-project backend/src/OnlineSupermarket.Api
-   ```
-4. Khởi chạy Backend API:
-   ```powershell
-   dotnet run --project backend/src/OnlineSupermarket.Api
-   ```
-   - API mặc định lắng nghe tại: `http://localhost:5072` (hoặc cấu hình qua `launchSettings.json`).
-   - Kiểm tra Health Endpoint: `http://localhost:5072/api/health`
-   - OpenAPI Documentation (môi trường Dev): `http://localhost:5072/openapi/v1.json`
-
----
-
-### 2. Chạy Frontend Native (React 19 + Vite)
-
-**Yêu cầu**: Node.js 20+ LTS (khuyên dùng Node.js 22 hoặc 24).
-
-```powershell
+~~~powershell
 Set-Location frontend
-npm.cmd install
-npm.cmd test -- --run
+npm.cmd ci
 npm.cmd run dev
-```
+~~~
 
-- Giao diện người dùng sẽ chạy tại: `http://localhost:5173`.
-- Vite đã cấu hình proxy `/api` tự động chuyển tiếp request về backend (`http://localhost:5072` hoặc cổng API được chỉ định).
+Mở **[http://localhost:5173](http://localhost:5173)**. Vite proxy /api về cổng **5072**. Giữ API và terminal frontend đang chạy.
 
----
+Có thể chạy API bằng CLI thay Visual Studio, từ thư mục gốc:
 
-### 3. Khởi Chạy Toàn Bộ Bằng Docker Compose
+~~~powershell
+dotnet restore OnlineSupermarket.slnx
+dotnet run --project backend/src/OnlineSupermarket.Api --launch-profile http
+~~~
 
-**Yêu cầu**: Docker Desktop đã cài đặt và đang chạy.
+API Development tự migrate và seed dữ liệu; không cần import database-init.sql cho database mới. Tác vụ nền trong cấu hình Development mặc định bị tắt; đặt **Infrastructure.DisableBackgroundServices=false** nếu muốn chạy như Docker. Xem [SETUP-VI.md](SETUP-VI.md) để cấu hình database, chuỗi kết nối và xử lý lỗi.
 
-```powershell
-# 1. Tạo file cấu hình môi trường từ mẫu
+### Cách 2: Docker toàn bộ hệ thống
+
+**Yêu cầu:** Docker Desktop đang hoạt động với Linux containers. Không cần cài riêng .NET, Node.js hoặc MySQL trên host để chạy ứng dụng.
+
+Tại thư mục gốc, chỉ copy cấu hình mẫu khi chưa có .env:
+
+~~~powershell
 Copy-Item .env.example .env
+docker compose up --build -d
+docker compose ps
+Invoke-RestMethod http://localhost:8080/api/health
+~~~
 
-# 2. Khởi tạo và khởi chạy các containers (MySQL 8.4, Backend API, Frontend Nginx)
+| Dịch vụ | Địa chỉ |
+|---|---|
+| Giao diện web | [http://localhost:5173](http://localhost:5173) |
+| API health | [http://localhost:8080/api/health](http://localhost:8080/api/health) |
+| OpenAPI Development | [http://localhost:8080/openapi/v1.json](http://localhost:8080/openapi/v1.json) |
+| MySQL trên host | 127.0.0.1:3306 |
+
+API tự migrate và tạo dữ liệu demo. Database/user/mật khẩu cấu hình trong .env; nếu đổi mật khẩu, cập nhật cả chuỗi kết nối. Dữ liệu được giữ trong Docker volume, không nằm trong repository.
+
+~~~powershell
+# Xem lỗi khởi động
+docker compose logs --tail 100 api mysql
+
+# Sau khi sửa và lưu code, cập nhật image
 docker compose up --build -d
 
-# 3. Kiểm tra trạng thái hệ thống
-Invoke-RestMethod http://localhost:8080/api/health
-Invoke-WebRequest http://localhost:5173
+# Dừng nhưng giữ dữ liệu
+docker compose stop
+~~~
 
-# 4. Tắt các containers khi không dùng
-docker compose down
-```
+Lệnh **docker compose up -d** chạy image hiện có; cần **--build** để cập nhật code. Không dùng **down -v** nếu muốn giữ database. Tránh chạy frontend Docker và Vite cùng cổng 5173. Hướng dẫn setup cũng có cách dùng MySQL Docker với API chạy bằng Visual Studio.
 
----
+## Tài khoản demo
 
-## 📡 Danh Mục API Endpoints Chính
-
-| Phân hệ | Endpoint | Phương thức | Mô tả |
-|---|---|---|---|
-| **System** | `/api/health` | `GET` | Kiểm tra trạng thái hoạt động của hệ thống |
-| **Auth** | `/api/auth/register` | `POST` | Đăng ký tài khoản khách hàng mới |
-| | `/api/auth/login` | `POST` | Đăng nhập nhận Access Token và Refresh Token |
-| | `/api/auth/refresh` | `POST` | Làm mới Access Token bằng Refresh Token |
-| | `/api/auth/logout` | `POST` | Đăng xuất và thu hồi Refresh Token |
-| | `/api/auth/me` | `GET` | Lấy thông tin user hiện tại từ Token |
-| | `/api/auth/password-reset` | `POST` | Yêu cầu gửi email đặt lại mật khẩu |
-| | `/api/auth/password-reset/confirm` | `POST` | Xác nhận mật khẩu mới bằng token |
-| **Users** | `/api/users/me` | `PUT` | Cập nhật họ tên, số điện thoại |
-| | `/api/users/me/password` | `PUT` | Đổi mật khẩu tài khoản |
-| | `/api/admin/users` | `GET` | *(Admin)* Danh sách người dùng hệ thống |
-| | `/api/admin/users/{id}/status` | `PUT` | *(Admin)* Khóa / Mở khóa tài khoản |
-| **Addresses**| `/api/users/me/addresses` | `GET`, `POST` | Danh sách & Thêm mới địa chỉ nhận hàng |
-| | `/api/users/me/addresses/{id}` | `PUT`, `DELETE`| Cập nhật / Xóa địa chỉ nhận hàng |
-| | `/api/users/me/addresses/{id}/default`| `PUT` | Đặt làm địa chỉ giao hàng mặc định |
-| **Catalog** | `/api/categories` | `GET` | Danh mục sản phẩm dạng phân cấp |
-| | `/api/brands` | `GET` | Danh sách thương hiệu |
-| | `/api/products` | `GET` | Tìm kiếm, lọc sản phẩm (giá, danh mục, từ khóa, chi nhánh) |
-| | `/api/products/{id}` | `GET` | Chi tiết sản phẩm kèm giá & tồn kho chi nhánh |
-| **Branches**| `/api/branches` | `GET` | Danh sách chi nhánh siêu thị |
-| | `/api/branches/{id}` | `GET` | Chi tiết chi nhánh |
-| | `/api/branches/{id}/inventory` | `GET` | Tồn kho & giá bán sản phẩm tại chi nhánh |
-| | `/api/admin/branches/{branchId}/inventory` | `PUT` | *(Admin)* Điều chỉnh giá bán, tồn kho, định mức nhập |
-| **Cart** | `/api/cart` | `GET`, `DELETE` | Xem giỏ hàng / Xóa toàn bộ giỏ hàng |
-| | `/api/cart/items` | `POST` | Thêm sản phẩm vào giỏ hàng (kiểm tra tồn kho chi nhánh) |
-| | `/api/cart/items/{itemId}` | `PUT`, `DELETE` | Cập nhật số lượng / Xóa sản phẩm khỏi giỏ |
-| | `/api/cart/change-branch` | `POST` | Đổi chi nhánh mua hàng |
-| **Checkout**| `/api/checkout` | `POST` | Đặt hàng, khóa giữ tồn kho (reserve), tính phí giao hàng |
-| | `/api/checkout/payment` | `POST` | Khởi tạo giao dịch thanh toán (COD, VNPay, MoMo) |
-| | `/api/checkout/payment/callback` | `POST` | Webhook / IPN tiếp nhận kết quả thanh toán từ cổng |
-| **Orders** | `/api/orders` | `GET` | Lịch sử đơn hàng của khách hàng |
-| | `/api/orders/{id}` | `GET` | Chi tiết đơn hàng và lịch sử chuyển trạng thái |
-| | `/api/admin/orders` | `GET` | *(Admin)* Xem toàn bộ đơn hàng hệ thống |
-| | `/api/admin/orders/{id}/status`| `PUT` | *(Admin)* Cập nhật trạng thái đơn hàng |
-
----
-
-## 📊 Trạng Thái Triển Khai Hiện Tại
-
-| Nhóm chức năng | Hiện trạng | Ghi chú |
+| Vai trò | Email | Mật khẩu seed |
 |---|---|---|
-| **Identity & Authentication** | ✅ Hoàn thành | Đăng ký, Đăng nhập JWT, Refresh Token, Thu hồi token, Đặt lại mật khẩu qua email, Background dọn dẹp |
-| **User Profile & Address Book** | ✅ Hoàn thành | Quản lý thông tin cá nhân, CRUD địa chỉ giao hàng, đặt địa chỉ mặc định transactional |
-| **Multi-Branch Catalog & Stock** | ✅ Hoàn thành | Danh mục, Thương hiệu, Sản phẩm, Tồn kho độc lập theo từng chi nhánh, Quản lý giá theo chi nhánh |
-| **Cart Management** | ✅ Hoàn thành | Giỏ hàng gắn với User & Chi nhánh, kiểm tra tồn kho tức thì, đổi chi nhánh cập nhật giá |
-| **Transactional Checkout** | ✅ Hoàn thành | Đặt hàng giao dịch (Serializable / Retry), khóa giữ tồn kho (Reserved Stock), snapshot thông tin giao hàng |
-| **Payment Gateway Sandbox** | ✅ Hoàn thành | COD, mô phỏng VNPay & MoMo sandbox URL, xử lý callback IPN và tự động hoàn trả tồn kho nếu thất bại |
-| **Order Management** | ✅ Hoàn thành | Lịch sử đơn hàng, chi tiết đơn hàng, lịch sử thay đổi trạng thái, Admin cập nhật trạng thái đơn |
-| **Promotions & Coupons** | ⏳ Kế hoạch mở rộng | Mô hình bảng đã thiết kế trong ERD, dự kiến triển khai engine coupon ở sprint tiếp theo |
-| **Reviews & Ratings** | ⏳ Kế hoạch mở rộng | Đánh giá sản phẩm sau khi đơn hàng hoàn thành (Verified Purchase) |
-| **Demand Forecast & AI** | ⏳ Kế hoạch mở rộng | Dự báo nhu cầu 7-14 ngày, cảnh báo tồn kho, gợi ý sản phẩm cold-start |
+| Admin | admin@test.com | Test@123 |
+| Customer | user1@test.com | Test@123 |
+| Customer | user2@test.com | Test@123 |
+| Customer | user3@test.com | Test@123 |
 
----
+Các tài khoản được tạo khi bảng người dùng trống. Database cũ có thể đã đổi mật khẩu. Đây là cấu hình local/demo; không dùng mật khẩu và khóa Development cho môi trường thật.
 
-## 📚 Tài Liệu Kỹ Thuật
+Sau đăng nhập, thử tìm **Samsung Galaxy S24 Ultra 256GB**, thêm giỏ và đặt COD; dùng cửa sổ admin riêng để xem đơn tại **/admin/orders**. ID đơn và tài khoản QA trong báo cáo final thuộc máy kiểm thử, không tự xuất hiện trên máy cài mới.
 
-- [Danh mục Yêu cầu Chức năng Canonical (SSoT)](docs/requirements/functional-requirements.md)
-- [Thiết kế Cơ sở Dữ liệu & ERD Toàn Hệ Thống](docs/architecture/erd.md)
-- [Sơ đồ Luồng Dữ liệu (DFD Context, Level 0 & Level 1)](docs/architecture/dfd.md)
-- [Sơ đồ Cây Điều hướng & Sitemap Chi Tiết](docs/architecture/sitemap.md)
-- [Hợp đồng Giao tiếp API (OpenAPI 3.1.1 Contract)](docs/api/openapi.json)
-- [Đặc tả Dự án Tổng Thể (Project Spec HTML)](docs/project-spec.html)
-- [Bảng Theo Dõi Tiến Độ Thành Viên 1 & 3 (Backend & Frontend Dashboard)](docs/progress-member-1-3.html)
+## Kiểm thử
+
+Backend, từ thư mục gốc:
+
+~~~powershell
+dotnet test OnlineSupermarket.slnx
+~~~
+
+Cần Docker cho các test MySQL Testcontainers và Python 3 trong PATH cho một số test migration. Không cần Docker chỉ để chạy API native với MySQL đã cài.
+
+Frontend:
+
+~~~powershell
+Set-Location frontend
+npm.cmd ci
+npm.cmd test -- --run
+npm.cmd run build
+~~~
+
+UI E2E dùng API **8080** và frontend **5173**: bật stack Docker toàn bộ trước, sau đó chạy trong thư mục frontend:
+
+~~~powershell
+npx.cmd playwright install chromium
+$env:UI_TEST_RUN_ID="FINAL-MYPC-01"
+$env:UI_TEST_PREFIX="QA_MYPC_01_"
+npx.cmd playwright test e2e/ui-full-plan
+~~~
+
+Đổi prefix mỗi đợt. Các ca UI sẽ tạo tài khoản, đơn và dữ liệu QA trong database ứng dụng.
+
+### Kết quả đã ghi nhận ngày 11/09/2026
+
+| Bộ kiểm tra | Kết quả |
+|---|---|
+| Backend Domain / API / Infrastructure | 171 + 294 + 246 = **711/711 đạt**, không bỏ qua |
+| Frontend unit/component | **391/391 đạt** |
+| UI | **32/32 ca có kết quả đạt qua nhiều lượt**: 26 ca + 6 hành trình chạy lại sau sửa test |
+| Build | Docker API/frontend đạt; bản ZIP giải nén build backend Release và frontend thành công |
+
+Đây là kết quả của đợt kiểm thử đã thực hiện, không phải trạng thái CI tự động. Bộ UI có giới hạn về assertion; số ca đạt không đồng nghĩa bao phủ mọi biến thể. Chưa xác minh đầy đủ cổng VNPay/MoMo bên ngoài, email reset thực tế và thao tác gửi đánh giá qua UI trong đợt này. Chi tiết và các lỗi test đã sửa nằm trong [báo cáo final](docs/testing/FINAL-RESULT-2026-09-11.md); các log/ảnh local không được commit cùng mã nguồn.
+
+## Cấu trúc dự án
+
+~~~text
+backend/
+  src/
+    OnlineSupermarket.Api/             # API, cấu hình, Dockerfile
+    OnlineSupermarket.Domain/          # Mô hình và quy tắc nghiệp vụ
+    OnlineSupermarket.Infrastructure/  # EF, migrations, seed, services
+  tests/                              # Domain, API, MySQL integration tests
+frontend/
+  src/                                # React, API client, giao diện khách/admin
+  e2e/ui-full-plan/                    # Playwright
+docs/                                 # Yêu cầu, kiến trúc, OpenAPI, nghiệm thu
+compose.yaml                          # MySQL + API + frontend
+OnlineSupermarket.slnx                 # Solution .NET
+SETUP-VI.md                           # Setup và xử lý lỗi thường gặp
+~~~
+
+## Tài liệu
+
+- [Setup Visual Studio và Docker](SETUP-VI.md)
+- [Hướng dẫn UAT với dữ liệu demo](docs/testing/FINAL-UAT-2026-09-11.md)
+- [Báo cáo final và giới hạn kiểm thử](docs/testing/FINAL-RESULT-2026-09-11.md)
+- [Yêu cầu chức năng](docs/requirements/functional-requirements.md)
+- [Thiết kế database / ERD](docs/architecture/erd.md)
+- [Luồng dữ liệu / DFD](docs/architecture/dfd.md)
+- [Sitemap](docs/architecture/sitemap.md)
+- [OpenAPI contract](docs/api/openapi.json)
