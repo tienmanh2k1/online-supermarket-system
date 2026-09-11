@@ -318,15 +318,14 @@ public sealed class InventoryMutationEndpointTests
         var payment = await seed.Client.PostAsJsonAsync("/api/checkout/payment",
             new PaymentRequest(checkoutBody!.OrderId, "VNPay"));
         Assert.Equal(HttpStatusCode.OK, payment.StatusCode);
+        var paymentBody = await payment.Content.ReadFromJsonAsync<PaymentInitDto>();
+        Assert.NotNull(paymentBody);
 
-        var client = factory.CreateClient();
         for (var i = 0; i < 2; i++)
         {
-            var response = await client.PostAsJsonAsync("/api/checkout/payment/callback", new
-            {
-                provider = "vnpay",
-                data = SignedVnPayCallback(checkoutBody.OrderId, checkoutBody.TotalAmount, "e2e-fail"),
-            });
+            var response = await seed.Client.PostAsJsonAsync(
+                $"/api/payments/mock/{paymentBody!.PaymentId}/complete",
+                new { outcome = "Failed" });
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 

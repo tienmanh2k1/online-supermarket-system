@@ -183,26 +183,18 @@ public sealed class CodPaymentLifecycleTests
     }
 
     [Fact]
-    public async Task VnpayPayment_NotAffectedByCodCompletionRule()
+    public async Task VnpayPendingPayment_CannotBeAdvancedByAdmin()
     {
         using var factory = new TestApiFactory();
 
         // Seed order without initiating payment first
         var (_, adminClient, orderId) = await SeedVnpayOrderAsync(factory);
 
-        // Progress order to Completed
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
+        var progressResponse = await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
             new UpdateOrderStatusRequest("Preparing", null));
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Ready", null));
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Delivered", null));
+        Assert.Equal(HttpStatusCode.Conflict, progressResponse.StatusCode);
 
-        var completeResponse = await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Completed", null));
-        Assert.Equal(HttpStatusCode.OK, completeResponse.StatusCode);
-
-        // VNPay payment should still be Pending (not marked Completed by order completion)
+        // VNPay payment remains pending until its own payment flow completes.
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
@@ -214,26 +206,18 @@ public sealed class CodPaymentLifecycleTests
     }
 
     [Fact]
-    public async Task MomoPayment_NotAffectedByCodCompletionRule()
+    public async Task MomoPendingPayment_CannotBeAdvancedByAdmin()
     {
         using var factory = new TestApiFactory();
 
         // Seed order without initiating payment first
         var (_, adminClient, orderId) = await SeedMomoOrderAsync(factory);
 
-        // Progress order to Completed
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
+        var progressResponse = await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
             new UpdateOrderStatusRequest("Preparing", null));
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Ready", null));
-        await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Delivered", null));
+        Assert.Equal(HttpStatusCode.Conflict, progressResponse.StatusCode);
 
-        var completeResponse = await adminClient.PutAsJsonAsync($"/api/admin/orders/{orderId}/status",
-            new UpdateOrderStatusRequest("Completed", null));
-        Assert.Equal(HttpStatusCode.OK, completeResponse.StatusCode);
-
-        // MoMo payment should still be Pending
+        // MoMo payment remains pending until its own payment flow completes.
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
