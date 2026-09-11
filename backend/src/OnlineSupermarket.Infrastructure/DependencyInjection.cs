@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using OnlineSupermarket.Infrastructure.Identity;
 using OnlineSupermarket.Infrastructure.Inventory;
@@ -19,7 +20,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrWhiteSpace(connectionString))
@@ -44,6 +46,15 @@ public static class DependencyInjection
             configuration.GetSection(VnPayWebhookOptions.SectionName));
         services.Configure<MoMoWebhookOptions>(
             configuration.GetSection(MoMoWebhookOptions.SectionName));
+        services.AddOptions<PaymentOptions>()
+            .Bind(configuration.GetSection(PaymentOptions.SectionName))
+            .Validate(
+                options => options.Mode is "Mock" or "Sandbox",
+                "Payments:Mode must be either 'Mock' or 'Sandbox'.")
+            .Validate(
+                options => options.Mode != "Mock" || environment.IsDevelopment(),
+                "Payments:Mode 'Mock' is only allowed in Development.")
+            .ValidateOnStart();
         services.AddScoped<IPaymentCallbackVerifier, VnPayCallbackVerifier>();
         services.AddScoped<IPaymentCallbackVerifier, MomoCallbackVerifier>();
         services.AddScoped<IPaymentCallbackProcessor, PaymentCallbackProcessor>();

@@ -122,6 +122,25 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
     }
 
     [Fact]
+    public async Task Payment_IsMock_RoundTripsAndDefaultsToFalse()
+    {
+        await using var db = CreateContext();
+        var seed = await SeedOrderWithPaymentAsync(db, OrderStatus.Pending, reserveInventory: false);
+        var mockPayment = Payment.Create(seed.Order.Id, PaymentMethod.MoMo, seed.Order.TotalAmount, isMock: true);
+        db.Payments.Add(mockPayment);
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
+
+        var payments = await db.Payments.AsNoTracking()
+            .Where(payment => payment.OrderId == seed.Order.Id)
+            .OrderBy(payment => payment.Id)
+            .ToListAsync();
+
+        Assert.Contains(payments, payment => payment.Id == seed.Payment.Id && !payment.IsMock);
+        Assert.Contains(payments, payment => payment.Id == mockPayment.Id && payment.IsMock);
+    }
+
+    [Fact]
     public async Task Sequential_Duplicate_Callback_IsIdempotent_OnMySql()
     {
         await using var db = CreateContext();

@@ -10,12 +10,13 @@ public sealed class Payment : Entity
     public PaymentMethod Method { get; private set; }
     public PaymentStatus Status { get; private set; }
     public decimal Amount { get; private set; }
+    public bool IsMock { get; private set; }
     public string? ProviderTransactionId { get; private set; }
     public string? ProviderResponse { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public DateTime? CompletedAtUtc { get; private set; }
 
-    public static Payment Create(Guid orderId, PaymentMethod method, decimal amount)
+    public static Payment Create(Guid orderId, PaymentMethod method, decimal amount, bool isMock = false)
     {
         return new Payment
         {
@@ -23,6 +24,7 @@ public sealed class Payment : Entity
             OrderId = orderId,
             Method = method,
             Amount = amount,
+            IsMock = isMock,
             Status = method == PaymentMethod.COD ? PaymentStatus.PendingCollection : PaymentStatus.Pending,
             CreatedAtUtc = DateTime.UtcNow
         };

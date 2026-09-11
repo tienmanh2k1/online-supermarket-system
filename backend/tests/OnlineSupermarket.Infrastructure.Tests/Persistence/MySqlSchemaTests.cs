@@ -135,6 +135,17 @@ public sealed class MySqlSchemaTests(MySqlFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Migrations_CreateRequiredPaymentIsMockColumn()
+    {
+        var columnCount = await ExecuteScalarAsync(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS " +
+            "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'payments' " +
+            "AND COLUMN_NAME = 'is_mock' AND IS_NULLABLE = 'NO'");
+
+        Assert.Equal(1L, columnCount);
+    }
+
+    [Fact]
     public async Task Migrations_DoNotCreateDeferredStockAlertsTable()
     {
         var alertCount = await ExecuteScalarAsync(

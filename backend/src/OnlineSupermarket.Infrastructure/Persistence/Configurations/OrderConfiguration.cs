@@ -88,6 +88,7 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Method).HasColumnName("method").HasConversion<string>().HasMaxLength(20).IsRequired();
         builder.Property(p => p.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(30).IsRequired();
         builder.Property(p => p.Amount).HasColumnName("amount").HasColumnType("decimal(18,2)").IsRequired();
+        builder.Property(p => p.IsMock).HasColumnName("is_mock").HasDefaultValue(false).IsRequired();
         builder.Property(p => p.ProviderTransactionId).HasColumnName("provider_transaction_id").HasMaxLength(200);
         builder.Property(p => p.ProviderResponse).HasColumnName("provider_response").HasColumnType("text");
         builder.Property(p => p.CreatedAtUtc).HasColumnName("created_at_utc").HasColumnType("datetime(6)");
