@@ -28,6 +28,7 @@ export interface PaymentInitDto {
   method: string
   status: string
   checkoutUrl: string | null
+  isMock?: boolean
 }
 
 export interface CheckoutResponse {

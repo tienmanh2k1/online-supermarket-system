@@ -17,6 +17,7 @@ import { AddressListPage } from './features/account/AddressListPage'
 import { CartPage } from './features/cart/CartPage'
 import { CheckoutPage } from './features/checkout/CheckoutPage'
 import { CheckoutSuccessPage } from './features/checkout/CheckoutSuccessPage'
+import { MockPaymentPage } from './features/checkout/MockPaymentPage'
 import { OrderHistoryPage } from './features/orders/OrderHistoryPage'
 import { OrderDetailPage } from './features/orders/OrderDetailPage'
 import { AdminRoute } from './features/admin/AdminRoute'
@@ -55,6 +56,7 @@ function CompareAppShell() {
           <Route path="/shopping/cart" element={<CartPage />} />
           <Route path="/shopping/checkout" element={<CheckoutPage />} />
           <Route path="/shopping/checkout/success" element={<CheckoutSuccessPage />} />
+          <Route path="/shopping/payment/mock/:paymentId" element={<MockPaymentPage />} />
           <Route path="/orders/history" element={<OrderHistoryPage />} />
           <Route path="/orders/history/:id" element={<OrderDetailPage />} />
 
