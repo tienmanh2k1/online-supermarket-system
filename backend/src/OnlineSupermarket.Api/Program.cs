@@ -64,6 +64,10 @@ if (app.Environment.IsDevelopment())
     await DataSeeder.SeedAllAsync(context, hasher);
 
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Online Supermarket API");
+    });
     app.MapDevEmailEndpoints();
 }
 

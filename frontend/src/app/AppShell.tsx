@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { ApiStatus } from '../features/system/ApiStatus'
 import { UserMenu } from '../features/auth/UserMenu'
 import { CartHeaderLink } from '../features/cart/CartHeaderLink'
@@ -10,25 +10,33 @@ export function AppShell({ children }: PropsWithChildren) {
   return (
     <div className="site-shell bg-slate-50 min-h-screen">
       <header className="site-header-wrap w-full bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div className="site-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6 lg:gap-8">
-            <Link className="brand" to="/" aria-label="AptechMart — trang chủ">
-              <span className="brand__mark">AM</span>
-              <span>
-                <strong>AptechMart</strong>
-                <small>Siêu thị điện tử</small>
-              </span>
-            </Link>
+        <div className="site-header max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 lg:gap-8 flex-nowrap">
+          {/* Khối Trái: Logo */}
+          <Link className="brand shrink-0 flex items-center gap-3" to="/" aria-label="AptechMart — trang chủ">
+            <span className="brand__mark shrink-0">AM</span>
+            <span className="brand__text flex flex-col justify-center">
+              <strong>AptechMart</strong>
+              <small>Siêu thị điện tử</small>
+            </span>
+          </Link>
 
-            <nav className="site-nav flex items-center gap-6 lg:gap-8" aria-label="Điều hướng chính">
-              <Link to="/browse" className="nav-menu-link">Sản phẩm</Link>
-              <BranchNavMenu />
-              <CompareHeaderLink />
-              <CartHeaderLink />
-            </nav>
-          </div>
+          {/* Khối Giữa: Navigation */}
+          <nav className="site-nav flex items-center gap-1 sm:gap-2 lg:gap-3 flex-nowrap" aria-label="Điều hướng chính">
+            <NavLink
+              to="/browse"
+              className={({ isActive }) =>
+                `nav-menu-link ${isActive ? 'nav-menu-link--active' : ''}`
+              }
+            >
+              Sản phẩm
+            </NavLink>
+            <BranchNavMenu />
+            <CompareHeaderLink />
+            <CartHeaderLink />
+          </nav>
 
-          <div className="header-actions flex items-center gap-3 md:gap-4">
+          {/* Khối Phải: Actions */}
+          <div className="header-actions shrink-0 flex items-center gap-2.5 sm:gap-3 lg:gap-4">
             <UserMenu />
             <ApiStatus />
           </div>

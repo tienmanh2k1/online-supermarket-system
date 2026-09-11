@@ -403,10 +403,35 @@
   width: 100%;
   padding: 14px 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  background: var(--forest);
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  text-decoration: none;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+}
+
+.cart-btn--checkout:hover:not(:disabled):not(.cart-btn--disabled) {
+  background: var(--leaf);
+  color: white;
+  cursor: pointer;
+}
+
+.cart-btn--checkout:active:not(:disabled):not(.cart-btn--disabled) {
+  transform: translateY(1px);
+}
+
+.cart-btn--checkout:disabled,
+.cart-btn--checkout.cart-btn--disabled {
   background: #a3b8b0;
+  color: white;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .cart-btn__badge {
@@ -414,6 +439,20 @@
   background: rgba(0, 0, 0, 0.2);
   padding: 2px 8px;
   border-radius: 4px;
+}
+
+/* Utilities for cursor and interaction state */
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.cursor-not-allowed,
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed !important;
+}
+
+.pointer-events-none {
+  pointer-events: none !important;
 }
 
 /* Dialog Overlay */

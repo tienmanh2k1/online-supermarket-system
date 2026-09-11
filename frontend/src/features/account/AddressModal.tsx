@@ -15,7 +15,6 @@ export function AddressModal({ isOpen, initialData, onClose, onSave }: AddressMo
   const [ward, setWard] = useState('')
   const [district, setDistrict] = useState('')
   const [city, setCity] = useState('')
-  const [postalCode, setPostalCode] = useState('')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +29,6 @@ export function AddressModal({ isOpen, initialData, onClose, onSave }: AddressMo
       setWard(initialData.ward)
       setDistrict(initialData.district)
       setCity(initialData.city)
-      setPostalCode(initialData.postalCode || '')
     } else {
       setRecipientName('')
       setPhone('')
@@ -38,7 +36,6 @@ export function AddressModal({ isOpen, initialData, onClose, onSave }: AddressMo
       setWard('')
       setDistrict('')
       setCity('')
-      setPostalCode('')
     }
     setError(null)
   }, [initialData, isOpen])
@@ -63,7 +60,6 @@ export function AddressModal({ isOpen, initialData, onClose, onSave }: AddressMo
         ward: ward.trim(),
         district: district.trim(),
         city: city.trim(),
-        postalCode: postalCode.trim() || null,
       })
       onClose()
     } catch (err: any) {
@@ -170,32 +166,18 @@ export function AddressModal({ isOpen, initialData, onClose, onSave }: AddressMo
             </div>
           </div>
 
-          <div className="form-row-2">
-            <div className="form-group">
-              <label htmlFor="addr-city">Tỉnh / Thành phố *</label>
-              <input
-                id="addr-city"
-                type="text"
-                required
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="VD: TP. Hồ Chí Minh"
-                className="input-field"
-                data-testid="input-city"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="addr-postal">Mã bưu điện (Tùy chọn)</label>
-              <input
-                id="addr-postal"
-                type="text"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                placeholder="VD: 700000"
-                className="input-field"
-                data-testid="input-postal"
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="addr-city">Tỉnh / Thành phố *</label>
+            <input
+              id="addr-city"
+              type="text"
+              required
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="VD: TP. Hồ Chí Minh"
+              className="input-field"
+              data-testid="input-city"
+            />
           </div>
 
           <div className="modal-actions">

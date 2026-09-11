@@ -209,6 +209,15 @@ export function CartPage() {
   if (status === 'error') return <CartLoadError onRetry={() => void reloadCart()} />
   if (!cart) return <CartLoadError onRetry={() => void reloadCart()} />
 
+  const isCheckoutDisabled =
+    !cart ||
+    cart.items.length === 0 ||
+    cart.totalItems <= 0 ||
+    cart.subtotal <= 0 ||
+    isChangingBranch ||
+    isClearing ||
+    mutatingItemIds.size > 0
+
   return (
     <section className="cart-page">
       <h1 className="cart-page__heading">Giỏ hàng của bạn</h1>
@@ -348,9 +357,28 @@ export function CartPage() {
               <span>Tạm tính</span>
               <strong className="cart-summary__price">{formatPrice(cart.subtotal)}</strong>
             </div>
-            <Link to="/shopping/checkout" className="cart-btn cart-btn--checkout">
-              Tiến hành thanh toán
-            </Link>
+            {isCheckoutDisabled ? (
+              <button
+                type="button"
+                disabled
+                className="cart-btn cart-btn--checkout cart-btn--disabled cursor-not-allowed disabled:cursor-not-allowed"
+                aria-disabled="true"
+                title={
+                  cart.items.length === 0 || cart.totalItems <= 0 || cart.subtotal <= 0
+                    ? 'Giỏ hàng không có sản phẩm hoặc số tiền không hợp lệ'
+                    : 'Giỏ hàng đang được cập nhật, vui lòng đợi'
+                }
+              >
+                Tiến hành thanh toán
+              </button>
+            ) : (
+              <Link
+                to="/shopping/checkout"
+                className="cart-btn cart-btn--checkout cursor-pointer"
+              >
+                Tiến hành thanh toán
+              </Link>
+            )}
           </aside>
         </div>
       )}

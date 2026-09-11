@@ -1,15 +1,17 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useCart } from './CartContext'
 import './CartHeaderLink.css'
 
 export function CartHeaderLink() {
   const { status, cart } = useCart()
+  const location = useLocation()
   const count = status === 'ready' ? cart?.totalItems ?? 0 : 0
+  const isActive = location.pathname.startsWith('/shopping/cart')
 
   return (
     <Link
       to="/shopping/cart"
-      className="cart-header-link relative inline-flex items-center gap-2"
+      className={`cart-header-link relative inline-flex items-center gap-2 ${isActive ? 'cart-header-link--active' : ''}`}
       aria-label={`Giỏ hàng${count > 0 ? ` (${count} sản phẩm)` : ''}`}
     >
       <span className="cart-header-link__icon-container relative inline-flex items-center justify-center">

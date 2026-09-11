@@ -375,9 +375,17 @@ describe('CartPage & Header Badge', () => {
 
   it('links ready carts to checkout', async () => {
     renderReadyCart()
-    expect(
-      await screen.findByRole('link', { name: 'Tiến hành thanh toán' })
-    ).toHaveAttribute('href', '/shopping/checkout')
+    const checkoutLink = await screen.findByRole('link', { name: 'Tiến hành thanh toán' })
+    expect(checkoutLink).toHaveAttribute('href', '/shopping/checkout')
+    expect(checkoutLink).toHaveClass('cursor-pointer')
+  })
+
+  it('disables checkout button when cart is mutating or has invalid total', () => {
+    renderReadyCart({ mutatingItemIds: new Set(['item-1']) })
+    const checkoutBtn = screen.getByRole('button', { name: 'Tiến hành thanh toán' })
+    expect(checkoutBtn).toBeDisabled()
+    expect(checkoutBtn).toHaveClass('cart-btn--disabled')
+    expect(checkoutBtn).toHaveClass('cursor-not-allowed')
   })
 
   it('exposes accessible cart controls and progress', () => {

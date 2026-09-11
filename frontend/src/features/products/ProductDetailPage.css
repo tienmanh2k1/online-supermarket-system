@@ -1,6 +1,7 @@
 .product-detail-page {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto 64px;
+  overflow-anchor: none;
 }
 
 /* Breadcrumb */

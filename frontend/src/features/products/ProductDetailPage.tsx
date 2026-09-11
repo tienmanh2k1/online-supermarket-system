@@ -89,6 +89,19 @@ export function ProductDetailPage() {
     setRetryAdd(null)
   }, [id, branchId])
 
+  // Scroll to top when product ID changes (unless URL contains #reviews anchor)
+  useEffect(() => {
+    if (window.location.hash !== '#reviews') {
+      if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      }
+      if (typeof document !== 'undefined') {
+        if (document.documentElement) document.documentElement.scrollTop = 0
+        if (document.body) document.body.scrollTop = 0
+      }
+    }
+  }, [id])
+
   // Scroll and focus reviews section when URL fragment is #reviews
   useEffect(() => {
     if (productState.kind === 'ready' && window.location.hash === '#reviews') {

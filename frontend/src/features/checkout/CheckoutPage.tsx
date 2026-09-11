@@ -17,7 +17,7 @@ import { ApiError } from '../../api/httpClient'
 import type { CartDto } from '../../api/cartApi'
 import './CheckoutPage.css'
 
-const DELIVERY_SHIPPING_FEE = 15000
+const DELIVERY_SHIPPING_FEE = 0
 
 function isAbortError(error: unknown) {
   return error instanceof Error && error.name === 'AbortError'

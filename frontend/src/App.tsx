@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from './app/AppShell'
+import { ScrollToTop } from './app/ScrollToTop'
 import { AuthProvider } from './features/auth/AuthContext'
 import { CartProvider } from './features/cart/CartContext'
 import { CompareProvider } from './features/compare/CompareContext'
@@ -90,6 +91,7 @@ function CompareAppShell() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <CartProvider>
           <CompareProvider>

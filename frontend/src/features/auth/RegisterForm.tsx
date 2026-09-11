@@ -20,8 +20,14 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
     e.preventDefault()
     setError(null)
 
-    if (!fullName.trim() || !email.trim() || !password) {
+    if (!fullName.trim() || !email.trim() || !phone.trim() || !password) {
       setError('Vui lòng điền đầy đủ các thông tin bắt buộc.')
+      return
+    }
+
+    const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/
+    if (!phoneRegex.test(phone.trim())) {
+      setError('Số điện thoại không hợp lệ. Vui lòng nhập 10 số bắt đầu bằng 0.')
       return
     }
 
@@ -40,7 +46,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       await register({
         fullName: fullName.trim(),
         email: email.trim(),
-        phone: phone.trim() || null,
+        phone: phone.trim(),
         password,
       })
       onSuccess?.()
@@ -95,7 +101,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       </div>
 
       <div className="form-group">
-        <label htmlFor="reg-phone">Số điện thoại (tùy chọn)</label>
+        <label htmlFor="reg-phone">Số điện thoại *</label>
         <input
           id="reg-phone"
           type="tel"
@@ -104,6 +110,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           disabled={isSubmitting}
+          required
         />
       </div>
 

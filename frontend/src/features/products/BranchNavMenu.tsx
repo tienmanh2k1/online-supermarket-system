@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { branchApi, type BranchDto } from '../../api/branchApi'
 import './BranchNavMenu.css'
 
@@ -11,7 +11,9 @@ import './BranchNavMenu.css'
  */
 export function BranchNavMenu() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [branches, setBranches] = useState<BranchDto[]>([])
+  const isActive = location.pathname.startsWith('/branches')
 
   useEffect(() => {
     const controller = new AbortController()
@@ -30,7 +32,11 @@ export function BranchNavMenu() {
 
   return (
     <div className="branch-nav">
-      <Link to="/branches" className="branch-nav__label" aria-haspopup="menu">
+      <Link
+        to="/branches"
+        className={`branch-nav__label ${isActive ? 'branch-nav__label--active' : ''}`}
+        aria-haspopup="menu"
+      >
         Chi nhánh
       </Link>
       <div className="branch-nav__menu" role="menu" aria-label="Danh sách chi nhánh">
