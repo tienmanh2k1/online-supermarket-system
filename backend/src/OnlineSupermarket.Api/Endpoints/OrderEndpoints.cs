@@ -169,6 +169,17 @@ public static class OrderEndpoints
         if (!Enum.TryParse<OrderStatus>(request.Status, true, out var newStatus))
             return Results.BadRequest(new { message = "Invalid status value." });
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+            System.Data.IsolationLevel.Serializable, cancellationToken);
+
+        if (dbContext.Database.IsRelational())
+        {
+            await dbContext.Orders
+                .FromSqlInterpolated($"SELECT * FROM orders WHERE Id = {id} FOR UPDATE")
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         var order = await dbContext.Orders
             .Include(o => o.Items)
             .Include(o => o.StatusHistory)
@@ -182,6 +193,14 @@ public static class OrderEndpoints
             .OrderByDescending(item => item.CreatedAtUtc)
             .ThenByDescending(item => item.Id)
             .FirstOrDefaultAsync(cancellationToken);
+        if (payment is not null && dbContext.Database.IsRelational())
+        {
+            await dbContext.Payments
+                .FromSqlInterpolated($"SELECT * FROM payments WHERE Id = {payment.Id} FOR UPDATE")
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+            await dbContext.Entry(payment).ReloadAsync(cancellationToken);
+        }
         if (newStatus != OrderStatus.Cancelled
             && (payment is null || (payment.Method != PaymentMethod.COD && payment.Status != PaymentStatus.Completed)))
             return Results.Conflict(new { code = "PAYMENT_NOT_COMPLETED" });
@@ -191,9 +210,6 @@ public static class OrderEndpoints
         var validTransitions = GetValidTransitions(order.Status);
         if (!validTransitions.Contains(newStatus))
             return Results.BadRequest(new { message = $"Invalid transition from {order.Status} to {newStatus}." });
-
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
-            System.Data.IsolationLevel.Serializable, cancellationToken);
 
         if (newStatus == OrderStatus.Cancelled)
         {

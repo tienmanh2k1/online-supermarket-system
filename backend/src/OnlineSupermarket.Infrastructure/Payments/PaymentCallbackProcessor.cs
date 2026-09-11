@@ -55,18 +55,24 @@ public sealed class PaymentCallbackProcessor(
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
-        var duplicate = await dbContext.PaymentCallbacks.AnyAsync(
-            x => x.Provider == provider && x.ExternalEventId == callback.ExternalEventId, cancellationToken);
-        if (duplicate) return PaymentCallbackOutcome.AlreadyProcessed;
-
         var paymentQuery = dbContext.Payments.Where(x => x.OrderId == callback.OrderId);
         if (callback.TargetPaymentId.HasValue)
             paymentQuery = paymentQuery.Where(x => x.Id == callback.TargetPaymentId.Value);
-        var payment = await paymentQuery
+        var candidate = await paymentQuery
             .OrderByDescending(x => x.CreatedAtUtc)
             .ThenByDescending(x => x.Id)
+            .Select(x => new { x.Id, x.OrderId })
             .FirstOrDefaultAsync(cancellationToken);
-        if (payment is null) return PaymentCallbackOutcome.PaymentNotFound;
+        if (candidate is null) return PaymentCallbackOutcome.PaymentNotFound;
+
+        // All writers serialize on the order first, then its payment. This avoids
+        // an admin cancellation racing a callback into two inventory reversals.
+        await LockOrderAsync(candidate.OrderId, cancellationToken);
+        var order = await dbContext.Orders
+            .Include(x => x.Items)
+            .Include(x => x.StatusHistory)
+            .FirstOrDefaultAsync(x => x.Id == candidate.OrderId, cancellationToken);
+        if (order is null) return PaymentCallbackOutcome.PaymentNotFound;
 
         // Test seam: both contenders can reach this point concurrently because the
         // payment read above is non-locking; only the FOR UPDATE below serializes.
@@ -79,17 +85,19 @@ public sealed class PaymentCallbackProcessor(
         if (dbContext.Database.IsRelational())
         {
             await dbContext.Payments
-                .FromSqlInterpolated($"SELECT * FROM payments WHERE Id = {payment.Id} FOR UPDATE")
+                .FromSqlInterpolated($"SELECT * FROM payments WHERE Id = {candidate.Id} FOR UPDATE")
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);
         }
-        await dbContext.Entry(payment).ReloadAsync(cancellationToken);
+        var payment = await dbContext.Payments.FirstOrDefaultAsync(x => x.Id == candidate.Id, cancellationToken);
+        if (payment is null) return PaymentCallbackOutcome.PaymentNotFound;
 
         // We may have blocked on the row lock while the winning transaction
         // committed the very callback we are about to insert; re-check the
         // unique (provider, externalEventId) after serialization.
         var duplicateAfterLock = await dbContext.PaymentCallbacks.AnyAsync(
-            x => x.Provider == provider && x.ExternalEventId == callback.ExternalEventId, cancellationToken);
+            x => x.PaymentId == payment.Id && x.Provider == provider && x.ExternalEventId == callback.ExternalEventId,
+            cancellationToken);
         if (duplicateAfterLock) return PaymentCallbackOutcome.AlreadyProcessed;
 
         var expectedMethod = PaymentMethodExpected(provider);
@@ -101,12 +109,6 @@ public sealed class PaymentCallbackProcessor(
         {
             return PaymentCallbackOutcome.Conflict;
         }
-
-        var order = await dbContext.Orders
-            .Include(x => x.Items)
-            .Include(x => x.StatusHistory)
-            .FirstOrDefaultAsync(x => x.Id == payment.OrderId, cancellationToken);
-        if (order is null) return PaymentCallbackOutcome.PaymentNotFound;
 
         if (order.Status is not (OrderStatus.Pending or OrderStatus.Confirmed))
             return PaymentCallbackOutcome.Conflict;
@@ -154,6 +156,15 @@ public sealed class PaymentCallbackProcessor(
 
     internal Func<Task>? BeforeSaveTestHook { get; set; }
     internal Func<Task>? BeforePaymentLockTestHook { get; set; }
+
+    private async Task LockOrderAsync(Guid orderId, CancellationToken cancellationToken)
+    {
+        if (!dbContext.Database.IsRelational()) return;
+        await dbContext.Orders
+            .FromSqlInterpolated($"SELECT * FROM orders WHERE Id = {orderId} FOR UPDATE")
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
     private static bool IsDuplicateKeyError(Exception error)
     {
