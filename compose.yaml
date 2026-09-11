@@ -28,6 +28,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       Infrastructure__DisableBackgroundServices: "false"
+      Payments__Mode: ${PAYMENTS_MODE:-Mock}
       ConnectionStrings__DefaultConnection: ${ConnectionStrings__DefaultConnection}
     depends_on:
       mysql:

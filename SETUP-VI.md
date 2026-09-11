@@ -93,6 +93,8 @@ Invoke-RestMethod http://localhost:8080/api/health
 
 File `.env.example` đã khai báo đủ `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD`, chuỗi kết nối và `VITE_API_BASE_URL`. Nếu đổi mật khẩu database, cập nhật đồng thời chuỗi kết nối. Các biến khởi tạo MySQL chỉ áp dụng khi volume trống; đổi `.env` không tự đổi mật khẩu trong volume cũ.
 
+`PAYMENTS_MODE=Mock` là cấu hình demo mặc định. Khi checkout, chọn MoMo hoặc VNPay để vào trang **Thanh toán giả lập — không thu tiền**; ba nút chỉ mô phỏng Success, Failed và Cancelled trong database local. Không dùng thông tin merchant, không tạo QR/OTP và không thu tiền. `Sandbox` hiện chỉ dùng để tắt thanh toán online với mã `PAYMENT_PROVIDER_NOT_CONFIGURED`, không phải bật thanh toán thật.
+
 API Docker chạy Development và tự migrate/seed. Không cần import SQL thủ công. Dữ liệu được lưu trong named volume `mysql_data`. Gói này không chứa các đơn QA từ máy tác giả; máy mới có dữ liệu seed, ID được tạo mới.
 
 Các lệnh thường dùng:

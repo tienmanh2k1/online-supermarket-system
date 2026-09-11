@@ -21,7 +21,7 @@
 - **Khách hàng:** đăng ký/đăng nhập, hồ sơ và sổ địa chỉ; tìm kiếm/lọc sản phẩm; chọn chi nhánh; giỏ hàng; nhận tại cửa hàng hoặc giao tận nơi; lịch sử đơn; đánh giá sản phẩm theo điều kiện mua hàng.
 - **Quản trị:** danh mục, thương hiệu, sản phẩm, chi nhánh; giá và tồn kho; nhật ký biến động kho; xử lý đơn; khóa/mở tài khoản; dashboard và báo cáo doanh số.
 - **Tác vụ nền:** dự báo nhu cầu, gợi ý sản phẩm và giao diện quản lý tác vụ.
-- **Thanh toán:** COD và luồng sandbox VNPay/MoMo. Kiểm thử cổng bên ngoài chưa được xác minh xuyên suốt trong đợt final.
+- **Thanh toán:** COD và MoMo/VNPay giả lập trong Development. Màn hình giả lập không thu tiền; đổi sang Sandbox vẫn chưa cấu hình cổng thật.
 - **So sánh, coupon và khuyến mãi:** đã có mã nguồn/giao diện; tài liệu phạm vi release ghi deferred, không tính là nghiệm thu đầy đủ mọi biến thể.
 
 ## Chạy dự án
@@ -76,6 +76,8 @@ Invoke-RestMethod http://localhost:8080/api/health
 | MySQL trên host | 127.0.0.1:3306 |
 
 API tự migrate và tạo dữ liệu demo. Database/user/mật khẩu cấu hình trong .env; nếu đổi mật khẩu, cập nhật cả chuỗi kết nối. Dữ liệu được giữ trong Docker volume, không nằm trong repository.
+
+`PAYMENTS_MODE=Mock` là mặc định cho demo: sau khi tạo đơn, chọn MoMo hoặc VNPay để mở trang **“Thanh toán giả lập — không thu tiền”** rồi chọn thành công, thất bại hoặc hủy. Sandbox hiện trả `PAYMENT_PROVIDER_NOT_CONFIGURED`; chưa có merchant credential hay giao dịch thật.
 
 ~~~powershell
 # Xem lỗi khởi động
