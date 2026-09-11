@@ -1,8 +1,10 @@
 .admin-shell {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 240px minmax(0, 1fr);
   gap: 24px;
   max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 24px auto;
   padding: 0 20px;
   align-items: start;
@@ -71,6 +73,7 @@
 
 .admin-content {
   min-width: 0;
+  max-width: 100%;
 }
 
 /* Guard states (login required / access denied) */

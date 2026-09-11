@@ -63,7 +63,7 @@ export function QuickCategoryStrip() {
       aria-label="Danh mục sản phẩm nổi bật"
     >
       <div className="kg-quick-categories__container">
-        <div className="kg-quick-categories__box">
+        <div className="kg-quick-categories__box bg-white rounded-2xl border border-slate-200 shadow-sm">
           <ul className="kg-quick-categories__track">
             {APTECHMART_QUICK_CATEGORIES.map((cat) => (
               <li key={cat.id} className="kg-quick-categories__item">

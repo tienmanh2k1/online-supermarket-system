@@ -3,9 +3,11 @@ import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { adminApi, type PaginatedUsersDto, type UserSummaryDto } from '../../api/adminApi'
 import { ApiError } from '../../api/httpClient'
+import { AdminCard, AdminBadge, AdminPagination, AdminEmptyState } from './components'
 import './AdminOrdersPage.css'
 import './AdminInventoryPage.css'
 import './AdminUsersPage.css'
+import './AdminDesignSystem.css'
 
 const PAGE_SIZE = 20
 
@@ -110,6 +112,8 @@ export function AdminUsersPage() {
     }
   }
 
+  const totalPages = data ? Math.ceil(data.totalCount / PAGE_SIZE) : 1
+
   return (
     <main className="admin-page admin-users" role="main" aria-label="Quản lý người dùng">
       <header className="admin-page-header">
@@ -117,55 +121,82 @@ export function AdminUsersPage() {
         <p className="admin-page-sub">Xem danh sách tài khoản và khóa / mở khóa / vô hiệu hóa.</p>
       </header>
 
-      {loadState === 'error' && (
-        <section className="admin-alert" role="alert">
-          <p>Không thể tải danh sách người dùng. Vui lòng thử lại.</p>
-          <button type="button" onClick={() => setRetryKey((prev) => prev + 1)}>Thử lại</button>
-        </section>
-      )}
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex items-center justify-between w-full">
+            <h2 className="text-base font-semibold text-slate-800" style={{ margin: 0 }}>Danh sách người dùng</h2>
+            {data && (
+              <AdminBadge variant="neutral">
+                Tổng: <strong style={{ marginLeft: 4 }}>{data.totalCount}</strong> tài khoản
+              </AdminBadge>
+            )}
+          </div>
+        }
+        footer={
+          data ? (
+            <AdminPagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalCount={data.totalCount}
+              itemName="người dùng"
+              onPageChange={setPage}
+            />
+          ) : undefined
+        }
+      >
+        {loadState === 'error' && (
+          <section className="admin-alert p-6" role="alert">
+            <p className="text-rose-600 font-medium">Không thể tải danh sách người dùng. Vui lòng thử lại.</p>
+            <button type="button" className="btn btn-sm btn-secondary mt-2" onClick={() => setRetryKey((prev) => prev + 1)}>Thử lại</button>
+          </section>
+        )}
 
-      {loadState === 'loading' && <p className="admin-loading" aria-busy="true">Đang tải người dùng...</p>}
+        {loadState === 'loading' && <p className="admin-loading py-8 text-center text-slate-500" aria-busy="true">Đang tải người dùng...</p>}
 
-      {loadState === 'ready' && data && data.users.length === 0 && (
-        <div className="admin-empty"><p>Không có người dùng nào.</p></div>
-      )}
+        {loadState === 'ready' && data && data.users.length === 0 && (
+          <AdminEmptyState icon="👥" message="Không có người dùng nào." />
+        )}
 
-      {loadState === 'ready' && data && data.users.length > 0 && (
-        <div className="admin-table-wrap">
-          <table className="admin-table" aria-label="Danh sách người dùng">
+        {loadState === 'ready' && data && data.users.length > 0 && (
+          <table className="admin-table admin-ds-table" aria-label="Danh sách người dùng" style={{ width: '100%' }}>
             <thead>
               <tr>
-                <th scope="col">Email</th>
-                <th scope="col">Họ tên</th>
-                <th scope="col">SĐT</th>
-                <th scope="col">Vai trò</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col">Ngày tạo</th>
-                <th scope="col">Đổi trạng thái</th>
+                <th scope="col" className="col-text text-left">Email</th>
+                <th scope="col" className="col-text text-left">Họ tên</th>
+                <th scope="col" className="col-text text-left">SĐT</th>
+                <th scope="col" className="col-status text-center">Vai trò</th>
+                <th scope="col" className="col-status text-center">Trạng thái</th>
+                <th scope="col" className="col-text text-left">Ngày tạo</th>
+                <th scope="col" className="col-actions text-right">Đổi trạng thái</th>
               </tr>
             </thead>
             <tbody>
               {data.users.map((user) => (
                 <tr key={user.id}>
-                  <td>{user.email}</td>
-                  <td>{user.fullName}</td>
-                  <td>{user.phone || '—'}</td>
-                  <td>
-                    <span className={`admin-role admin-role--${user.role.toLowerCase()}`}>
+                  <td className="col-text text-left align-middle font-medium text-slate-800">{user.email}</td>
+                  <td className="col-text text-left align-middle text-slate-700">{user.fullName}</td>
+                  <td className="col-text text-left align-middle text-slate-600 font-mono text-xs">{user.phone || '—'}</td>
+                  <td className="col-status text-center align-middle">
+                    <AdminBadge variant={user.role === 'Admin' ? 'info' : 'neutral'} className={`admin-role admin-role--${user.role.toLowerCase()}`}>
                       {ROLE_LABELS[user.role] ?? user.role}
-                    </span>
+                    </AdminBadge>
                   </td>
-                  <td>
-                    <span className={`admin-status admin-status--${user.status.toLowerCase()}`}>
+                  <td className="col-status text-center align-middle">
+                    <AdminBadge
+                      variant={user.status === 'Active' ? 'success' : user.status === 'Locked' ? 'warning' : 'danger'}
+                      dot
+                      className={`admin-status admin-status--${user.status.toLowerCase()}`}
+                    >
                       {userStatusLabel(user.status)}
                       <span className="sr-only">{user.status}</span>
-                    </span>
+                    </AdminBadge>
                   </td>
-                  <td>{formatDate(user.createdAtUtc)}</td>
-                  <td>
+                  <td className="col-text text-left align-middle text-slate-600 text-xs">{formatDate(user.createdAtUtc)}</td>
+                  <td className="col-actions text-right align-middle">
                     <select
                       value={user.status}
                       aria-label={`Đổi trạng thái ${user.email}`}
+                      className="admin-select-filter text-xs py-1 px-2"
                       onChange={(event) => requestChange(user, event.target.value)}
                     >
                       {USER_STATUSES.map((status) => (
@@ -177,22 +208,8 @@ export function AdminUsersPage() {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {data && (
-        <nav className="admin-pagination" aria-label="Phân trang người dùng">
-          <button type="button" onClick={() => setPage(page - 1)} disabled={page <= 1}>Trang trước</button>
-          <span>Trang {page}</span>
-          <button
-            type="button"
-            onClick={() => setPage(page + 1)}
-            disabled={page * PAGE_SIZE >= data.totalCount}
-          >
-            Trang sau
-          </button>
-        </nav>
-      )}
+        )}
+      </AdminCard>
 
       {pending && (
         <div className="admin-modal-overlay" onClick={cancelChange}>

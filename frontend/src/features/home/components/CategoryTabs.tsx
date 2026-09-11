@@ -27,7 +27,7 @@ export function CategoryTabs({ tabs, products, defaultTab = 'all' }: CategoryTab
 
   return (
     <section
-      className="category-showcase-section"
+      className="category-showcase-section bg-white rounded-2xl border border-slate-200 shadow-sm"
       data-testid="home-category-showcase"
       aria-label="Sản phẩm theo ngành hàng"
     >

@@ -32,16 +32,36 @@
   --brand-green: #159447;
   --brand-green-dark: #0b5d37;
   --brand-orange: #ff7a1a;
-  --brand-bg: #f4f7f5;
+  --brand-bg: #f8fafc;
   --brand-surface: #ffffff;
-  --brand-ink: #17211b;
+  --brand-ink: #0f172a;
   font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 2rem;
   padding-bottom: 60px;
   overflow-x: hidden;
-  max-width: 100%;
+  max-width: 80rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .home-page.appliance-home-page {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-page.appliance-home-page {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    gap: 2.5rem;
+  }
 }
 
 /* ==========================================================================
@@ -103,9 +123,9 @@
 /* Column 2: Main Slider Banner (Aspect Ratio 16:9 / 21:9) */
 .appliance-slider-container {
   position: relative;
-  border-radius: var(--appliance-radius-md);
-  overflow: hidden;
-  box-shadow: var(--appliance-shadow-sm);
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   background: #000;
   display: flex;
   flex-direction: column;
@@ -653,9 +673,9 @@
   flex: 1;
   text-decoration: none;
   color: inherit;
-  border-radius: var(--appliance-radius-md);
-  overflow: hidden;
-  box-shadow: var(--appliance-shadow-sm);
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   background: #0f172a;
   position: relative;
   display: block;
@@ -736,10 +756,10 @@
 
 .kg-quick-categories__box {
   background: #ffffff;
-  border: 1px solid var(--appliance-border);
-  border-radius: var(--appliance-radius-lg);
-  box-shadow: var(--appliance-shadow-sm);
-  padding: 14px 18px;
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 16px 20px;
 }
 
 .kg-quick-categories__track {
@@ -829,10 +849,10 @@
    ========================================================================== */
 .appliance-trust-badges {
   background: #ffffff;
-  border: 1px solid var(--appliance-border);
-  border-radius: var(--appliance-radius-md);
-  padding: 18px 24px;
-  box-shadow: var(--appliance-shadow-sm);
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
+  padding: 20px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .appliance-trust-badges__grid {
@@ -880,10 +900,10 @@
    ========================================================================== */
 .flash-sale-section {
   background: #ffffff;
-  border: 1px solid var(--appliance-border);
-  border-radius: var(--appliance-radius-lg);
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
   padding: 24px 28px;
-  box-shadow: var(--appliance-shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -1591,6 +1611,11 @@
    5. CATEGORY TABS SECTION (Kangaroo Vibrant Green Theme)
    ========================================================================== */
 .category-showcase-section {
+  background: #ffffff;
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
+  padding: 24px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1677,9 +1702,9 @@
 .home-branch-teaser {
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
   border: 1px solid #bbf7d0;
-  border-radius: var(--appliance-radius-lg);
+  border-radius: 1rem;
   padding: 36px 40px;
-  box-shadow: var(--appliance-shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
 }
@@ -1745,9 +1770,27 @@
 
 /* Roadmap Section */
 .home-roadmap {
+  background: #ffffff;
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
+  padding: 32px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+/* Home Recommendations Shelf Section */
+.home-recommendations-section {
+  background: #ffffff;
+  border: 1px solid var(--appliance-border, #e2e8f0);
+  border-radius: 1rem;
+  padding: 24px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.home-recommendations-section:empty {
+  display: none;
 }
 
 .home-section-header--center {

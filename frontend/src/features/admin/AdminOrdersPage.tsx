@@ -4,7 +4,9 @@ import { useAuth } from '../auth/AuthContext'
 import { adminApi } from '../../api/adminApi'
 import type { PaginatedOrdersDto } from '../../api/orderApi'
 import { ORDER_STATUSES, formatStatus } from './orderStatus'
+import { AdminCard, AdminBadge, AdminPagination, AdminEmptyState } from './components'
 import './AdminOrdersPage.css'
+import './AdminDesignSystem.css'
 
 const PAGE_SIZE = 10
 
@@ -86,6 +88,24 @@ export function AdminOrdersPage() {
     setSearchParams(next)
   }
 
+function getStatusVariant(status: string): 'success' | 'warning' | 'danger' | 'neutral' | 'info' {
+  switch (status) {
+    case 'Delivered':
+      return 'success'
+    case 'Cancelled':
+      return 'danger'
+    case 'Shipped':
+      return 'warning'
+    case 'Confirmed':
+    case 'Processing':
+      return 'info'
+    default:
+      return 'neutral'
+  }
+}
+
+  const totalPages = orders ? Math.ceil(orders.totalCount / PAGE_SIZE) : 1
+
   return (
     <main className="admin-page admin-orders" role="main" aria-label="Quản lý đơn hàng">
       <header className="admin-page-header">
@@ -93,84 +113,122 @@ export function AdminOrdersPage() {
         <p className="admin-page-sub">Xem toàn bộ đơn hàng của hệ thống và cập nhật trạng thái.</p>
       </header>
 
-      <div className="admin-toolbar">
-        <div className="admin-field">
-          <label htmlFor="admin-order-status">Lọc trạng thái</label>
-          <select
-            id="admin-order-status"
-            value={status}
-            onChange={(event) => setStatusFilter(event.target.value)}
-          >
-            <option value="">Tất cả trạng thái</option>
-            {ORDER_STATUSES.map((value) => (
-              <option key={value} value={value}>{formatStatus(value)}</option>
-            ))}
-          </select>
-        </div>
-        <form className="admin-field" onSubmit={applyUserIdFilter}>
-          <label htmlFor="admin-order-user">Lọc theo mã khách (userId)</label>
-          <div className="admin-field-inline">
-            <input
-              id="admin-order-user"
-              type="text"
-              value={userIdInput}
-              placeholder="Dán userId..."
-              onChange={(event) => setUserIdInput(event.target.value)}
-            />
-            <button type="submit">Lọc</button>
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
+            <div className="admin-toolbar-left flex flex-wrap items-center gap-3">
+              <div className="admin-field" style={{ margin: 0 }}>
+                <label htmlFor="admin-order-status" className="sr-only">Lọc trạng thái</label>
+                <select
+                  id="admin-order-status"
+                  className="admin-select-filter"
+                  value={status}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                  aria-label="Lọc trạng thái"
+                >
+                  <option value="">Tất cả trạng thái</option>
+                  {ORDER_STATUSES.map((value) => (
+                    <option key={value} value={value}>{formatStatus(value)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <form className="admin-field flex items-center gap-2" onSubmit={applyUserIdFilter} style={{ margin: 0 }}>
+                <label htmlFor="admin-order-user" className="sr-only">Lọc theo mã khách (userId)</label>
+                <input
+                  id="admin-order-user"
+                  type="text"
+                  className="admin-input-search"
+                  value={userIdInput}
+                  placeholder="🔍 Lọc theo userId..."
+                  onChange={(event) => setUserIdInput(event.target.value)}
+                />
+                <button type="submit" className="admin-btn-action admin-btn-action-primary">Lọc</button>
+              </form>
+            </div>
+
+            {orders && (
+              <div className="admin-toolbar-right flex items-center gap-2">
+                <AdminBadge variant="neutral">
+                  Tổng: <strong style={{ marginLeft: 4 }}>{orders.totalCount}</strong> đơn hàng
+                </AdminBadge>
+              </div>
+            )}
           </div>
-        </form>
-      </div>
+        }
+        footer={
+          orders ? (
+            <AdminPagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalCount={orders.totalCount}
+              itemName="đơn hàng"
+              onPageChange={setPage}
+            />
+          ) : undefined
+        }
+      >
+        {loadState === 'error' && (
+          <section className="admin-alert p-6" role="alert">
+            <p className="text-rose-600 font-medium">Không thể tải danh sách đơn hàng. Vui lòng thử lại.</p>
+            <button type="button" className="btn btn-sm btn-secondary mt-2" onClick={() => setRetryKey((prev) => prev + 1)}>Thử lại</button>
+          </section>
+        )}
 
-      {loadState === 'error' && (
-        <section className="admin-alert" role="alert">
-          <p>Không thể tải danh sách đơn hàng. Vui lòng thử lại.</p>
-          <button type="button" onClick={() => setRetryKey((prev) => prev + 1)}>Thử lại</button>
-        </section>
-      )}
+        {loadState === 'loading' && (
+          <p className="admin-loading py-8 text-center text-slate-500" aria-busy="true">Đang tải đơn hàng...</p>
+        )}
 
-      {loadState === 'loading' && (
-        <p className="admin-loading" aria-busy="true">Đang tải đơn hàng...</p>
-      )}
+        {loadState === 'ready' && orders && orders.data.length === 0 && (
+          <AdminEmptyState
+            icon="🧾"
+            message="Không có đơn hàng nào khớp bộ lọc."
+            description="Thử chọn trạng thái khác hoặc xóa điều kiện lọc"
+          />
+        )}
 
-      {loadState === 'ready' && orders && orders.data.length === 0 && (
-        <div className="admin-empty">
-          <p>Không có đơn hàng nào khớp bộ lọc.</p>
-        </div>
-      )}
-
-      {loadState === 'ready' && orders && orders.data.length > 0 && (
-        <div className="admin-table-wrap">
-          <table className="admin-table" aria-label="Danh sách đơn hàng">
+        {loadState === 'ready' && orders && orders.data.length > 0 && (
+          <table className="admin-table admin-ds-table" aria-label="Danh sách đơn hàng" style={{ width: '100%' }}>
             <thead>
               <tr>
-                <th scope="col">Mã đơn</th>
-                <th scope="col">Ngày tạo</th>
-                <th scope="col">Hình thức</th>
-                <th scope="col">Số món</th>
-                <th scope="col">Tổng tiền</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col"><span className="sr-only">Hành động</span></th>
+                <th scope="col" className="col-text text-left">Mã đơn</th>
+                <th scope="col" className="col-text text-left">Ngày tạo</th>
+                <th scope="col" className="col-text text-center">Hình thức</th>
+                <th scope="col" className="col-numeric text-right">Số món</th>
+                <th scope="col" className="col-numeric text-right">Tổng tiền</th>
+                <th scope="col" className="col-status text-center">Trạng thái</th>
+                <th scope="col" className="col-actions text-right"><span className="sr-only">Hành động</span></th>
               </tr>
             </thead>
             <tbody>
               {orders.data.map((order) => (
                 <tr key={order.id}>
-                  <td><code title={order.id}>{shortId(order.id)}</code></td>
-                  <td>{formatDate(order.createdAtUtc)}</td>
-                  <td>{order.fulfillmentType}</td>
-                  <td>{order.itemCount}</td>
-                  <td>{formatPrice(order.totalAmount)}</td>
-                  <td>
-                    <span className={`admin-status admin-status--${order.status.toLowerCase()}`} role="status">
-                      {formatStatus(order.status)}
-                      <span className="sr-only">{order.status}</span>
+                  <td className="col-text text-left align-middle">
+                    <code className="admin-code-badge" title={order.id}>{shortId(order.id)}</code>
+                  </td>
+                  <td className="col-text text-left align-middle text-slate-600">{formatDate(order.createdAtUtc)}</td>
+                  <td className="col-text text-center align-middle">
+                    <span className="text-xs font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                      {order.fulfillmentType}
                     </span>
                   </td>
-                  <td>
+                  <td className="col-numeric text-right align-middle font-medium text-slate-700">{order.itemCount}</td>
+                  <td className="col-numeric text-right align-middle font-semibold text-slate-900">{formatPrice(order.totalAmount)}</td>
+                  <td className="col-status text-center align-middle">
+                    <AdminBadge
+                      variant={getStatusVariant(order.status)}
+                      dot
+                      className={`admin-status admin-status--${order.status.toLowerCase()}`}
+                      role="status"
+                    >
+                      {formatStatus(order.status)}
+                      <span className="sr-only">{order.status}</span>
+                    </AdminBadge>
+                  </td>
+                  <td className="col-actions text-right align-middle">
                     <Link
                       to={`/admin/orders/${encodeURIComponent(order.id)}`}
-                      className="admin-link"
+                      className="admin-link admin-btn-action"
                       aria-label={`Xem chi tiết đơn ${order.id}`}
                     >
                       Chi tiết
@@ -180,22 +238,8 @@ export function AdminOrdersPage() {
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {orders && (
-        <nav className="admin-pagination" aria-label="Phân trang đơn hàng">
-          <button type="button" onClick={() => setPage(page - 1)} disabled={page <= 1}>Trang trước</button>
-          <span>Trang {page}</span>
-          <button
-            type="button"
-            onClick={() => setPage(page + 1)}
-            disabled={page * PAGE_SIZE >= orders.totalCount}
-          >
-            Trang sau
-          </button>
-        </nav>
-      )}
+        )}
+      </AdminCard>
     </main>
   )
 }

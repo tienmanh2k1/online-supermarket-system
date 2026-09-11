@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { adminCatalogApi, AdminBrandDto } from '../../../api/adminCatalogApi'
 import { useAuth } from '../../auth/AuthContext'
 import { AdminConfirmDialog } from '../AdminConfirmDialog'
+import { AdminCard, AdminBadge, AdminEmptyState } from '../components'
+import '../AdminCatalog.css'
+import '../AdminDesignSystem.css'
 
 export function AdminBrandsPage() {
   const { accessToken } = useAuth()
@@ -215,20 +218,28 @@ export function AdminBrandsPage() {
         </form>
       </div>
 
-      <div className="admin-card">
-        <h2>Danh sách thương hiệu</h2>
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex items-center justify-between w-full">
+            <h2 className="text-base font-semibold text-slate-800" style={{ margin: 0 }}>Danh sách thương hiệu</h2>
+            <AdminBadge variant="neutral">
+              Tổng: <strong style={{ marginLeft: 4 }}>{brands.length}</strong> thương hiệu
+            </AdminBadge>
+          </div>
+        }
+      >
         {loading ? (
-          <div className="admin-loading">Đang tải thương hiệu...</div>
+          <div className="admin-loading py-8 text-center text-slate-500">Đang tải thương hiệu...</div>
         ) : brands.length === 0 ? (
-          <div className="admin-empty">Không có thương hiệu nào.</div>
+          <AdminEmptyState icon="🏷️" message="Không có thương hiệu nào." />
         ) : (
-          <table className="admin-table">
+          <table className="admin-table admin-ds-table" aria-label="Danh sách thương hiệu" style={{ width: '100%' }}>
             <thead>
               <tr>
-                <th>Tên thương hiệu</th>
-                <th>Slug</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th className="col-text text-left">Tên thương hiệu</th>
+                <th className="col-text text-left">Slug</th>
+                <th className="col-status text-center">Trạng thái</th>
+                <th className="col-actions text-right" style={{ width: 140 }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -236,41 +247,47 @@ export function AdminBrandsPage() {
                 const isItemBusy = actionBusyId === b.id || isSubmitting
                 return (
                   <tr key={b.id} className={!b.isActive ? 'row-inactive' : ''}>
-                    <td><strong>{b.name}</strong></td>
-                    <td><code>{b.slug}</code></td>
-                    <td>
-                      <span className={`badge ${b.isActive ? 'badge-active' : 'badge-inactive'}`}>
-                        {b.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
-                      </span>
+                    <td className="col-text text-left align-middle">
+                      <strong className="text-slate-800 font-medium">{b.name}</strong>
                     </td>
-                    <td className="table-actions">
-                      <button
-                        type="button"
-                        onClick={() => handleStartEdit(b)}
-                        disabled={isItemBusy}
-                        className="btn btn-sm btn-secondary"
-                      >
-                        Sửa
-                      </button>
-                      {b.isActive ? (
+                    <td className="col-text text-left align-middle">
+                      <code className="admin-code-badge">{b.slug}</code>
+                    </td>
+                    <td className="col-status text-center align-middle">
+                      <AdminBadge variant={b.isActive ? 'success' : 'danger'} dot className={`badge ${b.isActive ? 'badge-active' : 'badge-inactive'}`}>
+                        {b.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
+                      </AdminBadge>
+                    </td>
+                    <td className="col-actions text-right align-middle">
+                      <div className="table-actions admin-table-actions">
                         <button
                           type="button"
-                          onClick={() => handleOpenDeactivate(b)}
+                          onClick={() => handleStartEdit(b)}
                           disabled={isItemBusy}
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-secondary"
                         >
-                          Vô hiệu hóa
+                          Sửa
                         </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleRestore(b)}
-                          disabled={isItemBusy}
-                          className="btn btn-sm btn-success"
-                        >
-                          Kích hoạt lại
-                        </button>
-                      )}
+                        {b.isActive ? (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDeactivate(b)}
+                            disabled={isItemBusy}
+                            className="btn btn-sm btn-danger"
+                          >
+                            Vô hiệu hóa
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleRestore(b)}
+                            disabled={isItemBusy}
+                            className="btn btn-sm btn-success"
+                          >
+                            Kích hoạt lại
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -278,7 +295,7 @@ export function AdminBrandsPage() {
             </tbody>
           </table>
         )}
-      </div>
+      </AdminCard>
 
       <AdminConfirmDialog
         isOpen={deactivateDialog.isOpen}

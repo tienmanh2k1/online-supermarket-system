@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import './AdminLayout.css'
 import './AdminCatalog.css'
+import './AdminDesignSystem.css'
 
 interface NavItem {
   to: string

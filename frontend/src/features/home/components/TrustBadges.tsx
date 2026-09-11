@@ -7,7 +7,7 @@ interface TrustBadgesProps {
 export function TrustBadges({ badges }: TrustBadgesProps) {
   return (
     <section
-      className="home-perks appliance-trust-badges"
+      className="home-perks appliance-trust-badges bg-white rounded-2xl border border-slate-200 shadow-sm"
       data-testid="home-trust-strip"
       aria-label="Cam kết dịch vụ điện máy"
     >

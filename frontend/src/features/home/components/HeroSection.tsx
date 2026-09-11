@@ -111,7 +111,7 @@ export function HeroSection({
       <div className="appliance-hero__grid">
         {/* Column 1: Main Promotion Slider */}
         <div
-          className="appliance-slider-container"
+          className="appliance-slider-container rounded-2xl overflow-hidden shadow-sm"
           data-testid="hero-main-slider"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
@@ -237,7 +237,7 @@ export function HeroSection({
             <Link
               key={sub.id}
               to={sub.linkUrl}
-              className="appliance-sub-banner-card"
+              className="appliance-sub-banner-card rounded-2xl overflow-hidden shadow-sm"
               title={sub.title}
               data-testid="sub-banner-container"
             >

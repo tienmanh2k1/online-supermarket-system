@@ -25,9 +25,13 @@ internal sealed class DemandForecastConfiguration : IEntityTypeConfiguration<Dem
         builder.Property(forecast => forecast.HorizonDays)
             .HasColumnName("horizon_days").IsRequired();
         builder.Property(forecast => forecast.ForecastStartDate)
-            .HasColumnName("forecast_start_date").IsRequired();
+            .HasColumnName("forecast_start_date").HasColumnType("date")
+            .HasConversion(value => value.ToDateTime(TimeOnly.MinValue), value => DateOnly.FromDateTime(value))
+            .IsRequired();
         builder.Property(forecast => forecast.ForecastEndDate)
-            .HasColumnName("forecast_end_date").IsRequired();
+            .HasColumnName("forecast_end_date").HasColumnType("date")
+            .HasConversion(value => value.ToDateTime(TimeOnly.MinValue), value => DateOnly.FromDateTime(value))
+            .IsRequired();
         builder.Property(forecast => forecast.PredictedQuantity)
             .HasColumnName("predicted_quantity").HasPrecision(18, 2).IsRequired();
         builder.Property(forecast => forecast.ActualDataDays)

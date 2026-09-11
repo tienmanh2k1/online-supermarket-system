@@ -8,6 +8,9 @@ import {
 } from '../../../api/adminCatalogApi'
 import { useAuth } from '../../auth/AuthContext'
 import { AdminConfirmDialog } from '../AdminConfirmDialog'
+import { AdminCard, AdminBadge, AdminPagination, AdminEmptyState } from '../components'
+import '../AdminCatalog.css'
+import '../AdminDesignSystem.css'
 
 const PAGE_SIZE = 20
 
@@ -486,114 +489,143 @@ export function AdminProductsPage() {
       </div>
 
       {/* Filter and Products List */}
-      <div className="admin-card">
-        <h2>Danh sách sản phẩm ({totalCount})</h2>
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
+            <div className="admin-toolbar-left flex flex-wrap items-center gap-3">
+              <div className="filter-group" style={{ margin: 0 }}>
+                <input
+                  id="filter-search"
+                  type="text"
+                  className="admin-input-search"
+                  value={search}
+                  onChange={e => handleSearchChange(e.target.value)}
+                  placeholder="🔍 Tên sản phẩm hoặc SKU..."
+                  aria-label="Tìm kiếm sản phẩm"
+                />
+              </div>
 
-        {/* Filters */}
-        <div className="admin-filters">
-          <div className="filter-group">
-            <label htmlFor="filter-search">Tìm kiếm:</label>
-            <input
-              id="filter-search"
-              type="text"
-              value={search}
-              onChange={e => handleSearchChange(e.target.value)}
-              placeholder="Tên sản phẩm hoặc SKU..."
-            />
+              <div className="filter-group" style={{ margin: 0 }}>
+                <select
+                  id="filter-cat"
+                  className="admin-select-filter"
+                  value={filterCategoryId}
+                  onChange={e => handleFilterCategoryChange(e.target.value)}
+                  aria-label="Lọc theo danh mục"
+                >
+                  <option value="">Tất cả danh mục</option>
+                  {categories.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group" style={{ margin: 0 }}>
+                <select
+                  id="filter-brand"
+                  className="admin-select-filter"
+                  value={filterBrandId}
+                  onChange={e => handleFilterBrandChange(e.target.value)}
+                  aria-label="Lọc theo thương hiệu"
+                >
+                  <option value="">Tất cả thương hiệu</option>
+                  {brands.map(b => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group" style={{ margin: 0 }}>
+                <select
+                  id="filter-status"
+                  className="admin-select-filter"
+                  value={filterStatus}
+                  onChange={e => handleFilterStatusChange(e.target.value as any)}
+                  aria-label="Lọc theo trạng thái"
+                >
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="active">Hoạt động</option>
+                  <option value="inactive">Vô hiệu hóa</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="admin-toolbar-right flex items-center gap-2">
+              <AdminBadge variant="neutral">
+                Tổng: <strong style={{ marginLeft: 4 }}>{totalCount}</strong> sản phẩm
+              </AdminBadge>
+            </div>
           </div>
-
-          <div className="filter-group">
-            <label htmlFor="filter-cat">Danh mục:</label>
-            <select
-              id="filter-cat"
-              value={filterCategoryId}
-              onChange={e => handleFilterCategoryChange(e.target.value)}
-            >
-              <option value="">Tất cả danh mục</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="filter-brand">Thương hiệu:</label>
-            <select
-              id="filter-brand"
-              value={filterBrandId}
-              onChange={e => handleFilterBrandChange(e.target.value)}
-            >
-              <option value="">Tất cả thương hiệu</option>
-              {brands.map(b => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="filter-status">Trạng thái:</label>
-            <select
-              id="filter-status"
-              value={filterStatus}
-              onChange={e => handleFilterStatusChange(e.target.value as any)}
-            >
-              <option value="all">Tất cả</option>
-              <option value="active">Hoạt động</option>
-              <option value="inactive">Vô hiệu hóa</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Product Table */}
+        }
+        footer={
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalCount={totalCount}
+            itemName="sản phẩm"
+            onPageChange={setCurrentPage}
+          />
+        }
+      >
         {loading ? (
-          <p className="admin-loading">Đang tải sản phẩm...</p>
+          <p className="admin-loading py-8 text-center text-slate-500">Đang tải sản phẩm...</p>
         ) : products.length === 0 ? (
-          <p className="admin-empty">Không tìm thấy sản phẩm nào.</p>
+          <AdminEmptyState
+            icon="📦"
+            message="Không tìm thấy sản phẩm nào."
+            description="Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm"
+          />
         ) : (
-          <>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Ảnh</th>
-                  <th>SKU</th>
-                  <th>Tên sản phẩm</th>
-                  <th>Danh mục</th>
-                  <th>Thương hiệu</th>
-                  <th>Giá gốc</th>
-                  <th>Đơn vị</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(p => (
-                  <tr key={p.id} className={!p.isActive ? 'row-inactive' : ''}>
-                    <td>
-                      {p.imageUrl ? (
-                        <img
-                          src={p.imageUrl}
-                          alt={p.name}
-                          className="admin-product-thumb"
-                          onError={e => {
-                            ;(e.target as HTMLElement).style.display = 'none'
-                          }}
-                        />
-                      ) : (
-                        <span className="admin-product-thumb-placeholder">—</span>
-                      )}
-                    </td>
-                    <td><code>{p.sku}</code></td>
-                    <td><strong>{p.name}</strong></td>
-                    <td>{p.categoryName}</td>
-                    <td>{p.brandName}</td>
-                    <td>{p.basePrice.toLocaleString('vi-VN')} đ</td>
-                    <td>{p.unit}</td>
-                    <td>
-                      <span className={`badge ${p.isActive ? 'badge-active' : 'badge-inactive'}`}>
-                        {p.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
-                      </span>
-                    </td>
-                    <td className="table-actions">
+          <table className="admin-table admin-ds-table" aria-label="Danh sách sản phẩm" style={{ width: '100%', minWidth: 800 }}>
+            <thead>
+              <tr>
+                <th className="col-thumb text-center" style={{ width: 64, minWidth: 64, maxWidth: 64 }}>Ảnh</th>
+                <th className="col-sku text-left" style={{ whiteSpace: 'nowrap' }}>SKU</th>
+                <th className="col-text text-left" style={{ minWidth: 160 }}>Tên sản phẩm</th>
+                <th className="col-category text-left" style={{ whiteSpace: 'nowrap' }}>Danh mục</th>
+                <th className="col-brand text-left" style={{ whiteSpace: 'nowrap' }}>Thương hiệu</th>
+                <th className="col-price col-numeric text-right" style={{ whiteSpace: 'nowrap' }}>Giá gốc</th>
+                <th className="col-unit text-center" style={{ whiteSpace: 'nowrap' }}>Đơn vị</th>
+                <th className="col-status text-center" style={{ whiteSpace: 'nowrap' }}>Trạng thái</th>
+                <th className="col-actions text-right" style={{ whiteSpace: 'nowrap', width: 140, minWidth: 140 }}>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(p => (
+                <tr key={p.id} className={!p.isActive ? 'row-inactive' : ''}>
+                  <td className="col-thumb text-center align-middle" style={{ width: 64, minWidth: 64, maxWidth: 64 }}>
+                    {p.imageUrl ? (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="admin-product-thumb"
+                        onError={e => {
+                          ;(e.target as HTMLElement).style.display = 'none'
+                        }}
+                      />
+                    ) : (
+                      <span className="admin-product-thumb-placeholder">—</span>
+                    )}
+                  </td>
+                  <td className="col-sku text-left align-middle" style={{ whiteSpace: 'nowrap' }}>
+                    <code className="admin-code-badge">{p.sku}</code>
+                  </td>
+                  <td className="col-text text-left align-middle" style={{ minWidth: 160, maxWidth: 260, whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                    <strong className="text-slate-800 font-medium">{p.name}</strong>
+                  </td>
+                  <td className="col-category text-left align-middle" style={{ whiteSpace: 'nowrap' }}>{p.categoryName}</td>
+                  <td className="col-brand text-left align-middle" style={{ whiteSpace: 'nowrap' }}>{p.brandName}</td>
+                  <td className="col-price col-numeric text-right align-middle font-medium" style={{ whiteSpace: 'nowrap' }}>
+                    {p.basePrice.toLocaleString('vi-VN')} đ
+                  </td>
+                  <td className="col-unit text-center align-middle" style={{ whiteSpace: 'nowrap' }}>{p.unit}</td>
+                  <td className="col-status text-center align-middle" style={{ whiteSpace: 'nowrap' }}>
+                    <AdminBadge variant={p.isActive ? 'success' : 'danger'} dot className={`badge ${p.isActive ? 'badge-active' : 'badge-inactive'}`}>
+                      {p.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
+                    </AdminBadge>
+                  </td>
+                  <td className="col-actions text-right align-middle" style={{ whiteSpace: 'nowrap' }}>
+                    <div className="table-actions admin-table-actions">
                       <button
                         type="button"
                         onClick={() => handleStartEdit(p)}
@@ -621,39 +653,14 @@ export function AdminProductsPage() {
                           {actionBusyId === p.id ? 'Đang xử lý...' : 'Kích hoạt lại'}
                         </button>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="admin-pagination">
-                <button
-                  type="button"
-                  disabled={currentPage <= 1}
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className="btn btn-sm btn-secondary"
-                >
-                  Trang trước
-                </button>
-                <span className="pagination-info">
-                  Trang {currentPage} / {totalPages} ({totalCount} sản phẩm)
-                </span>
-                <button
-                  type="button"
-                  disabled={currentPage >= totalPages}
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className="btn btn-sm btn-secondary"
-                >
-                  Trang sau
-                </button>
-              </div>
-            )}
-          </>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
-      </div>
+      </AdminCard>
 
       {/* Confirmation Dialog for Deactivation */}
       <AdminConfirmDialog

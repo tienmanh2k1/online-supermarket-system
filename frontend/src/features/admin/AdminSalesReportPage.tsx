@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { adminApi, type SalesReportDto } from '../../api/adminApi'
 import { useAuth } from '../auth/AuthContext'
+import { AdminCard, AdminBadge, AdminEmptyState } from './components'
 import './AdminSalesReportPage.css'
+import './AdminDesignSystem.css'
 
 function formatVnd(amount: number) {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
@@ -255,33 +257,41 @@ export function AdminSalesReportPage() {
             </div>
           </div>
 
-          <section className="admin-sales-report__section">
-            <div className="admin-sales-report__section-header">
-              <h2 className="admin-sales-report__section-title">Doanh thu theo ngày</h2>
-              <span className="admin-sales-report__count-badge">
-                {state.data.completedOrderCount} đơn hàng hoàn tất
-              </span>
-            </div>
-
-            <table className="admin-sales-report__table">
-              <thead>
-                <tr>
-                  <th>Ngày</th>
-                  <th>Số đơn hoàn tất</th>
-                  <th>Doanh thu</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.data.daily.map((day) => (
-                  <tr key={day.date}>
-                    <td>{day.date}</td>
-                    <td>{day.orderCount}</td>
-                    <td>{formatVnd(day.revenue)}</td>
+          <AdminCard
+            toolbar={
+              <div className="admin-toolbar-wrap flex items-center justify-between w-full">
+                <h2 className="admin-sales-report__section-title text-base font-semibold text-slate-800" style={{ margin: 0 }}>Doanh thu theo ngày</h2>
+                <AdminBadge variant="neutral" className="admin-sales-report__count-badge">
+                  {state.data.completedOrderCount} đơn hàng hoàn tất
+                </AdminBadge>
+              </div>
+            }
+          >
+            {state.data.daily.length === 0 ? (
+              <AdminEmptyState icon="📈" message="Không có dữ liệu doanh thu trong khoảng thời gian này." />
+            ) : (
+              <table className="admin-table admin-ds-table admin-sales-report__table" style={{ width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th scope="col" className="col-text text-left">Ngày</th>
+                    <th scope="col" className="col-numeric text-right">Số đơn hoàn tất</th>
+                    <th scope="col" className="col-numeric text-right">Doanh thu</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
+                </thead>
+                <tbody>
+                  {state.data.daily.map((day) => (
+                    <tr key={day.date}>
+                      <td className="col-text text-left align-middle">
+                        <code className="admin-code-badge">{day.date}</code>
+                      </td>
+                      <td className="col-numeric text-right align-middle font-medium text-slate-700">{day.orderCount}</td>
+                      <td className="col-numeric text-right align-middle font-semibold text-slate-900">{formatVnd(day.revenue)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </AdminCard>
         </>
       )}
     </div>

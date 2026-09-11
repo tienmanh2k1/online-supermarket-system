@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState, useTransition } from 'react'
 import { adminCatalogApi, AdminCategoryDto } from '../../../api/adminCatalogApi'
 import { useAuth } from '../../auth/AuthContext'
 import { AdminConfirmDialog } from '../AdminConfirmDialog'
+import { AdminCard, AdminBadge, AdminEmptyState } from '../components'
+import '../AdminCatalog.css'
+import '../AdminDesignSystem.css'
 
 export function AdminCategoriesPage() {
   const { accessToken } = useAuth()
@@ -259,21 +262,29 @@ export function AdminCategoriesPage() {
         </form>
       </div>
 
-      <div className="admin-card">
-        <h2>Danh sách danh mục</h2>
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex items-center justify-between w-full">
+            <h2 className="text-base font-semibold text-slate-800" style={{ margin: 0 }}>Danh sách danh mục</h2>
+            <AdminBadge variant="neutral">
+              Tổng: <strong style={{ marginLeft: 4 }}>{categories.length}</strong> danh mục
+            </AdminBadge>
+          </div>
+        }
+      >
         {loading ? (
-          <div className="admin-loading">Đang tải danh mục...</div>
+          <div className="admin-loading py-8 text-center text-slate-500">Đang tải danh mục...</div>
         ) : categories.length === 0 ? (
-          <div className="admin-empty">Không có danh mục nào.</div>
+          <AdminEmptyState icon="🗂️" message="Không có danh mục nào." />
         ) : (
-          <table className="admin-table">
+          <table className="admin-table admin-ds-table" aria-label="Danh sách danh mục" style={{ width: '100%' }}>
             <thead>
               <tr>
-                <th>Tên danh mục</th>
-                <th>Slug</th>
-                <th>Danh mục cha</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th className="col-text text-left">Tên danh mục</th>
+                <th className="col-text text-left">Slug</th>
+                <th className="col-text text-left">Danh mục cha</th>
+                <th className="col-status text-center">Trạng thái</th>
+                <th className="col-actions text-right" style={{ width: 140 }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -281,42 +292,50 @@ export function AdminCategoriesPage() {
                 const isItemBusy = actionBusyId === c.id || isSubmitting
                 return (
                   <tr key={c.id} className={!c.isActive ? 'row-inactive' : ''}>
-                    <td><strong>{c.name}</strong></td>
-                    <td><code>{c.slug}</code></td>
-                    <td>{c.parentCategoryId ? categoryMap.get(c.parentCategoryId) || c.parentCategoryId : '—'}</td>
-                    <td>
-                      <span className={`badge ${c.isActive ? 'badge-active' : 'badge-inactive'}`}>
-                        {c.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
-                      </span>
+                    <td className="col-text text-left align-middle">
+                      <strong className="text-slate-800 font-medium">{c.name}</strong>
                     </td>
-                    <td className="table-actions">
-                      <button
-                        type="button"
-                        onClick={() => handleStartEdit(c)}
-                        disabled={isItemBusy}
-                        className="btn btn-sm btn-secondary"
-                      >
-                        Sửa
-                      </button>
-                      {c.isActive ? (
+                    <td className="col-text text-left align-middle">
+                      <code className="admin-code-badge">{c.slug}</code>
+                    </td>
+                    <td className="col-text text-left align-middle text-slate-600">
+                      {c.parentCategoryId ? categoryMap.get(c.parentCategoryId) || c.parentCategoryId : '—'}
+                    </td>
+                    <td className="col-status text-center align-middle">
+                      <AdminBadge variant={c.isActive ? 'success' : 'danger'} dot className={`badge ${c.isActive ? 'badge-active' : 'badge-inactive'}`}>
+                        {c.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
+                      </AdminBadge>
+                    </td>
+                    <td className="col-actions text-right align-middle">
+                      <div className="table-actions admin-table-actions">
                         <button
                           type="button"
-                          onClick={() => handleOpenDeactivate(c)}
+                          onClick={() => handleStartEdit(c)}
                           disabled={isItemBusy}
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-secondary"
                         >
-                          Vô hiệu hóa
+                          Sửa
                         </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleRestore(c)}
-                          disabled={isItemBusy}
-                          className="btn btn-sm btn-success"
-                        >
-                          Kích hoạt lại
-                        </button>
-                      )}
+                        {c.isActive ? (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDeactivate(c)}
+                            disabled={isItemBusy}
+                            className="btn btn-sm btn-danger"
+                          >
+                            Vô hiệu hóa
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleRestore(c)}
+                            disabled={isItemBusy}
+                            className="btn btn-sm btn-success"
+                          >
+                            Kích hoạt lại
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -324,7 +343,7 @@ export function AdminCategoriesPage() {
             </tbody>
           </table>
         )}
-      </div>
+      </AdminCard>
 
       <AdminConfirmDialog
         isOpen={deactivateDialog.isOpen}

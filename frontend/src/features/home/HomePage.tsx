@@ -33,7 +33,10 @@ export function HomePage() {
   }, [location])
 
   return (
-    <div className="home-page appliance-home-page" data-testid="home-page">
+    <div
+      className="home-page appliance-home-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 md:space-y-10"
+      data-testid="home-page"
+    >
       {/* 1. Standard Retail Grid Hero: Mega-Menu (22%) | 16:9 Main Slider (53%) | 4:3 Sub-Banners (25%) */}
       <HeroSection
         categories={MOCK_CATEGORY_MENU}
@@ -47,24 +50,24 @@ export function HomePage() {
       {/* 3. 4 Service Trust Badges (Giao 2h, Lắp đặt miễn phí, Đổi mới 30 ngày, Bảo hành chính hãng) */}
       <TrustBadges badges={MOCK_TRUST_BADGES} />
 
-      {/* 3. Flash Sale Countdown with Heat-progress */}
+      {/* 4. Flash Sale Countdown with Heat-progress */}
       <FlashSaleCountdown products={MOCK_APPLIANCE_PRODUCTS} />
 
-      {/* 4. Category Tabs Showcase (Tivi, Tủ lạnh, Máy giặt, Điều hòa, Gia dụng) */}
+      {/* 5. Category Tabs Showcase (Tivi, Tủ lạnh, Máy giặt, Điều hòa, Gia dụng) */}
       <CategoryTabs tabs={MOCK_CATEGORY_TABS} products={MOCK_APPLIANCE_PRODUCTS} />
 
-      {/* 5. AI Recommendations Shelf (Personalized via ML.NET) */}
+      {/* 6. AI Recommendations Shelf (Personalized via ML.NET) */}
       <section
-        className="home-recommendations-section"
+        className="home-recommendations-section bg-white rounded-2xl border border-slate-200 shadow-sm"
         data-testid="home-recommendations"
         aria-label="Gợi ý sản phẩm thông minh"
       >
         <RecommendationShelfLoader limit={8} title="Gợi ý thiết bị điện máy phù hợp cho bạn" />
       </section>
 
-      {/* 6. Branch Network Teaser */}
+      {/* 7. Branch Network Teaser */}
       <section
-        className="home-branch-teaser"
+        className="home-branch-teaser rounded-2xl shadow-sm"
         data-testid="home-branches"
         aria-label="Hệ thống siêu thị điện máy"
       >
@@ -85,10 +88,10 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* 7. Technology Roadmap Section (#roadmap) */}
+      {/* 8. Technology Roadmap Section (#roadmap) */}
       <section
         id="roadmap"
-        className="home-roadmap"
+        className="home-roadmap bg-white rounded-2xl border border-slate-200 shadow-sm"
         data-testid="home-roadmap"
         aria-labelledby="roadmap-heading"
       >

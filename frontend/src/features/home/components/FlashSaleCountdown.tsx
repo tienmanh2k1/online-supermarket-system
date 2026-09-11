@@ -88,7 +88,7 @@ export function FlashSaleCountdown({
   return (
     <section
       ref={sectionRef}
-      className="flash-sale-section"
+      className="flash-sale-section bg-white rounded-2xl border border-slate-200 shadow-sm"
       data-testid="home-bestsellers"
       aria-label="Sản phẩm bán chạy"
     >

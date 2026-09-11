@@ -44,6 +44,35 @@ public sealed class MySqlSchemaTests(MySqlFixture fixture) : IAsyncLifetime
         return Convert.ToInt64(result);
     }
 
+    [Theory]
+    [InlineData(7)]
+    [InlineData(14)]
+    public async Task DemandForecast_DateOnlyValues_RoundTripThroughMySql(int horizon)
+    {
+        await using var db = new AppDbContext(Options);
+        await DataSeeder.SeedAllAsync(db, new OnlineSupermarket.Infrastructure.Identity.PasswordHasher());
+        var inventory = await db.BranchInventories.FirstAsync();
+        var run = new OnlineSupermarket.Domain.Jobs.BackgroundJobRun("Forecast", Guid.NewGuid().ToString(), DateTime.UtcNow);
+        db.BackgroundJobRuns.Add(run);
+        var start = new DateOnly(2026, 12, 28);
+        var end = start.AddDays(horizon - 1);
+        var forecast = OnlineSupermarket.Domain.Intelligence.DemandForecast.Create(
+            inventory.Id, horizon, start, end, 12.5m, 0,
+            OnlineSupermarket.Domain.Intelligence.ForecastDataQuality.Insufficient,
+            "date-roundtrip", DateTime.UtcNow, run.Id);
+        db.DemandForecasts.Add(forecast);
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
+
+        var row = await db.DemandForecasts.AsNoTracking()
+            .Where(item => item.Id == forecast.Id)
+            .Select(item => new { item.ForecastStartDate, item.ForecastEndDate, item.PredictedQuantity })
+            .SingleAsync();
+        Assert.Equal(new DateOnly(2026, 12, 28), row.ForecastStartDate);
+        Assert.Equal(end, row.ForecastEndDate);
+        Assert.Equal(12.5m, row.PredictedQuantity);
+    }
+
     [Fact]
     public async Task Migrations_EnforceRecommendationBounds()
     {

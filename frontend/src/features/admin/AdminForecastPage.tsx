@@ -7,7 +7,9 @@ import {
 } from '../../api/inventoryIntelligenceApi'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../../api/httpClient'
+import { AdminCard, AdminBadge, AdminEmptyState } from './components'
 import './AdminForecastPage.css'
+import './AdminDesignSystem.css'
 
 function isAbortError(error: unknown) {
   return error instanceof Error && error.name === 'AbortError'
@@ -171,45 +173,26 @@ export function AdminForecastPage() {
     }
   }
 
+  function getQualityVariant(quality: string): 'success' | 'warning' | 'danger' {
+    if (quality === 'Sufficient') return 'success'
+    if (quality === 'Partial') return 'warning'
+    return 'danger'
+  }
+
+  function getRunStatusVariant(status: string): 'success' | 'warning' | 'danger' {
+    if (status === 'Succeeded') return 'success'
+    if (status === 'Failed') return 'danger'
+    return 'warning'
+  }
+
   return (
     <main className="admin-page admin-forecast" role="main" aria-label="Dự báo nhu cầu">
       <header className="admin-page-header">
         <h1>Dự báo nhu cầu</h1>
         <p className="admin-page-sub">
-          Moving average 7/14 ngày theo chi nhánh. Chạy lại lượt tính khi nhu cầu válto.
+          Moving average 7/14 ngày theo chi nhánh. Chạy lại lượt tính khi nhu cầu thay đổi.
         </p>
       </header>
-
-      <div className="admin-toolbar">
-        <div className="admin-field">
-          <label htmlFor="admin-forecast-branch">Chi nhánh</label>
-          <select
-            id="admin-forecast-branch"
-            value={branchId}
-            onChange={(event) => setBranchId(event.target.value)}
-          >
-            {(branches ?? []).map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="admin-field">
-          <label htmlFor="admin-forecast-horizon">Kỳ dự báo</label>
-          <select
-            id="admin-forecast-horizon"
-            value={horizon}
-            onChange={(event) => setHorizon(Number(event.target.value))}
-          >
-            <option value={7}>7 ngày</option>
-            <option value={14}>14 ngày</option>
-          </select>
-        </div>
-        <button type="button" className="admin-btn" onClick={triggerRun} disabled={runState.running}>
-          {runState.running ? 'Đang chạy…' : 'Chạy lại dự báo'}
-        </button>
-      </div>
 
       {runState.message && (
         <section className={`admin-note admin-note--${runState.kind}`} role="status">
@@ -217,90 +200,155 @@ export function AdminForecastPage() {
         </section>
       )}
 
-      {branchId && run && (
-        <p className="admin-forecast-meta">
-          Lượt gần nhất #{run.id.slice(0, 8)} · trạng {run.status}
-          {run.completedAtUtc
-            ? ` · kết lúc ${new Date(run.completedAtUtc).toLocaleString('vi-VN')}`
-            : ` · tạo lúc ${new Date(run.createdAtUtc).toLocaleString('vi-VN')}`}
-        </p>
-      )}
+      {/* Main Forecast Card */}
+      <AdminCard
+        toolbar={
+          <div className="admin-toolbar-wrap flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full">
+            <div className="admin-toolbar-left flex flex-wrap items-center gap-3">
+              <div className="admin-field" style={{ margin: 0 }}>
+                <label htmlFor="admin-forecast-branch" className="sr-only">Chi nhánh</label>
+                <select
+                  id="admin-forecast-branch"
+                  className="admin-select-filter"
+                  value={branchId}
+                  onChange={(event) => setBranchId(event.target.value)}
+                  aria-label="Chi nhánh"
+                >
+                  {(branches ?? []).map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-      {branchId && runHistory.length === 0 && (
-        <p className="admin-forecast-meta">Chưa có lượt chạy dự báo cho chi nhánh này.</p>
-      )}
+              <div className="admin-field" style={{ margin: 0 }}>
+                <label htmlFor="admin-forecast-horizon" className="sr-only">Kỳ dự báo</label>
+                <select
+                  id="admin-forecast-horizon"
+                  className="admin-select-filter"
+                  value={horizon}
+                  onChange={(event) => setHorizon(Number(event.target.value))}
+                  aria-label="Kỳ dự báo"
+                >
+                  <option value={7}>7 ngày</option>
+                  <option value={14}>14 ngày</option>
+                </select>
+              </div>
+            </div>
 
-      {branchId && runHistory.length > 0 && (
-        <div className="admin-table-wrap">
-          <table className="admin-table" aria-label="Lịch sử lượt dự báo">
+            <div className="admin-toolbar-right flex items-center gap-3">
+              {branchId && run && (
+                <AdminBadge variant="neutral">
+                  Lượt gần nhất #{run.id.slice(0, 8)}
+                </AdminBadge>
+              )}
+              <button
+                type="button"
+                className="btn-primary admin-btn"
+                onClick={triggerRun}
+                disabled={runState.running}
+              >
+                {runState.running ? 'Đang chạy…' : 'Chạy lại dự báo'}
+              </button>
+            </div>
+          </div>
+        }
+      >
+        {loadState === 'error' && (
+          <section className="admin-alert p-6" role="alert">
+            <p className="text-rose-600 font-medium">Không thể tải dự báo. Vui lòng thử lại.</p>
+            <button type="button" className="btn btn-sm btn-secondary mt-2" onClick={refresh}>Thử lại</button>
+          </section>
+        )}
+
+        {loadState === 'loading' && (
+          <p className="admin-loading py-8 text-center text-slate-500" aria-busy="true">Đang tải dự báo nhu cầu...</p>
+        )}
+
+        {loadState === 'ready' && rows && rows.length === 0 && (
+          <AdminEmptyState
+            icon="📈"
+            message="Chưa có dự báo."
+            description='Nhấn "Chạy lại dự báo" để sinh kết quả đầu tiên.'
+          />
+        )}
+
+        {loadState === 'ready' && rows && rows.length > 0 && (
+          <table className="admin-table admin-ds-table" aria-label="Dự báo nhu cầu" style={{ width: '100%' }}>
             <thead>
               <tr>
-                <th scope="col">Lượt</th>
-                <th scope="col">Trạng</th>
-                <th scope="col">Tạo lúc</th>
-                <th scope="col">Kết lúc</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runHistory.map((item) => (
-                <tr key={item.id}>
-                  <td><code>{item.id.slice(0, 8)}…</code></td>
-                  <td className={`admin-forecast-quality admin-forecast-quality--${runStatusClass(item.status)}`}>
-                    {item.status}
-                  </td>
-                  <td>{new Date(item.createdAtUtc).toLocaleString('vi-VN')}</td>
-                  <td>{item.completedAtUtc ? new Date(item.completedAtUtc).toLocaleString('vi-VN') : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {loadState === 'error' && (
-        <section className="admin-alert" role="alert">
-          <p>Không thể tải dự báo. Vui lòng thử lại.</p>
-          <button type="button" onClick={refresh}>Thử lại</button>
-        </section>
-      )}
-
-      {loadState === 'loading' && (
-        <p className="admin-loading" aria-busy="true">Đang tải dự báo nhu cầu...</p>
-      )}
-
-      {loadState === 'ready' && rows && rows.length === 0 && (
-        <div className="admin-empty">
-          <p>Chưa có dự báo. Nhấn &quot;Chạy lại dự báo&quot; để sinh kết quà đầu đầu.</p>
-        </div>
-      )}
-
-      {loadState === 'ready' && rows && rows.length > 0 && (
-        <div className="admin-table-wrap">
-          <table className="admin-table" aria-label="Dự báo nhu cầu">
-            <thead>
-              <tr>
-                <th scope="col">Sản phẩm</th>
-                <th scope="col">{horizon} ngày dự báo</th>
-                <th scope="col">Đữ liệu ngày</th>
-                <th scope="col">Chất dữ liệu</th>
+                <th scope="col" className="col-text text-left">Sản phẩm</th>
+                <th scope="col" className="col-numeric text-right">{horizon} ngày dự báo</th>
+                <th scope="col" className="col-numeric text-right">Dữ liệu ngày</th>
+                <th scope="col" className="col-status text-center">Chất dữ liệu</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id}>
-                  <td>{row.productName}</td>
-                  <td>{formatQuantity(row.predictedQuantity)}</td>
-                  <td>{row.actualDataDays}</td>
-                  <td className={`admin-forecast-quality admin-forecast-quality--${qualityClass(
-                    row.dataQuality,
-                  )}`}>
-                    {qualityLabel(row.dataQuality)}
+                  <td className="col-text text-left align-middle font-medium text-slate-800">{row.productName}</td>
+                  <td className="col-numeric text-right align-middle font-semibold text-slate-900">{formatQuantity(row.predictedQuantity)}</td>
+                  <td className="col-numeric text-right align-middle font-medium text-slate-700">{row.actualDataDays}</td>
+                  <td className="col-status text-center align-middle">
+                    <AdminBadge
+                      variant={getQualityVariant(row.dataQuality)}
+                      dot
+                      className={`admin-forecast-quality admin-forecast-quality--${qualityClass(row.dataQuality)}`}
+                    >
+                      {qualityLabel(row.dataQuality)}
+                    </AdminBadge>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        )}
+      </AdminCard>
+
+      {/* History Card */}
+      {branchId && runHistory.length > 0 && (
+        <AdminCard
+          toolbar={
+            <div className="admin-toolbar-wrap flex items-center justify-between w-full">
+              <h2 className="text-base font-semibold text-slate-800" style={{ margin: 0 }}>Lịch sử lượt dự báo</h2>
+              <AdminBadge variant="neutral">
+                {runHistory.length} lượt chạy
+              </AdminBadge>
+            </div>
+          }
+        >
+          <table className="admin-table admin-ds-table" aria-label="Lịch sử lượt dự báo" style={{ width: '100%' }}>
+            <thead>
+              <tr>
+                <th scope="col" className="col-text text-left">Lượt</th>
+                <th scope="col" className="col-status text-center">Trạng thái</th>
+                <th scope="col" className="col-text text-left">Tạo lúc</th>
+                <th scope="col" className="col-text text-left">Kết lúc</th>
+              </tr>
+            </thead>
+            <tbody>
+              {runHistory.map((item) => (
+                <tr key={item.id}>
+                  <td className="col-text text-left align-middle">
+                    <code className="admin-code-badge">{item.id.slice(0, 8)}…</code>
+                  </td>
+                  <td className="col-status text-center align-middle">
+                    <AdminBadge
+                      variant={getRunStatusVariant(item.status)}
+                      dot
+                      className={`admin-forecast-quality admin-forecast-quality--${runStatusClass(item.status)}`}
+                    >
+                      {item.status}
+                    </AdminBadge>
+                  </td>
+                  <td className="col-text text-left align-middle text-slate-600 text-xs">{new Date(item.createdAtUtc).toLocaleString('vi-VN')}</td>
+                  <td className="col-text text-left align-middle text-slate-600 text-xs">{item.completedAtUtc ? new Date(item.completedAtUtc).toLocaleString('vi-VN') : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </AdminCard>
       )}
     </main>
   )

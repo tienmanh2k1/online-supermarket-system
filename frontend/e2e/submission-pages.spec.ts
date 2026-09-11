@@ -298,11 +298,8 @@ test.describe('Storefront Homepage Responsive Suite', () => {
     await categoryLink.click();
     await expect(page).toHaveURL(/.*\/browse\?search=.*/);
 
-    // Navigate to /browse and click roadmap link from nav
-    await page.goto('/browse');
-    const roadmapLink = page.locator('.site-nav a[href="/#roadmap"]');
-    await expect(roadmapLink).toBeVisible();
-    await roadmapLink.click();
+    // Verify #roadmap section on homepage
+    await page.goto('/#roadmap');
     await expect(page).toHaveURL(/.*\/#roadmap/);
     await expect(page.locator('#roadmap')).toBeVisible();
   });

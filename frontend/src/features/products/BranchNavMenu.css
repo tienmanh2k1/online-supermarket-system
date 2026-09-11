@@ -1,6 +1,26 @@
 .branch-nav {
   position: relative;
   display: inline-flex;
+  align-items: center;
+}
+
+.branch-nav__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  color: #1e293b;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.branch-nav__label:hover,
+.branch-nav:hover .branch-nav__label {
+  background: #f1f5f9;
+  color: #0b3d2e;
 }
 
 /* Dropdown, hidden until hover / keyboard focus within the nav item. */

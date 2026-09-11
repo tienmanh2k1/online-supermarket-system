@@ -6,6 +6,7 @@ import type { OrderDetailDto } from '../../api/orderApi'
 import { ApiError } from '../../api/httpClient'
 import { formatStatus, validTransitions } from './orderStatus'
 import './AdminOrdersPage.css'
+import './AdminDesignSystem.css'
 
 function isAbortError(error: unknown) {
   return error instanceof Error && error.name === 'AbortError'
@@ -144,27 +145,30 @@ function AdminOrderContent({
             <p><strong>Địa chỉ:</strong> {order.deliveryAddressSnapshot === 'Pickup at branch' ? 'Nhận hàng trực tiếp tại quầy chi nhánh' : (order.deliveryAddressSnapshot || '—')}</p>
           </section>
 
-          <section aria-label="Sản phẩm trong đơn" className="admin-card">
-            <h2>Sản phẩm</h2>
-            <div className="admin-table-wrap">
-              <table className="admin-table" aria-label="Sản phẩm trong đơn">
+          <section aria-label="Sản phẩm trong đơn" className="admin-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" style={{ padding: 0 }}>
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-slate-800" style={{ margin: 0 }}>Sản phẩm trong đơn</h2>
+              <span className="text-xs font-semibold text-slate-500">{order.items.length} mặt hàng</span>
+            </div>
+            <div className="admin-table-wrap overflow-x-auto">
+              <table className="admin-table admin-ds-table" aria-label="Sản phẩm trong đơn" style={{ width: '100%' }}>
                 <thead>
                   <tr>
-                    <th scope="col">Sản phẩm</th>
-                    <th scope="col">SKU</th>
-                    <th scope="col">Đơn giá</th>
-                    <th scope="col">SL</th>
-                    <th scope="col">Thành tiền</th>
+                    <th scope="col" className="col-text text-left">Sản phẩm</th>
+                    <th scope="col" className="col-text text-left">SKU</th>
+                    <th scope="col" className="col-numeric text-right">Đơn giá</th>
+                    <th scope="col" className="col-numeric text-right">SL</th>
+                    <th scope="col" className="col-numeric text-right">Thành tiền</th>
                   </tr>
                 </thead>
                 <tbody>
                   {order.items.map((item) => (
                     <tr key={item.productId}>
-                      <td>{item.productName}</td>
-                      <td><code>{item.sku}</code></td>
-                      <td>{formatPrice(item.unitPrice)}</td>
-                      <td>{item.quantity}</td>
-                      <td>{formatPrice(item.lineTotal)}</td>
+                      <td className="col-text text-left align-middle font-medium text-slate-800">{item.productName}</td>
+                      <td className="col-text text-left align-middle"><code className="admin-code-badge">{item.sku}</code></td>
+                      <td className="col-numeric text-right align-middle text-slate-700">{formatPrice(item.unitPrice)}</td>
+                      <td className="col-numeric text-right align-middle font-medium text-slate-700">{item.quantity}</td>
+                      <td className="col-numeric text-right align-middle font-semibold text-slate-900">{formatPrice(item.lineTotal)}</td>
                     </tr>
                   ))}
                 </tbody>
