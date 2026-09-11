@@ -84,6 +84,47 @@ public sealed class MockPaymentEndpointsTests
         Assert.Empty(await db.Payments.Where(item => item.OrderId == order.Id).ToListAsync());
     }
 
+    [Fact]
+    public async Task Owner_CanCompleteMockPayment_AndReadPersistedSuccessState()
+    {
+        using var factory = new TestApiFactory();
+        var (client, order) = await SeedPendingOrderAsync(factory);
+        var initiated = await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "VNPay"));
+        var initiatedBody = JsonDocument.Parse(await initiated.Content.ReadAsStringAsync());
+        var paymentId = initiatedBody.RootElement.GetProperty("paymentId").GetGuid();
+
+        var completed = await client.PostAsJsonAsync($"/api/payments/mock/{paymentId}/complete", new { outcome = "Success" });
+        var detail = await client.GetAsync($"/api/payments/mock/{paymentId}");
+
+        Assert.True(completed.StatusCode == HttpStatusCode.OK, await completed.Content.ReadAsStringAsync());
+        Assert.Equal(HttpStatusCode.OK, detail.StatusCode);
+        var body = JsonDocument.Parse(await detail.Content.ReadAsStringAsync()).RootElement;
+        Assert.Equal("Completed", body.GetProperty("paymentStatus").GetString());
+        Assert.Equal("Confirmed", body.GetProperty("orderStatus").GetString());
+    }
+
+    [Theory]
+    [InlineData("Failed")]
+    [InlineData("Cancelled")]
+    public async Task FailedOrCancelledMockPayment_IsIdempotent(string outcome)
+    {
+        using var factory = new TestApiFactory();
+        var (client, order) = await SeedPendingOrderAsync(factory);
+        var initiated = await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "MoMo"));
+        var paymentId = JsonDocument.Parse(await initiated.Content.ReadAsStringAsync()).RootElement.GetProperty("paymentId").GetGuid();
+
+        var first = await client.PostAsJsonAsync($"/api/payments/mock/{paymentId}/complete", new { outcome });
+        var second = await client.PostAsJsonAsync($"/api/payments/mock/{paymentId}/complete", new { outcome });
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        Assert.Equal(1, await db.PaymentCallbacks.CountAsync(item => item.PaymentId == paymentId));
+        Assert.Equal(PaymentStatus.Failed, (await db.Payments.SingleAsync(item => item.Id == paymentId)).Status);
+        Assert.Equal(OrderStatus.Cancelled, (await db.Orders.SingleAsync(item => item.Id == order.Id)).Status);
+    }
+
     private static async Task<(HttpClient Client, Order Order)> SeedPendingOrderAsync(WebApplicationFactory<Program> factory)
     {
         using var scope = factory.Services.CreateScope();

@@ -7,4 +7,6 @@ public sealed record PaymentCallbackVerificationResult(
     decimal Amount,
     bool IsSuccess,
     string SanitizedPayload,
-    string? ErrorCode);
+    string? ErrorCode,
+    bool IsMock = false,
+    Guid? TargetPaymentId = null);

@@ -1,5 +1,7 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using OnlineSupermarket.Domain.Inventory;
 using OnlineSupermarket.Domain.Orders;
@@ -9,7 +11,11 @@ using OnlineSupermarket.Infrastructure.Persistence;
 
 namespace OnlineSupermarket.Infrastructure.Payments;
 
-public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryMutationService mutationService) : IPaymentCallbackProcessor
+public sealed class PaymentCallbackProcessor(
+    AppDbContext dbContext,
+    IInventoryMutationService mutationService,
+    IOptions<PaymentOptions>? paymentOptions = null,
+    IHostEnvironment? environment = null) : IPaymentCallbackProcessor
 {
     private const int MaxDeadlockRetries = 3;
 
@@ -18,8 +24,11 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
         PaymentCallbackVerificationResult callback,
         CancellationToken cancellationToken)
     {
-        if (!callback.IsValidSignature)
+        if (!callback.IsValidSignature && !callback.IsMock)
             throw new InvalidOperationException("Callback must be signature-verified before processing.");
+
+        if (callback.IsMock && (environment?.IsDevelopment() != true || paymentOptions?.Value.Mode != "Mock" || !callback.TargetPaymentId.HasValue))
+            return PaymentCallbackOutcome.Conflict;
 
         for (var attempt = 0; attempt < MaxDeadlockRetries; attempt++)
         {
@@ -50,8 +59,10 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
             x => x.Provider == provider && x.ExternalEventId == callback.ExternalEventId, cancellationToken);
         if (duplicate) return PaymentCallbackOutcome.AlreadyProcessed;
 
-        var payment = await dbContext.Payments
-            .Where(x => x.OrderId == callback.OrderId)
+        var paymentQuery = dbContext.Payments.Where(x => x.OrderId == callback.OrderId);
+        if (callback.TargetPaymentId.HasValue)
+            paymentQuery = paymentQuery.Where(x => x.Id == callback.TargetPaymentId.Value);
+        var payment = await paymentQuery
             .OrderByDescending(x => x.CreatedAtUtc)
             .ThenByDescending(x => x.Id)
             .FirstOrDefaultAsync(cancellationToken);
@@ -84,6 +95,7 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
         var expectedMethod = PaymentMethodExpected(provider);
         if (expectedMethod is null
             || payment.Method != expectedMethod
+            || payment.IsMock != callback.IsMock
             || payment.Amount != callback.Amount
             || payment.Status is PaymentStatus.Completed or PaymentStatus.Failed or PaymentStatus.Refunded)
         {
@@ -101,7 +113,7 @@ public sealed class PaymentCallbackProcessor(AppDbContext dbContext, IInventoryM
 
         dbContext.PaymentCallbacks.Add(PaymentCallback.Create(
             payment.Id, provider, callback.ExternalEventId, callback.SanitizedPayload,
-            true, callback.Amount, callback.IsSuccess ? PaymentStatus.Completed : PaymentStatus.Failed));
+            callback.IsValidSignature, callback.Amount, callback.IsSuccess ? PaymentStatus.Completed : PaymentStatus.Failed));
 
         if (callback.IsSuccess)
         {

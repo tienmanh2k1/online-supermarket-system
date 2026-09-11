@@ -67,6 +67,9 @@ if (app.Environment.IsDevelopment())
     app.MapDevEmailEndpoints();
 }
 
+if (app.Environment.IsDevelopment() && app.Configuration["Payments:Mode"] == "Mock")
+    app.MapMockPaymentEndpoints();
+
 app.UseMiddleware<RequestCancellationMiddleware>();
 
 app.UseAuthentication();

@@ -177,6 +177,17 @@ public static class OrderEndpoints
         if (order == null)
             return Results.NotFound(new { message = "Order not found." });
 
+        var payment = await dbContext.Payments
+            .Where(item => item.OrderId == order.Id)
+            .OrderByDescending(item => item.CreatedAtUtc)
+            .ThenByDescending(item => item.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (newStatus != OrderStatus.Cancelled
+            && (payment is null || (payment.Method != PaymentMethod.COD && payment.Status != PaymentStatus.Completed)))
+            return Results.Conflict(new { code = "PAYMENT_NOT_COMPLETED" });
+        if (newStatus == OrderStatus.Cancelled && payment is { IsMock: true, Status: PaymentStatus.Completed })
+            return Results.Conflict(new { code = "REFUND_NOT_SUPPORTED" });
+
         var validTransitions = GetValidTransitions(order.Status);
         if (!validTransitions.Contains(newStatus))
             return Results.BadRequest(new { message = $"Invalid transition from {order.Status} to {newStatus}." });
