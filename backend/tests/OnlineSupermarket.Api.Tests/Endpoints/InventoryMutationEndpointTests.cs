@@ -117,7 +117,8 @@ public sealed class InventoryMutationEndpointTests
     private static async Task<OrderSeed> SeedReservedOrderAsync(
         TestApiFactory factory,
         int quantity,
-        OrderStatus status)
+        OrderStatus status,
+        bool isPaid = false)
     {
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -156,11 +157,18 @@ public sealed class InventoryMutationEndpointTests
         {
             order.SetStatus(path[i], $"transition to {path[i]}");
         }
+        Payment? payment = null;
+        if (isPaid)
+        {
+            payment = Payment.Create(order.Id, PaymentMethod.VNPay, order.TotalAmount, isMock: true);
+            payment.MarkCompleted($"mock:{payment.Id}:Success", "{\"mode\":\"Mock\",\"outcome\":\"Success\"}");
+        }
 
         db.Users.Add(customer);
         db.Branches.Add(branch);
         db.BranchInventories.Add(inventory);
         db.Orders.Add(order);
+        if (payment is not null) db.Payments.Add(payment);
         await db.SaveChangesAsync();
 
         return new OrderSeed(await CreateAdminClientAsync(factory), order.Id, inventory.Id);
@@ -181,7 +189,7 @@ public sealed class InventoryMutationEndpointTests
     public async Task CompletingOrder_ConvertsReservationToSaleExactlyOnce()
     {
         using var factory = new TestApiFactory();
-        var fixture = await SeedReservedOrderAsync(factory, quantity: 3, OrderStatus.Delivered);
+        var fixture = await SeedReservedOrderAsync(factory, quantity: 3, OrderStatus.Delivered, isPaid: true);
 
         var first = await fixture.AdminClient.PutAsJsonAsync(
             $"/api/admin/orders/{fixture.OrderId}/status",

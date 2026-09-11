@@ -42,7 +42,10 @@ public sealed class OpenApiContractTests(TestApiFactory factory)
     public async Task GetOpenApi_InProduction_ReturnsNotFound()
     {
         using var productionFactory = factory.WithWebHostBuilder(builder =>
-            builder.UseEnvironment("Production"));
+        {
+            builder.UseEnvironment("Production");
+            builder.UseSetting("Payments:Mode", "Sandbox");
+        });
         using var client = productionFactory.CreateClient();
 
         var response = await client.GetAsync("/openapi/v1.json");
