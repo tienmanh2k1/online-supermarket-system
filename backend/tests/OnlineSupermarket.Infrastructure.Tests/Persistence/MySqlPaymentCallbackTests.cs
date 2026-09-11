@@ -141,6 +141,22 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
     }
 
     [Fact]
+    public async Task PretrackedPendingEntities_CannotOverwriteCommittedSuccess()
+    {
+        await using var stale = CreateContext();
+        var seed = await SeedOrderWithPaymentAsync(stale, OrderStatus.Pending, reserveInventory: true);
+        Assert.Equal(PaymentCallbackOutcome.Processed, await ProcessAsync(seed.Order.Id, seed.Payment.Amount, true, "winner"));
+        var processor = new PaymentCallbackProcessor(stale, new InventoryMutationService(stale, TimeProvider.System));
+        Assert.Equal(PaymentCallbackOutcome.Conflict,
+            await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, false, "loser"), CancellationToken.None));
+        await using var verify = CreateContext();
+        Assert.Equal(PaymentStatus.Completed, (await verify.Payments.SingleAsync(p => p.Id == seed.Payment.Id)).Status);
+        Assert.Equal(OrderStatus.Confirmed, (await verify.Orders.SingleAsync(o => o.Id == seed.Order.Id)).Status);
+        Assert.Equal(1, await verify.PaymentCallbacks.CountAsync());
+        Assert.Equal(0, await verify.InventoryTransactions.CountAsync(t => t.TransactionType == InventoryTransactionType.Release));
+    }
+
+    [Fact]
     public async Task Sequential_Duplicate_Callback_IsIdempotent_OnMySql()
     {
         await using var db = CreateContext();
@@ -177,10 +193,10 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
                 {
                     await using var ctx = CreateContext();
                     var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
-                    processor.BeforePaymentLockTestHook = () =>
+                    processor.BeforeOrderLockTestHook = () =>
                     {
                         ready.Release();
-                        return gate.Task;
+                        return gate.Task.WaitAsync(TimeSpan.FromSeconds(15));
                     };
                     return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, true, eventId), CancellationToken.None);
                 }
@@ -188,8 +204,8 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
                 var task1 = Task.Run(RaceOnceAsync);
                 var task2 = Task.Run(RaceOnceAsync);
 
-                await ready.WaitAsync();
-                await ready.WaitAsync();
+                Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
+                Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
                 gate.SetResult();
                 var outcomes = await Task.WhenAll(task1, task2);
 
@@ -232,10 +248,10 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
         {
             await using var ctx = CreateContext();
             var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
-            processor.BeforePaymentLockTestHook = () =>
+            processor.BeforeOrderLockTestHook = () =>
             {
                 ready.Release();
-                return gate.Task;
+                return gate.Task.WaitAsync(TimeSpan.FromSeconds(15));
             };
             return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, true, "race-forced"), CancellationToken.None);
         }
@@ -243,8 +259,8 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
         var task1 = Task.Run(RaceOnceAsync);
         var task2 = Task.Run(RaceOnceAsync);
 
-        await ready.WaitAsync();
-        await ready.WaitAsync();
+        Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
+        Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
         gate.SetResult();
         var outcomes = await Task.WhenAll(task1, task2);
 
@@ -274,10 +290,10 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
         {
             await using var ctx = CreateContext();
             var processor = new PaymentCallbackProcessor(ctx, new InventoryMutationService(ctx, TimeProvider.System));
-            processor.BeforePaymentLockTestHook = () =>
+            processor.BeforeOrderLockTestHook = () =>
             {
                 ready.Release();
-                return gate.Task;
+                return gate.Task.WaitAsync(TimeSpan.FromSeconds(15));
             };
             return await processor.ProcessAsync("VNPay", Callback(seed.Order.Id, seed.Payment.Amount, success, eventId), CancellationToken.None);
         }
@@ -285,8 +301,8 @@ public sealed class MySqlPaymentCallbackTests(MySqlFixture fixture) : IAsyncLife
         var task1 = Task.Run(() => RaceOnceAsync(true, "race-succ"));
         var task2 = Task.Run(() => RaceOnceAsync(false, "race-fail"));
 
-        await ready.WaitAsync();
-        await ready.WaitAsync();
+        Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
+        Assert.True(await ready.WaitAsync(TimeSpan.FromSeconds(15)), "Callback did not reach the pre-lock barrier.");
         gate.SetResult();
         var outcomes = await Task.WhenAll(task1, task2);
 

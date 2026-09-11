@@ -45,7 +45,7 @@ public static class MockPaymentEndpoints
     }
 
     private static async Task<PaymentView?> FindOwnedMockPaymentAsync(Guid id, Guid userId, AppDbContext db, CancellationToken ct) =>
-        await db.Payments.Where(payment => payment.Id == id && payment.IsMock)
+        await db.Payments.AsNoTracking().Where(payment => payment.Id == id && payment.IsMock)
             .Join(db.Orders, payment => payment.OrderId, order => order.Id, (payment, order) => new { Payment = payment, Order = order })
             .Where(item => item.Order.UserId == userId)
             .Select(item => new PaymentView(item.Payment, item.Order))

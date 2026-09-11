@@ -340,18 +340,6 @@ public static class CheckoutEndpoints
         if (order == null)
             return Results.NotFound(new { message = "Order not found." });
 
-        if (method == PaymentMethod.COD)
-        {
-            var payment = Payment.Create(order.Id, method, order.TotalAmount);
-            dbContext.Payments.Add(payment);
-            order.SetStatus(OrderStatus.Confirmed, $"Payment initiated: {method}");
-            var latestHistory = order.StatusHistory[^1];
-            dbContext.Entry(latestHistory).State = EntityState.Added;
-            await dbContext.SaveChangesAsync(cancellationToken);
-            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
-            return Results.Ok(new PaymentInitDto(payment.Id, method.ToString(), payment.Status.ToString()));
-        }
-
         var payments = await dbContext.Payments
             .Where(payment => payment.OrderId == order.Id)
             .OrderByDescending(payment => payment.CreatedAtUtc)
@@ -363,8 +351,16 @@ public static class CheckoutEndpoints
         if (payments.Count == 1)
         {
             var existing = payments[0];
-            if (existing.Method != method || !existing.IsMock)
+            if (existing.Method != method || existing.IsMock != (method != PaymentMethod.COD))
                 return Results.Conflict(new { code = "PAYMENT_METHOD_OR_MODE_CONFLICT" });
+            if (order.Status == OrderStatus.Cancelled)
+                return Results.Conflict(new { code = "PAYMENT_NOT_RETRYABLE" });
+            if (method == PaymentMethod.COD)
+            {
+                if (existing.Status is not (PaymentStatus.PendingCollection or PaymentStatus.Completed))
+                    return Results.Conflict(new { code = "PAYMENT_NOT_RETRYABLE" });
+                return Results.Ok(new PaymentInitDto(existing.Id, method.ToString(), existing.Status.ToString()));
+            }
             if (existing.Status == PaymentStatus.Completed)
                 return Results.Ok(new PaymentInitDto(existing.Id, method.ToString(), existing.Status.ToString(), null, true));
             if (existing.Status != PaymentStatus.Pending || order.Status == OrderStatus.Cancelled)
@@ -375,6 +371,17 @@ public static class CheckoutEndpoints
 
         if (order.Status != OrderStatus.Pending)
             return Results.Conflict(new { code = "ORDER_NOT_PENDING" });
+
+        if (method == PaymentMethod.COD)
+        {
+            var payment = Payment.Create(order.Id, method, order.TotalAmount);
+            dbContext.Payments.Add(payment);
+            order.SetStatus(OrderStatus.Confirmed, $"Payment initiated: {method}");
+            dbContext.Entry(order.StatusHistory[^1]).State = EntityState.Added;
+            await dbContext.SaveChangesAsync(cancellationToken);
+            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
+            return Results.Ok(new PaymentInitDto(payment.Id, method.ToString(), payment.Status.ToString()));
+        }
 
         var mockPayment = Payment.Create(order.Id, method, order.TotalAmount, isMock: true);
         dbContext.Payments.Add(mockPayment);

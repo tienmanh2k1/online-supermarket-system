@@ -8,6 +8,9 @@
 .env.*
 !.env.example
 *.user
+*.log
+.dotnet/
+frontend/debug.log
 TestResults/
 test-results/
 playwright-report/

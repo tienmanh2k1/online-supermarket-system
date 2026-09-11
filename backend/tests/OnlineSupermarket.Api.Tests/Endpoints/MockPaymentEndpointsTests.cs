@@ -17,6 +17,38 @@ namespace OnlineSupermarket.Api.Tests.Endpoints;
 
 public sealed class MockPaymentEndpointsTests
 {
+    [Theory]
+    [InlineData("Success")]
+    [InlineData("Cancelled")]
+    [InlineData("Failed")]
+    public async Task Cod_CannotReplaceTerminalMockPayment(string outcome)
+    {
+        using var factory = new TestApiFactory();
+        var (client, order) = await SeedPendingOrderAsync(factory);
+        var initiated = await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "MoMo"));
+        var id = JsonDocument.Parse(await initiated.Content.ReadAsStringAsync()).RootElement.GetProperty("paymentId").GetGuid();
+        Assert.Equal(HttpStatusCode.OK, (await client.PostAsJsonAsync($"/api/payments/mock/{id}/complete", new { outcome })).StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, (await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "COD"))).StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        Assert.Equal(1, await db.Payments.CountAsync(p => p.OrderId == order.Id));
+        Assert.Equal(outcome == "Success" ? OrderStatus.Confirmed : OrderStatus.Cancelled,
+            (await db.Orders.SingleAsync(o => o.Id == order.Id)).Status);
+    }
+
+    [Fact]
+    public async Task RepeatedCodInitiation_ReturnsExistingPayment()
+    {
+        using var factory = new TestApiFactory();
+        var (client, order) = await SeedPendingOrderAsync(factory);
+        var first = await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "COD"));
+        var second = await client.PostAsJsonAsync("/api/checkout/payment", new PaymentRequest(order.Id, "COD"));
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        Assert.Equal(await first.Content.ReadAsStringAsync(), await second.Content.ReadAsStringAsync());
+        using var scope = factory.Services.CreateScope();
+        Assert.Equal(1, await scope.ServiceProvider.GetRequiredService<AppDbContext>().Payments.CountAsync(p => p.OrderId == order.Id));
+    }
+
     [Fact]
     public async Task Owner_InitiatesMockOnlinePayment_UsingInternalUrl_WithoutConfirmingOrder()
     {

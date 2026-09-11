@@ -30,6 +30,10 @@ public sealed class PaymentCallbackProcessor(
         if (callback.IsMock && (environment?.IsDevelopment() != true || paymentOptions?.Value.Mode != "Mock" || !callback.TargetPaymentId.HasValue))
             return PaymentCallbackOutcome.Conflict;
 
+        // Synchronize contenders before any locks, and only once across retries.
+        if (BeforeOrderLockTestHook is not null)
+            await BeforeOrderLockTestHook();
+
         for (var attempt = 0; attempt < MaxDeadlockRetries; attempt++)
         {
             try
@@ -55,6 +59,15 @@ public sealed class PaymentCallbackProcessor(
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
+        // Lock the order before reading payments: SERIALIZABLE reads can also lock.
+        await LockOrderAsync(callback.OrderId, cancellationToken);
+        var order = await dbContext.Orders
+            .Include(x => x.Items)
+            .Include(x => x.StatusHistory)
+            .FirstOrDefaultAsync(x => x.Id == callback.OrderId, cancellationToken);
+        if (order is null) return PaymentCallbackOutcome.PaymentNotFound;
+        await dbContext.Entry(order).ReloadAsync(cancellationToken);
+
         var paymentQuery = dbContext.Payments.Where(x => x.OrderId == callback.OrderId);
         if (callback.TargetPaymentId.HasValue)
             paymentQuery = paymentQuery.Where(x => x.Id == callback.TargetPaymentId.Value);
@@ -64,20 +77,6 @@ public sealed class PaymentCallbackProcessor(
             .Select(x => new { x.Id, x.OrderId })
             .FirstOrDefaultAsync(cancellationToken);
         if (candidate is null) return PaymentCallbackOutcome.PaymentNotFound;
-
-        // All writers serialize on the order first, then its payment. This avoids
-        // an admin cancellation racing a callback into two inventory reversals.
-        await LockOrderAsync(candidate.OrderId, cancellationToken);
-        var order = await dbContext.Orders
-            .Include(x => x.Items)
-            .Include(x => x.StatusHistory)
-            .FirstOrDefaultAsync(x => x.Id == candidate.OrderId, cancellationToken);
-        if (order is null) return PaymentCallbackOutcome.PaymentNotFound;
-
-        // Test seam: both contenders can reach this point concurrently because the
-        // payment read above is non-locking; only the FOR UPDATE below serializes.
-        if (BeforePaymentLockTestHook is not null)
-            await BeforePaymentLockTestHook();
 
         // Row-lock the selected payment so a concurrent conflicting callback
         // (different externalEventId) serializes here and observes the
@@ -91,6 +90,8 @@ public sealed class PaymentCallbackProcessor(
         }
         var payment = await dbContext.Payments.FirstOrDefaultAsync(x => x.Id == candidate.Id, cancellationToken);
         if (payment is null) return PaymentCallbackOutcome.PaymentNotFound;
+        // Ownership checks may have tracked a Pending entity before we acquired locks.
+        await dbContext.Entry(payment).ReloadAsync(cancellationToken);
 
         // We may have blocked on the row lock while the winning transaction
         // committed the very callback we are about to insert; re-check the
@@ -155,7 +156,7 @@ public sealed class PaymentCallbackProcessor(
     }
 
     internal Func<Task>? BeforeSaveTestHook { get; set; }
-    internal Func<Task>? BeforePaymentLockTestHook { get; set; }
+    internal Func<Task>? BeforeOrderLockTestHook { get; set; }
 
     private async Task LockOrderAsync(Guid orderId, CancellationToken cancellationToken)
     {

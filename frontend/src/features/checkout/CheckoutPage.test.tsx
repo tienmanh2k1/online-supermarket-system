@@ -126,6 +126,16 @@ describe('CheckoutPage', () => {
     vi.restoreAllMocks()
   })
 
+  it('allows pickup with COD when online payments are disabled', async () => {
+    vi.spyOn(checkoutApi, 'getPaymentOptions').mockResolvedValue({ mode: 'Sandbox', onlineEnabled: false, disabledReason: 'Online unavailable' })
+    renderCheckout()
+    await screen.findByText(/Online unavailable/)
+    const pickup = screen.getByRole('radio', { name: /Nhận tại chi nhánh/ })
+    expect(pickup).toBeEnabled()
+    fireEvent.click(pickup)
+    expect(pickup).toBeChecked()
+  })
+
   it('asks guests to login before checkout even when cart state is idle', () => {
     renderCheckout({
       auth: { isAuthenticated: false, isLoading: false, user: null, accessToken: null },
@@ -231,38 +241,20 @@ describe('CheckoutPage', () => {
     })
   })
 
-  it('redirects to sandbox checkoutUrl for VNPay', async () => {
+  it('navigates to the internal mock checkout for VNPay', async () => {
+    vi.spyOn(checkoutApi, 'getPaymentOptions').mockResolvedValue({ mode: 'Mock', onlineEnabled: true, disabledReason: null })
     vi.spyOn(checkoutApi, 'checkout').mockResolvedValue(checkoutResponse)
     vi.spyOn(checkoutApi, 'initiatePayment').mockResolvedValue({
-      paymentId: 'payment-1',
-      method: 'VNPay',
-      status: 'Pending',
-      checkoutUrl: 'https://sandbox.vnpayment.vn/test?orderId=order-1',
+      paymentId: 'payment-1', method: 'VNPay', status: 'Pending',
+      checkoutUrl: '/shopping/payment/mock/payment-1', isMock: true,
     })
-
-    const assignMock = vi.fn()
-    const originalLocation = window.location
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, assign: assignMock },
-      writable: true,
-      configurable: true,
-    })
-
     renderCheckout({ cart: cartWithItems })
-    fireEvent.click(screen.getByRole('radio', { name: /VNPay Sandbox/ }))
+    const vnpay = screen.getByRole('radio', { name: /VNPay/ })
+    await waitFor(() => expect(vnpay).toBeEnabled())
+    fireEvent.click(vnpay)
     fireEvent.click(screen.getByRole('button', { name: 'Đặt hàng' }))
-
-    await waitFor(() => {
-      expect(assignMock).toHaveBeenCalledWith('https://sandbox.vnpayment.vn/test?orderId=order-1')
-    })
-
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-      configurable: true,
-    })
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/shopping/payment/mock/payment-1'))
   })
-
   it('shows cart empty error and links back to cart', async () => {
     vi.spyOn(checkoutApi, 'checkout').mockRejectedValue(new ApiError(400, { message: 'CART_EMPTY' }))
     renderCheckout({ cart: cartWithItems })

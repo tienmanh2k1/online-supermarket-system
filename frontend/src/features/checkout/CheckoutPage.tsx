@@ -411,7 +411,7 @@ export function CheckoutPage() {
                   value="Pickup"
                   checked={fulfillmentType === 'Pickup'}
                   onChange={() => setFulfillmentType('Pickup')}
-                  disabled={isSubmitting || paymentOptions?.onlineEnabled !== true}
+                  disabled={isSubmitting}
                 />
                 <div className="checkout-radio-content">
                   <span className="checkout-radio-title">Nhận tại chi nhánh</span>
