@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OnlineSupermarket.Api.Contracts.Checkout;
 using OnlineSupermarket.Domain.Catalog;
 using OnlineSupermarket.Domain.Inventory;
@@ -33,6 +34,10 @@ public static class CheckoutEndpoints
             .Produces<PaymentInitDto>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        group.MapGet("/payment-options", GetPaymentOptionsAsync)
+            .WithName("GetPaymentOptions")
+            .Produces<PaymentOptionsDto>();
 
         group.MapPost("/validate-coupon", ValidateCouponAsync)
             .WithName("ValidateCoupon")
@@ -304,43 +309,93 @@ public static class CheckoutEndpoints
         ClaimsPrincipal user,
         [FromBody] PaymentRequest request,
         [FromServices] AppDbContext dbContext,
+        [FromServices] IOptions<PaymentOptions> paymentOptions,
         CancellationToken cancellationToken)
     {
         var userId = GetUserId(user);
 
-        var order = await dbContext.Orders
-            .Include(o => o.StatusHistory)
-            .FirstOrDefaultAsync(o => o.Id == request.OrderId && o.UserId == userId, cancellationToken);
+        if (!Enum.TryParse<PaymentMethod>(request.Method, true, out var method)
+            || !Enum.IsDefined(typeof(PaymentMethod), method))
+            return Results.BadRequest(new { message = "Invalid payment method." });
+
+        if (method is PaymentMethod.VNPay or PaymentMethod.MoMo
+            && paymentOptions.Value.Mode != "Mock")
+        {
+            return Results.Json(
+                new { code = "PAYMENT_PROVIDER_NOT_CONFIGURED" },
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+
+        await using var transaction = dbContext.Database.IsRelational()
+            ? await dbContext.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, cancellationToken)
+            : null;
+
+        var orderQuery = dbContext.Database.IsRelational()
+            ? dbContext.Orders.FromSqlInterpolated($"SELECT * FROM orders WHERE id = {request.OrderId} FOR UPDATE")
+            : dbContext.Orders.Where(order => order.Id == request.OrderId);
+        var order = await orderQuery
+            .Include(item => item.StatusHistory)
+            .FirstOrDefaultAsync(item => item.UserId == userId, cancellationToken);
 
         if (order == null)
             return Results.NotFound(new { message = "Order not found." });
 
-        if (!Enum.TryParse<PaymentMethod>(request.Method, true, out var method))
-            return Results.BadRequest(new { message = "Invalid payment method." });
-
-        var payment = Payment.Create(order.Id, method, order.TotalAmount);
-        dbContext.Payments.Add(payment);
-
-        order.SetStatus(OrderStatus.Confirmed, $"Payment initiated: {method}");
-
-        // Force EF Core to track the new history entry added by SetStatus
-        var historyEntries = order.StatusHistory;
-        if (historyEntries.Count > 0)
+        if (method == PaymentMethod.COD)
         {
-            var latestHistory = historyEntries[historyEntries.Count - 1];
+            var payment = Payment.Create(order.Id, method, order.TotalAmount);
+            dbContext.Payments.Add(payment);
+            order.SetStatus(OrderStatus.Confirmed, $"Payment initiated: {method}");
+            var latestHistory = order.StatusHistory[^1];
             dbContext.Entry(latestHistory).State = EntityState.Added;
+            await dbContext.SaveChangesAsync(cancellationToken);
+            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
+            return Results.Ok(new PaymentInitDto(payment.Id, method.ToString(), payment.Status.ToString()));
         }
 
+        var payments = await dbContext.Payments
+            .Where(payment => payment.OrderId == order.Id)
+            .OrderByDescending(payment => payment.CreatedAtUtc)
+            .ThenByDescending(payment => payment.Id)
+            .ToListAsync(cancellationToken);
+        if (payments.Count > 1)
+            return Results.Conflict(new { code = "AMBIGUOUS_PAYMENT_HISTORY" });
+
+        if (payments.Count == 1)
+        {
+            var existing = payments[0];
+            if (existing.Method != method || !existing.IsMock)
+                return Results.Conflict(new { code = "PAYMENT_METHOD_OR_MODE_CONFLICT" });
+            if (existing.Status == PaymentStatus.Completed)
+                return Results.Ok(new PaymentInitDto(existing.Id, method.ToString(), existing.Status.ToString(), null, true));
+            if (existing.Status != PaymentStatus.Pending || order.Status == OrderStatus.Cancelled)
+                return Results.Conflict(new { code = "PAYMENT_NOT_RETRYABLE" });
+
+            return Results.Ok(ToPaymentInitDto(existing));
+        }
+
+        if (order.Status != OrderStatus.Pending)
+            return Results.Conflict(new { code = "ORDER_NOT_PENDING" });
+
+        var mockPayment = Payment.Create(order.Id, method, order.TotalAmount, isMock: true);
+        dbContext.Payments.Add(mockPayment);
         await dbContext.SaveChangesAsync(cancellationToken);
+        if (transaction is not null) await transaction.CommitAsync(cancellationToken);
 
-        string? checkoutUrl = null;
-        if (method == PaymentMethod.VNPay)
-            checkoutUrl = $"https://sandbox.vnpayment.vn/test?orderId={order.Id}&amount={order.TotalAmount}";
-        else if (method == PaymentMethod.MoMo)
-            checkoutUrl = $"https://momo.vn/test?orderId={order.Id}&amount={order.TotalAmount}";
-
-        return Results.Ok(new PaymentInitDto(payment.Id, method.ToString(), payment.Status.ToString(), checkoutUrl));
+        return Results.Ok(ToPaymentInitDto(mockPayment));
     }
+
+    private static IResult GetPaymentOptionsAsync([FromServices] IOptions<PaymentOptions> paymentOptions)
+    {
+        var onlineEnabled = paymentOptions.Value.Mode == "Mock";
+        return Results.Ok(new PaymentOptionsDto(
+            paymentOptions.Value.Mode,
+            onlineEnabled,
+            onlineEnabled ? null : "PAYMENT_PROVIDER_NOT_CONFIGURED"));
+    }
+
+    private static PaymentInitDto ToPaymentInitDto(Payment payment) =>
+        new(payment.Id, payment.Method.ToString(), payment.Status.ToString(),
+            $"/shopping/payment/mock/{payment.Id}", true);
 
     private static async Task<IResult> PaymentCallbackAsync(
         [FromBody] PaymentCallbackRequest request,

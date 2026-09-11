@@ -32,7 +32,13 @@ public sealed record PaymentInitDto(
     [property: JsonPropertyName("paymentId")] Guid PaymentId,
     [property: JsonPropertyName("method")] string Method,
     [property: JsonPropertyName("status")] string Status,
-    [property: JsonPropertyName("checkoutUrl")] string? CheckoutUrl = null);
+    [property: JsonPropertyName("checkoutUrl")] string? CheckoutUrl = null,
+    [property: JsonPropertyName("isMock")] bool IsMock = false);
+
+public sealed record PaymentOptionsDto(
+    [property: JsonPropertyName("mode")] string Mode,
+    [property: JsonPropertyName("onlineEnabled")] bool OnlineEnabled,
+    [property: JsonPropertyName("disabledReason")] string? DisabledReason);
 
 public sealed record PaymentRequest(
     [property: JsonPropertyName("orderId")] Guid OrderId,

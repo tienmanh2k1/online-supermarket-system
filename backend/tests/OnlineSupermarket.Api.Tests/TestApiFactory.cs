@@ -38,6 +38,7 @@ public class TestApiFactory : WebApplicationFactory<Program>
         builder.UseSetting("Payments:Webhooks:VNPay:Secret", TestSecret);
         builder.UseSetting("Payments:Webhooks:MoMo:Secret", TestSecret);
         builder.UseSetting("Payments:Webhooks:MoMo:AccessKey", "test-access-key");
+        builder.UseSetting("Payments:Mode", "Mock");
 
         builder.ConfigureLogging(logging =>
         {
