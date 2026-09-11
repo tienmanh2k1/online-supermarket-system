@@ -59,15 +59,17 @@ test.describe('Phase 5: Six Critical End-to-End Business Journeys', () => {
     p1Name = pRes.data[0].name;
     p1Price = pRes.data[0].basePrice;
 
-    // Ensure C3 is registered for lockout journey
-    await api.post('/api/auth/register', {
-      data: {
-        email: ACCOUNTS.CUSTOMER_3.email,
-        password: ACCOUNTS.CUSTOMER_3.password,
-        fullName: ACCOUNTS.CUSTOMER_3.name,
-        phone: ACCOUNTS.CUSTOMER_3.phone,
-      },
-    });
+    // These journeys must also work before the other test files run.
+    for (const account of [ACCOUNTS.CUSTOMER_1, ACCOUNTS.CUSTOMER_3]) {
+      await api.post('/api/auth/register', {
+        data: {
+          email: account.email,
+          password: account.password,
+          fullName: account.name,
+          phone: account.phone,
+        },
+      });
+    }
 
     await api.dispose();
   });
@@ -151,16 +153,13 @@ test.describe('Phase 5: Six Critical End-to-End Business Journeys', () => {
     const statusSelect = page.locator('#admin-next-status');
     const updateBtn = page.locator('.admin-status-panel button[type="submit"], .admin-order-panel .btn-primary:has-text("Cập nhật"), .admin-order-panel button[type="submit"]').first();
 
-    const nextStatuses = ['Confirmed', 'Processing', 'Delivered', 'Completed'];
+    const nextStatuses = ['Preparing', 'Ready', 'Delivered', 'Completed'];
     for (const st of nextStatuses) {
-      if (await statusSelect.isVisible()) {
-        const opt = statusSelect.locator(`option[value="${st}"]`);
-        if (await opt.count() > 0) {
-          await statusSelect.selectOption(st);
-          await updateBtn.click();
-          await page.waitForTimeout(800);
-        }
-      }
+      await expect(statusSelect).toBeVisible();
+      await expect(statusSelect.locator(`option[value="${st}"]`)).toBeAttached();
+      await statusSelect.selectOption(st);
+      await updateBtn.click();
+      await expect(page.locator('.admin-status[role="status"]')).toContainText(st);
     }
 
     logTestRecord({

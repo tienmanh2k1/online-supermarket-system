@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const RUN_ID = 'UI-20260910-01';
+export const RUN_ID = process.env.UI_TEST_RUN_ID || 'UI-20260910-01';
 export const ARTIFACTS_DIR = path.resolve(__dirname, '../../../artifacts/ui-full-test', RUN_ID);
 export const SCREENSHOTS_DIR = path.join(ARTIFACTS_DIR, 'screenshots');
 

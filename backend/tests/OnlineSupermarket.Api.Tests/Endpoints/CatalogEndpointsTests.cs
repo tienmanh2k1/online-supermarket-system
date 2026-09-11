@@ -216,7 +216,7 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.NotNull(response);
         Assert.Single(response.Data);
         Assert.Equal("TV-SAM-001", response.Data[0].Sku);
-        Assert.Equal(1, response.TotalCount);
+        Assert.Equal(1, response.Meta.TotalCount);
 
         // Case-insensitive exact match
         var responseLower = await client.GetFromJsonAsync<PaginatedResponse<ProductSummaryDto>>(
@@ -225,7 +225,7 @@ public sealed class CatalogEndpointsTests : IClassFixture<TestApiFactory>
         Assert.NotNull(responseLower);
         Assert.Single(responseLower.Data);
         Assert.Equal("TV-SAM-001", responseLower.Data[0].Sku);
-        Assert.Equal(1, responseLower.TotalCount);
+        Assert.Equal(1, responseLower.Meta.TotalCount);
     }
 
     [Fact]

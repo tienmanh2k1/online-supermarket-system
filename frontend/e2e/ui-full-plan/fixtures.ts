@@ -1,4 +1,4 @@
-export const TEST_PREFIX = 'QA_UI_20260910_';
+export const TEST_PREFIX = process.env.UI_TEST_PREFIX || 'QA_UI_20260910_';
 
 export const ACCOUNTS = {
   ADMIN: {
